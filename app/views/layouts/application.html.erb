@@ -24,5 +24,11 @@
 
   <body>
     <%= yield %>
+    
+    <% if Rails.env.development? %>
+      <div data-controller="git-branch" class="git-branch-indicator">
+        <span data-git-branch-target="branch"></span>
+      </div>
+    <% end %>
   </body>
 </html>
