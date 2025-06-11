@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   resource :session
   resource :registration, only: %i[new create]
   resources :passwords, param: :token
-  resources :games, only: [ :new, :create ]
+  resources :games, only: [ :new, :create, :show ] do
+    collection do
+      post :join
+    end
+  end
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

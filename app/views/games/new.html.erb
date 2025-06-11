@@ -9,6 +9,11 @@
   </div>
 
   <div>
+    <%= form.label :password, "Password (optional)" %>
+    <%= form.password_field :password, placeholder: "Leave blank for no password" %>
+  </div>
+
+  <div>
     <%= form.submit "Create Game" %>
   </div>
 <% end %>
