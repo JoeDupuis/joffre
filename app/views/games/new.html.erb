@@ -1,7 +1,7 @@
 <h1>New Game</h1>
 
 <%= form_with model: @game do |form| %>
-  <%= render "application/form_errors", instance: @game %>
+  <%= form_errors(@game) %>
 
   <div>
     <%= form.label :name %>
