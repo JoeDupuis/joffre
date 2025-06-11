@@ -1,5 +1,4 @@
 class FriendInvitationsController < ApplicationController
-  allow_unauthenticated_access only: [ :accept_via_email, :decline_via_email ]
 
   def index
     @invitations = Current.user.received_invitations
@@ -17,15 +16,22 @@ class FriendInvitationsController < ApplicationController
       return
     end
 
-    if looks_like_email?(identifier)
-      handle_email_invitation(identifier)
+    target_user = User.by_email_or_code(identifier).first
+    
+    if target_user
+      handle_existing_user_invitation(target_user)
     else
-      handle_friend_code_invitation(identifier.upcase)
+      # If no user found and it looks like an email, create invitation for future user
+      if looks_like_email?(identifier)
+        handle_email_invitation(identifier)
+      else
+        redirect_to new_friend_invitation_path, alert: "User not found with that email or friend code"
+      end
     end
   end
 
   def accept
-    @invitation = FriendInvitation.find_by!(token: params[:id])
+    @invitation = Current.user.received_invitations.find(params[:id])
 
     if @invitation.accept!
       redirect_to friends_path, notice: "You are now friends with #{@invitation.inviter.name}"
@@ -35,7 +41,7 @@ class FriendInvitationsController < ApplicationController
   end
 
   def decline
-    @invitation = FriendInvitation.find_by!(token: params[:id])
+    @invitation = Current.user.received_invitations.find(params[:id])
     @invitation.declined!
     redirect_to friend_invitations_path, notice: "Invitation declined"
   end
@@ -46,29 +52,6 @@ class FriendInvitationsController < ApplicationController
     redirect_to friends_path, notice: "Invitation cancelled"
   end
 
-  def accept_via_email
-    @invitation = FriendInvitation.find_by!(token: params[:token])
-
-    invitee = User.find_by(email_address: @invitation.invitee_email)
-    unless invitee
-      redirect_to new_registration_path,
-        notice: "Please create an account with #{@invitation.invitee_email} to accept this invitation"
-      return
-    end
-
-    if @invitation.accept!
-      redirect_to new_session_path, notice: "Friend invitation accepted! Please log in to see your new friend."
-    else
-      redirect_to new_session_path, alert: "Unable to accept invitation. It may have already been processed."
-    end
-  end
-
-  def decline_via_email
-    @invitation = FriendInvitation.find_by!(token: params[:token])
-    @invitation.declined!
-    redirect_to new_session_path, notice: "Friend invitation declined."
-  end
-
   private
 
   def looks_like_email?(identifier)
@@ -76,31 +59,15 @@ class FriendInvitationsController < ApplicationController
   end
 
   def handle_email_invitation(email)
-    # Check if user already exists
-    existing_user = User.find_by(email_address: email)
-    if existing_user
-      return handle_existing_user_invitation(existing_user)
-    end
-
-    # Create invitation for non-existing user
+    # Create invitation for non-existing user (no email sent)
     @invitation = Current.user.sent_invitations.build(invitee_email: email)
 
     if @invitation.save
-      redirect_to friends_path, notice: "Invitation sent to #{email}. They'll see it when they join or log in."
+      redirect_to friends_path, notice: "Invitation created for #{email}. They'll see it when they join or log in."
     else
       @invitation.errors.add(:invitee_identifier, @invitation.errors[:invitee_email].first) if @invitation.errors[:invitee_email].any?
       render :new, status: :unprocessable_entity
     end
-  end
-
-  def handle_friend_code_invitation(friend_code)
-    friend = User.find_by(user_code: friend_code)
-    unless friend
-      redirect_to new_friend_invitation_path, alert: "Friend code not found"
-      return
-    end
-
-    handle_existing_user_invitation(friend)
   end
 
   def handle_existing_user_invitation(friend)

@@ -17,6 +17,10 @@ class User < ApplicationRecord
 
   before_create :generate_user_code
 
+  scope :by_email_or_code, ->(identifier) {
+    where(email_address: identifier).or(where(user_code: identifier.upcase))
+  }
+
   def owned_games
     games.joins(:players).where(players: { user_id: id, owner: true })
   end

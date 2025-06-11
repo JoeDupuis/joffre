@@ -4,10 +4,9 @@ Hi there,
 
 <%= @inviter.name %> wants to be your friend on Joffre!
 
-Accept: <%= accept_invitation_via_email_url(token: @invitation.token) %>
-Decline: <%= decline_invitation_via_email_url(token: @invitation.token) %>
+To accept this invitation, please log in to your Joffre account and visit your Friends page.
 
-Or visit Joffre directly and use their friend code: <%= @inviter.user_code %>
+You can also use their friend code: <%= @inviter.user_code %>
 
 Happy gaming!
 The Joffre Team
