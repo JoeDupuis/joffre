@@ -5,13 +5,7 @@ Rails.application.routes.draw do
   resource :registration, only: %i[new create]
   resources :passwords, param: :token
   resources :games, only: [ :new, :create ]
-
-  resources :friendships do
-    member do
-      post :accept
-      post :decline
-    end
-  end
+  resources :friendships, only: [ :index, :new, :create, :update, :destroy ]
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

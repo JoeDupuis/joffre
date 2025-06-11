@@ -34,8 +34,8 @@
                 <div class="-content">Email: <%= request.user.email_address %></div>
                 <div class="-content">Friend code: <span class="user-info -code"><%= request.user.user_code %></span></div>
                 <div class="-actions">
-                  <%= button_to "Accept", accept_friendship_path(request), method: :post, class: "button" %>
-                  <%= button_to "Decline", decline_friendship_path(request), method: :post, class: "button --small" %>
+                  <%= button_to "Accept", friendship_path(request), method: :patch, class: "button" %>
+                  <%= button_to "Decline", friendship_path(request), method: :delete, class: "button --small" %>
                 </div>
               </div>
             </li>

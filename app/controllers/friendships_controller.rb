@@ -34,19 +34,17 @@ class FriendshipsController < ApplicationController
     end
   end
 
-  def accept
+  def update
     @friendship = Current.user.received_friend_requests.find(params[:id])
     @friendship.accept!
     redirect_to friendships_path, notice: "You are now friends with #{@friendship.user.name}"
   end
 
-  def decline
+  def destroy
     @friendship = Current.user.received_friend_requests.find(params[:id])
     @friendship.decline!
     redirect_to friendships_path, notice: "Friend request declined"
-  end
-
-  def destroy
+  rescue ActiveRecord::RecordNotFound
     @friendship = Current.user.sent_friend_requests.find(params[:id])
     @friendship.destroy
     redirect_to friendships_path, notice: "Friend request cancelled"
