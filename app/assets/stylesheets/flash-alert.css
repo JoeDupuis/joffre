@@ -1,0 +1,46 @@
+:root {
+  --flash-success-bg: #d4edda;
+  --flash-success-color: #155724;
+  --flash-success-border: #c3e6cb;
+  --flash-danger-bg: #f8d7da;
+  --flash-danger-color: #721c24;
+  --flash-danger-border: #f5c6cb;
+}
+
+.flash-alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.flash-alert.-success {
+  color: var(--flash-success-color);
+  background-color: var(--flash-success-bg);
+  border-color: var(--flash-success-border);
+}
+
+.flash-alert.-danger {
+  color: var(--flash-danger-color);
+  background-color: var(--flash-danger-bg);
+  border-color: var(--flash-danger-border);
+}
+
+.flash-alert .closeBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.75rem 1.25rem;
+  color: inherit;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.flash-alert .closeBtn:hover {
+  opacity: 0.75;
+}
