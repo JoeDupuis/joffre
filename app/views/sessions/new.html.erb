@@ -11,5 +11,15 @@
 
 <% if Rails.env.development? %>
   <hr style="margin: 20px 0;">
-  <%= button_to "Dev Sign In", session_path, params: { email_address: "test@example.com", password: "password" } %>
+  <h3>Development Sign In</h3>
+  <%= form_with url: session_path, local: true, data: { turbo: false } do |form| %>
+    <%= form.select :dev_user_email, 
+        User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"])
+            .pluck(:name, :email_address)
+            .map { |name, email| ["#{name} (#{email})", email] },
+        { prompt: "Select a user to sign in as" },
+        { style: "margin-bottom: 10px; width: 100%; padding: 8px;" } %>
+    <br>
+    <%= form.submit "Dev Sign In", style: "padding: 8px 16px;" %>
+  <% end %>
 <% end %>

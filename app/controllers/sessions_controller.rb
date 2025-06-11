@@ -6,7 +6,14 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(params.permit(:email_address, :password))
+    if Rails.env.development? && params[:dev_user_email].present?
+      if user = User.find_by(email_address: params[:dev_user_email])
+        start_new_session_for user
+        redirect_to after_authentication_url
+      else
+        redirect_to new_session_path, alert: "Dev user not found."
+      end
+    elsif user = User.authenticate_by(params.permit(:email_address, :password))
       start_new_session_for user
       redirect_to after_authentication_url
     else
