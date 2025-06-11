@@ -22,7 +22,7 @@ class User < ApplicationRecord
   end
 
   def all_friends
-    friends + inverse_friends
+    (friends + inverse_friends).uniq
   end
 
   private
