@@ -9,7 +9,7 @@ class GamesController < ApplicationController
     @game = Game.new(game_params)
 
     if @game.save
-      @game.game_players.create!(user: Current.user, owner: true)
+      @game.players.create!(user: Current.user, owner: true)
       redirect_to root_path, notice: "Game created successfully!"
     else
       render :new, status: :unprocessable_entity

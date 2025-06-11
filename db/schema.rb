@@ -11,21 +11,21 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[8.1].define(version: 2025_06_11_020400) do
-  create_table "game_players", force: :cascade do |t|
+  create_table "games", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "players", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "game_id", null: false
     t.boolean "owner", default: false, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["game_id", "user_id"], name: "index_game_players_on_game_id_and_user_id", unique: true
-    t.index ["game_id"], name: "index_game_players_on_game_id"
-    t.index ["user_id"], name: "index_game_players_on_user_id"
-  end
-
-  create_table "games", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
+    t.index ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
+    t.index ["game_id"], name: "index_players_on_game_id"
+    t.index ["user_id"], name: "index_players_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -45,7 +45,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_020400) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
-  add_foreign_key "game_players", "games"
-  add_foreign_key "game_players", "users"
+  add_foreign_key "players", "games"
+  add_foreign_key "players", "users"
   add_foreign_key "sessions", "users"
 end

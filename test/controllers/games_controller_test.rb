@@ -3,7 +3,7 @@ require "test_helper"
 class GamesControllerTest < ActionDispatch::IntegrationTest
   def setup
     @user = User.create!(email_address: "test@example.com", password: "password")
-    post session_url, params: { email_address: @user.email_address, password: "password" }
+    sign_in_as(@user)
   end
 
   test "should get new when authenticated" do
@@ -12,14 +12,14 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should redirect to login when not authenticated" do
-    delete session_url
+    sign_out
     get new_game_url
     assert_redirected_to new_session_path
   end
 
   test "should create game with valid params" do
     assert_difference("Game.count") do
-      assert_difference("GamePlayer.count") do
+      assert_difference("Player.count") do
         post games_url, params: { game: { name: "My Test Game" } }
       end
     end
@@ -30,7 +30,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     game = Game.last
     assert_equal "My Test Game", game.name
     assert_equal @user, game.owner
-    assert game.game_players.find_by(user: @user).owner?
+    assert game.players.find_by(user: @user).owner?
   end
 
   test "should not create game with invalid params" do
