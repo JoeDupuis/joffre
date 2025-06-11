@@ -13,7 +13,7 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "owner method returns the game owner" do
-    user = User.create!(email_address: "owner@example.com", password: "password")
+    user = users(:one)
     game = Game.create!(name: "Test Game")
     game.players.create!(user: user, owner: true)
 

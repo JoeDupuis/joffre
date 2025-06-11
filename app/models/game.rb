@@ -5,6 +5,6 @@ class Game < ApplicationRecord
   validates :name, presence: true
 
   def owner
-    players.find_by(owner: true)&.user
+    players.owner.first&.user
   end
 end
