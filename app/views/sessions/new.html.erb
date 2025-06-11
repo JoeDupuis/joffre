@@ -10,14 +10,13 @@
 <%= link_to "Don't have an account? Sign up", new_registration_path %>
 
 <% if Rails.env.development? %>
-  <div data-controller="dev-signin">
-    <hr style="margin: 20px 0;">
+  <div class="dev-signin" data-controller="dev-signin">
     <h3>Development Sign In</h3>
     <% dev_users = User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"]) %>
     <%= select_tag :dev_user_email, 
         options_from_collection_for_select(dev_users, :email_address, :name, nil),
-        { prompt: "Select a user to sign in as", data: { dev_signin_target: "select" }, style: "margin-bottom: 10px; width: 100%; padding: 8px;" } %>
+        { prompt: "Select a user to sign in as", data: { dev_signin_target: "select" } } %>
     <br>
-    <%= button_tag "Dev Sign In", data: { action: "click->dev-signin#signIn" }, style: "padding: 8px 16px;" %>
+    <%= button_tag "Dev Sign In", data: { action: "click->dev-signin#signIn" } %>
   </div>
 <% end %>

@@ -1,0 +1,7 @@
+/* Form field component */
+.form-field > .-help {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
