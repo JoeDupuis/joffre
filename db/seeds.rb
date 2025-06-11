@@ -10,17 +10,20 @@
 
 if Rails.env.development?
   dev_users = [
+    { name: "Test User", email: "test@example.com" },
     { name: "Alice Johnson", email: "alice@example.com" },
     { name: "Bob Smith", email: "bob@example.com" },
     { name: "Carol Davis", email: "carol@example.com" },
     { name: "David Wilson", email: "david@example.com" },
-    { name: "Eve Brown", email: "eve@example.com" }
+    { name: "Eve Brown", email: "eve@example.com" },
+    { name: "Friend One", email: "friend1@example.com" },
+    { name: "Friend Two", email: "friend2@example.com" }
   ]
 
   dev_users.each do |user_data|
     User.find_or_create_by!(email_address: user_data[:email]) do |user|
       user.name = user_data[:name]
-      user.password = "password"
+      user.password = "Xk9#mP7$qR2@"
     end
   end
 end

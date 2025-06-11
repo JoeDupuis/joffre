@@ -1,0 +1,12 @@
+/* Invitation card component */
+.invitation-card {
+  width: 100%;
+}
+
+.invitation-card > .-content {
+  margin: 0.5rem 0;
+}
+
+.invitation-card > .-actions {
+  margin-top: 1rem;
+}

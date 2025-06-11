@@ -1,0 +1,32 @@
+<div class="invitation-form">
+  <h1>Send Friend Request</h1>
+
+  <%= form_with model: @friendship, url: friendships_path do |form| %>
+    <% if @friendship.errors.any? %>
+      <div class="error-messages">
+        <ul class="-list">
+          <% @friendship.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-field">
+      <%= form.label :friend_identifier, "Friend's email or friend code" %>
+      <%= form.text_field :friend_identifier, placeholder: "Enter email address or 8-character friend code" %>
+      <small class="-help">You can enter either an email address or a friend code like ABC12345</small>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Send Request", class: "button" %>
+      <%= link_to "Cancel", friendships_path %>
+    </div>
+  <% end %>
+
+  <div class="info-panel">
+    <h3 class="-title">Your Friend Code</h3>
+    <p>Share this code: <span class="user-info -code"><%= Current.user.user_code %></span></p>
+    <p>Your email: <strong><%= Current.user.email_address %></strong></p>
+  </div>
+</div>
