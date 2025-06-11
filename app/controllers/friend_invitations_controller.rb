@@ -10,13 +10,10 @@ class FriendInvitationsController < ApplicationController
   end
 
   def create
-    @invitation = Current.user.sent_invitations.build(invitation_params)
-
-    if @invitation.save
-      FriendInvitationMailer.invite(@invitation).deliver_later
-      redirect_to friends_path, notice: "Invitation sent to #{@invitation.invitee_email}"
+    if params[:invitation_type] == "friend_code"
+      handle_friend_code_invitation
     else
-      render :new, status: :unprocessable_entity
+      handle_email_invitation
     end
   end
 
@@ -66,6 +63,60 @@ class FriendInvitationsController < ApplicationController
   end
 
   private
+
+  def handle_email_invitation
+    @invitation = Current.user.sent_invitations.build(invitation_params)
+
+    if @invitation.save
+      FriendInvitationMailer.invite(@invitation).deliver_later
+      redirect_to friends_path, notice: "Invitation sent to #{@invitation.invitee_email}"
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def handle_friend_code_invitation
+    friend_code = params[:friend_code]&.upcase&.strip
+
+    unless friend_code.present?
+      redirect_to new_friend_invitation_path, alert: "Please enter a friend code"
+      return
+    end
+
+    friend = User.find_by(user_code: friend_code)
+    unless friend
+      redirect_to new_friend_invitation_path, alert: "Friend code not found"
+      return
+    end
+
+    if friend == Current.user
+      redirect_to new_friend_invitation_path, alert: "You can't add yourself as a friend"
+      return
+    end
+
+    # Check if already friends
+    if Current.user.all_friends.include?(friend)
+      redirect_to friends_path, notice: "#{friend.name} is already your friend!"
+      return
+    end
+
+    # Check if invitation already exists
+    existing_invitation = FriendInvitation.pending.find_by(
+      inviter: Current.user,
+      invitee_email: friend.email_address
+    )
+
+    if existing_invitation
+      redirect_to friends_path, notice: "You've already sent an invitation to #{friend.name}"
+      return
+    end
+
+    # Create friendship directly since both users exist
+    Friendship.create!(user: Current.user, friend: friend)
+    Friendship.create!(user: friend, friend: Current.user)
+
+    redirect_to friends_path, notice: "#{friend.name} has been added as your friend!"
+  end
 
   def invitation_params
     params.require(:friend_invitation).permit(:invitee_email)
