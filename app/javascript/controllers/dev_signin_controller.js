@@ -12,7 +12,7 @@ export default class extends Controller {
     const passwordField = form.querySelector('input[name="password"]')
     
     emailField.value = selectedEmail
-    passwordField.value = "password"
+    passwordField.value = "Xk9#mP7$qR2@"
     form.submit()
   }
 }
