@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root "dashboard#index"
+
   resource :session do
     collection do
       post :dev_signin if Rails.env.development? || Rails.env.test?
@@ -16,5 +18,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root to: redirect("/session/new")
+  # root "posts#index"
 end

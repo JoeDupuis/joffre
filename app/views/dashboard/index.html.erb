@@ -1,0 +1,8 @@
+<div class="dashboard">
+  <h1>Welcome to Joffre</h1>
+  <p>You are logged in as <%= Current.session.user.email_address %></p>
+  
+  <div class="actions">
+    <%= link_to "Sign out", session_path, data: { turbo_method: :delete } %>
+  </div>
+</div>
