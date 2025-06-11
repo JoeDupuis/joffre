@@ -4,15 +4,19 @@
 
 <p><strong><%= @inviter.name %></strong> wants to be your friend on Joffre!</p>
 
-<p>To accept this invitation:</p>
+<p style="text-align: center; margin: 30px 0;">
+  <a href="<%= accept_invitation_via_email_url(token: @invitation.token) %>" 
+     style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 0 10px;">
+    Accept Invitation
+  </a>
+  
+  <a href="<%= decline_invitation_via_email_url(token: @invitation.token) %>" 
+     style="background-color: #6c757d; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 0 10px;">
+    Decline
+  </a>
+</p>
 
-<ol>
-  <li>Sign up or log in to Joffre</li>
-  <li>Go to your Friends page</li>
-  <li>You'll see the pending invitation there</li>
-</ol>
-
-<p>You can also use their friend code: <strong><%= @inviter.user_code %></strong></p>
+<p>Or visit Joffre directly and use their friend code: <strong><%= @inviter.user_code %></strong></p>
 
 <p>Happy gaming!</p>
 <p>The Joffre Team</p>

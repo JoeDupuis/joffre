@@ -14,6 +14,9 @@ Rails.application.routes.draw do
     end
   end
 
+  get "invitations/accept", to: "friend_invitations#accept_via_email", as: :accept_invitation_via_email
+  get "invitations/decline", to: "friend_invitations#decline_via_email", as: :decline_invitation_via_email
+
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
