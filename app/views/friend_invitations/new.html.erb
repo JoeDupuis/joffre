@@ -1,12 +1,12 @@
-<div class="new-invitation">
+<div class="new-invitation" data-controller="tabs" data-tabs-active-tab-value="email">
   <h1>Send Friend Invitation</h1>
 
   <div class="invitation-tabs">
-    <button type="button" class="tab-button active" data-tab="email">Invite by Email</button>
-    <button type="button" class="tab-button" data-tab="code">Add by Friend Code</button>
+    <button type="button" class="tab-button active" data-tab="email" data-tabs-target="button" data-action="click->tabs#switch">Invite by Email</button>
+    <button type="button" class="tab-button" data-tab="code" data-tabs-target="button" data-action="click->tabs#switch">Add by Friend Code</button>
   </div>
 
-  <div id="email-tab" class="tab-content active">
+  <div id="email-tab" class="tab-content active" data-tabs-target="content">
     <%= form_with model: @invitation, url: friend_invitations_path do |form| %>
       <% if @invitation.errors.any? %>
         <div class="error-messages">
@@ -30,7 +30,7 @@
     <% end %>
   </div>
 
-  <div id="code-tab" class="tab-content">
+  <div id="code-tab" class="tab-content" data-tabs-target="content">
     <%= form_with url: friend_invitations_path, method: :post, local: true do |form| %>
       <div class="field">
         <%= form.label :friend_code, "Friend's code" %>
@@ -51,24 +51,3 @@
     <p>Your email: <strong><%= Current.user.email_address %></strong></p>
   </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
-
-  tabButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const tabName = this.dataset.tab;
-      
-      // Remove active class from all buttons and contents
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-      
-      // Add active class to clicked button and corresponding content
-      this.classList.add('active');
-      document.getElementById(tabName + '-tab').classList.add('active');
-    });
-  });
-});
-</script>
