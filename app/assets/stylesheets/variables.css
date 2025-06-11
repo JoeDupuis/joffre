@@ -1,0 +1,8 @@
+:root {
+  --flash-success-bg: #d4edda;
+  --flash-success-color: #155724;
+  --flash-success-border: #c3e6cb;
+  --flash-danger-bg: #f8d7da;
+  --flash-danger-color: #721c24;
+  --flash-danger-border: #f5c6cb;
+}

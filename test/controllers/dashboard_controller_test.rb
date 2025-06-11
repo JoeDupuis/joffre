@@ -8,8 +8,7 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index when authenticated" do
     user = User.create!(email_address: "test@example.com", password: "password")
-    post session_url, params: { email_address: user.email_address, password: "password" }
-
+    sign_in_as(user)
     get root_url
     assert_response :success
   end
