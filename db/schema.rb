@@ -17,7 +17,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032934) do
     t.string "name"
     t.string "password_digest"
     t.datetime "updated_at", null: false
-    t.index [ "game_code" ], name: "index_games_on_game_code", unique: true
+    t.index ["game_code"], name: "index_games_on_game_code", unique: true
   end
 
   create_table "players", force: :cascade do |t|
@@ -26,9 +26,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032934) do
     t.boolean "owner", default: false, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index [ "game_id", "user_id" ], name: "index_players_on_game_id_and_user_id", unique: true
-    t.index [ "game_id" ], name: "index_players_on_game_id"
-    t.index [ "user_id" ], name: "index_players_on_user_id"
+    t.index ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
+    t.index ["game_id"], name: "index_players_on_game_id"
+    t.index ["user_id"], name: "index_players_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -37,7 +37,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032934) do
     t.datetime "updated_at", null: false
     t.string "user_agent"
     t.integer "user_id", null: false
-    t.index [ "user_id" ], name: "index_sessions_on_user_id"
+    t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -46,7 +46,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032934) do
     t.string "name", null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
-    t.index [ "email_address" ], name: "index_users_on_email_address", unique: true
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
   add_foreign_key "players", "games"
