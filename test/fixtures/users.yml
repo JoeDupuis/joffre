@@ -11,3 +11,9 @@ two:
   email_address: two@example.com
   password_digest: <%= password_digest %>
   user_code: USER5678
+
+no_friends:
+  name: No Friends User
+  email_address: no_friends@example.com
+  password_digest: <%= password_digest %>
+  user_code: NOFRIEND
