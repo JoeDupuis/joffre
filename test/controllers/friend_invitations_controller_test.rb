@@ -27,7 +27,7 @@ class FriendInvitationsControllerTest < ActionDispatch::IntegrationTest
   test "should create invitation with friend code" do
     # Create a new user that's not already friends with user :one
     new_user = User.create!(name: "Test Friend", email_address: "test_friend@example.com", password: "password", user_code: "TESTCODE")
-    
+
     assert_difference("FriendInvitation.count") do
       post friend_invitations_url, params: { friend_invitation: { invitee_identifier: new_user.user_code } }
     end
