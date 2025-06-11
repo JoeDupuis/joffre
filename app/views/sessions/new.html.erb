@@ -9,5 +9,9 @@
 
 <% if Rails.env.development? %>
   <hr style="margin: 20px 0;">
-  <%= button_to "Dev Sign In", dev_signin_session_path, method: :post, style: "background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;" %>
+  <%= form_with url: session_path, method: :post do |form| %>
+    <%= form.hidden_field :email_address, value: "test@example.com" %>
+    <%= form.hidden_field :password, value: "password" %>
+    <%= form.submit "Dev Sign In", style: "background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;" %>
+  <% end %>
 <% end %>
