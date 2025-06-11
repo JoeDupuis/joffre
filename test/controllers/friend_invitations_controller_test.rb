@@ -16,9 +16,20 @@ class FriendInvitationsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create invitation" do
+  test "should create invitation with email" do
     assert_difference("FriendInvitation.count") do
-      post friend_invitations_url, params: { friend_invitation: { invitee_email: "new_friend@example.com" } }
+      post friend_invitations_url, params: { friend_invitation: { invitee_identifier: "new_friend@example.com" } }
+    end
+
+    assert_redirected_to friends_url
+  end
+
+  test "should create invitation with friend code" do
+    # Create a new user that's not already friends with user :one
+    new_user = User.create!(name: "Test Friend", email_address: "test_friend@example.com", password: "password", user_code: "TESTCODE")
+    
+    assert_difference("FriendInvitation.count") do
+      post friend_invitations_url, params: { friend_invitation: { invitee_identifier: new_user.user_code } }
     end
 
     assert_redirected_to friends_url
