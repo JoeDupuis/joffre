@@ -1,18 +1,18 @@
-<div class="invitations-page">
+<div class="invitation-form">
   <h1>Friend Invitations</h1>
 
   <% if @invitations.any? %>
-    <section class="invitations-list">
-      <ul>
+    <section class="invitations-section">
+      <ul class="-list">
         <% @invitations.each do |invitation| %>
-          <li>
-            <div class="invitation">
-              <p><strong><%= invitation.inviter.name %></strong> wants to be your friend!</p>
-              <p>Email: <%= invitation.inviter.email_address %></p>
-              <p>Friend code: <%= invitation.inviter.user_code %></p>
-              <div class="actions">
+          <li class="-item">
+            <div class="invitation-card">
+              <div class="-content"><strong><%= invitation.inviter.name %></strong> wants to be your friend!</div>
+              <div class="-content">Email: <%= invitation.inviter.email_address %></div>
+              <div class="-content">Friend code: <span class="user-info -code"><%= invitation.inviter.user_code %></span></div>
+              <div class="-actions">
                 <%= button_to "Accept", accept_friend_invitation_path(invitation.token), method: :post, class: "button" %>
-                <%= button_to "Decline", decline_friend_invitation_path(invitation.token), method: :post, class: "button small" %>
+                <%= button_to "Decline", decline_friend_invitation_path(invitation.token), method: :post, class: "button --small" %>
               </div>
             </div>
           </li>
