@@ -2,10 +2,11 @@ require "test_helper"
 
 class PlayerTest < ActiveSupport::TestCase
   test "should validate uniqueness of user per game" do
-    user = User.create!(email_address: "player@example.com", password: "password")
-    game = Game.create!(name: "Test Game")
-
-    Player.create!(user: user, game: game)
+    user = users(:one)
+    game = games(:one)
+    
+    # There's already a player fixture with user one and game one
+    existing_player = players(:one)
     duplicate = Player.new(user: user, game: game)
 
     assert_not duplicate.valid?
@@ -13,14 +14,12 @@ class PlayerTest < ActiveSupport::TestCase
   end
 
   test "same user can join different games" do
-    user = User.create!(email_address: "player@example.com", password: "password")
-    game1 = Game.create!(name: "Game 1")
-    game2 = Game.create!(name: "Game 2")
+    user = users(:two)
+    # User two is already in game two via fixtures
+    # Create a new player for user two in game one
+    player = Player.create!(user: user, game: games(:one))
 
-    player1 = Player.create!(user: user, game: game1)
-    player2 = Player.create!(user: user, game: game2)
-
-    assert player1.valid?
-    assert player2.valid?
+    assert player.valid?
+    assert_equal 2, user.players.count
   end
 end
