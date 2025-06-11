@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resource :session
   root "dashboard#index"
 
   resource :session do
