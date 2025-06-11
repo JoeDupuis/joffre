@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_11_020401) do
+ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
+  create_table "cards", force: :cascade do |t|
+    t.integer "color", null: false
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.integer "play_bonus", default: 0, null: false
+    t.integer "position", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", null: false
+    t.index ["game_id", "color", "value"], name: "index_cards_on_game_id_and_color_and_value", unique: true
+    t.index ["game_id", "position"], name: "index_cards_on_game_id_and_position", unique: true
+    t.index ["game_id"], name: "index_cards_on_game_id"
+    t.index ["owner_type", "owner_id"], name: "index_cards_on_owner"
+  end
+
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -46,6 +62,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_020401) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "cards", "games"
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
   add_foreign_key "sessions", "users"
