@@ -4,7 +4,7 @@ class PlayerTest < ActiveSupport::TestCase
   test "should validate uniqueness of user per game" do
     user = users(:one)
     game = games(:one)
-    
+
     # There's already a player fixture with user one and game one
     existing_player = players(:one)
     duplicate = Player.new(user: user, game: game)
