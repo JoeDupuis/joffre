@@ -19,8 +19,4 @@ class Friendship < ApplicationRecord
       end
     end
   end
-
-  def decline!
-    destroy!
-  end
 end
