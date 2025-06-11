@@ -1,0 +1,31 @@
+<div class="new-invitation">
+  <h1>Send Friend Invitation</h1>
+
+  <%= form_with model: @invitation, url: friend_invitations_path do |form| %>
+    <% if @invitation.errors.any? %>
+      <div class="error-messages">
+        <ul>
+          <% @invitation.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= form.label :invitee_email, "Friend's email address" %>
+      <%= form.email_field :invitee_email, required: true %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Send Invitation", class: "button" %>
+      <%= link_to "Cancel", friends_path %>
+    </div>
+  <% end %>
+
+  <div class="invitation-info">
+    <h3>Or invite by friend code</h3>
+    <p>If you have your friend's code, ask them to send you an invitation using your email address.</p>
+    <p>Your email: <strong><%= Current.user.email_address %></strong></p>
+  </div>
+</div>

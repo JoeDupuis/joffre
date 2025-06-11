@@ -9,8 +9,22 @@
 #   end
 
 if Rails.env.development?
-  User.find_or_create_by!(email_address: "test@example.com") do |user|
+  test_user = User.find_or_create_by!(email_address: "test@example.com") do |user|
     user.name = "Test User"
     user.password = "password"
+  end
+
+  friend1 = User.find_or_create_by!(email_address: "friend1@example.com") do |user|
+    user.name = "Friend One"
+    user.password = "password"
+  end
+
+  friend2 = User.find_or_create_by!(email_address: "friend2@example.com") do |user|
+    user.name = "Friend Two"
+    user.password = "password"
+  end
+
+  User.where(user_code: nil).each do |user|
+    user.update!(user_code: SecureRandom.alphanumeric(8).upcase)
   end
 end

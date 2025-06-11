@@ -1,0 +1,60 @@
+<div class="friends-page">
+  <h1>Friends</h1>
+  
+  <div class="user-info">
+    <p>Your friend code: <strong><%= Current.user.user_code %></strong></p>
+    <p>Share this code with friends so they can invite you!</p>
+  </div>
+
+  <div class="actions">
+    <%= link_to "Send Friend Invitation", new_friend_invitation_path, class: "button" %>
+    <%= link_to "View Invitations", friend_invitations_path, class: "button" %>
+  </div>
+
+  <% if @received_invitations.any? %>
+    <section class="received-invitations">
+      <h2>Pending Invitations</h2>
+      <ul>
+        <% @received_invitations.each do |invitation| %>
+          <li>
+            <%= invitation.inviter.name %> (<%= invitation.inviter.email_address %>)
+            <%= button_to "Accept", accept_friend_invitation_path(invitation.token), method: :post, class: "button small" %>
+            <%= button_to "Decline", decline_friend_invitation_path(invitation.token), method: :post, class: "button small" %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <section class="friends-list">
+    <h2>Your Friends</h2>
+    <% if @friends.any? %>
+      <ul>
+        <% @friends.each do |friend| %>
+          <li>
+            <%= friend.name %> (<%= friend.email_address %>)
+            <span class="friend-code">Code: <%= friend.user_code %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>You don't have any friends yet. Send some invitations!</p>
+    <% end %>
+  </section>
+
+  <% if @sent_invitations.any? %>
+    <section class="sent-invitations">
+      <h2>Sent Invitations</h2>
+      <ul>
+        <% @sent_invitations.each do |invitation| %>
+          <li>
+            <%= invitation.invitee_email %> - Pending
+            <%= button_to "Cancel", friend_invitation_path(invitation), method: :delete, class: "button small" %>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+
+  <%= link_to "Back to Dashboard", root_path %>
+</div>

@@ -1,0 +1,29 @@
+<div class="invitations-page">
+  <h1>Friend Invitations</h1>
+
+  <% if @invitations.any? %>
+    <section class="invitations-list">
+      <ul>
+        <% @invitations.each do |invitation| %>
+          <li>
+            <div class="invitation">
+              <p><strong><%= invitation.inviter.name %></strong> wants to be your friend!</p>
+              <p>Email: <%= invitation.inviter.email_address %></p>
+              <p>Friend code: <%= invitation.inviter.user_code %></p>
+              <div class="actions">
+                <%= button_to "Accept", accept_friend_invitation_path(invitation.token), method: :post, class: "button" %>
+                <%= button_to "Decline", decline_friend_invitation_path(invitation.token), method: :post, class: "button small" %>
+              </div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </section>
+  <% else %>
+    <p>You don't have any pending friend invitations.</p>
+  <% end %>
+
+  <div class="actions">
+    <%= link_to "Back to Friends", friends_path %>
+  </div>
+</div>

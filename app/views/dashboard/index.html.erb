@@ -1,9 +1,11 @@
 <div class="dashboard">
   <h1>Welcome to Joffre</h1>
   <p>You are logged in as <%= Current.session.user.email_address %></p>
+  <p>Your friend code: <strong><%= Current.session.user.user_code %></strong></p>
   
   <div class="actions">
     <%= link_to "New Game", new_game_path, class: "button" %>
+    <%= link_to "Friends", friends_path, class: "button" %>
     <%= link_to "Sign out", session_path, data: { turbo_method: :delete } %>
   </div>
 </div>
