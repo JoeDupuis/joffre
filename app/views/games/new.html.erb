@@ -1,0 +1,25 @@
+<h1>New Game</h1>
+
+<%= form_with model: @game do |form| %>
+  <% if @game.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@game.errors.count, "error") %> prohibited this game from being saved:</h2>
+      <ul>
+        <% @game.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, autofocus: true, placeholder: "Enter game name" %>
+  </div>
+
+  <div>
+    <%= form.submit "Create Game" %>
+  </div>
+<% end %>
+
+<%= link_to "Back to Dashboard", root_path %>
