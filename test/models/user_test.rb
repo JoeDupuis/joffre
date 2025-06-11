@@ -31,4 +31,9 @@ class UserTest < ActiveSupport::TestCase
     user.valid?
     assert_equal "test@example.com", user.email_address
   end
+
+  test "downcases and strips email_address" do
+    user = User.new(email_address: " DOWNCASED@EXAMPLE.COM ")
+    assert_equal("downcased@example.com", user.email_address)
+  end
 end
