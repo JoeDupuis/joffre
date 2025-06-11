@@ -134,7 +134,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
     assert_response :success
     assert_select "h1", "Test Game"
-    assert_select ".game-code", text: game.game_code
+    assert_select "p", text: /Game Code: #{game.game_code}/
   end
 
   test "should display players in game show" do
