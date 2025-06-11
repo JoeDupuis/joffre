@@ -3,4 +3,6 @@ class Player < ApplicationRecord
   belongs_to :game
 
   validates :user_id, uniqueness: { scope: :game_id }
+
+  scope :owner, -> { where(owner: true) }
 end
