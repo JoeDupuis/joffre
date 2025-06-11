@@ -34,3 +34,12 @@ en:
       title:
         one: An error prohibited this %{name} from being saved
         other: "%{count} errors prohibited this %{name} from being saved"
+    create:
+      success: "%{name} created successfully!"
+      failure: "%{name} could not be created."
+    update:
+      success: "%{name} updated successfully!"
+      failure: "%{name} could not be updated."
+    destroy:
+      success: "%{name} deleted successfully!"
+      failure: "%{name} could not be deleted."
