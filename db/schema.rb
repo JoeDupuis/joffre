@@ -21,10 +21,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
     t.integer "position", null: false
     t.datetime "updated_at", null: false
     t.integer "value", null: false
-    t.index ["game_id", "color", "value"], name: "index_cards_on_game_id_and_color_and_value", unique: true
-    t.index ["game_id", "position"], name: "index_cards_on_game_id_and_position", unique: true
-    t.index ["game_id"], name: "index_cards_on_game_id"
-    t.index ["owner_type", "owner_id"], name: "index_cards_on_owner"
+    t.index [ "game_id", "color", "value" ], name: "index_cards_on_game_id_and_color_and_value", unique: true
+    t.index [ "game_id", "position" ], name: "index_cards_on_game_id_and_position", unique: true
+    t.index [ "game_id" ], name: "index_cards_on_game_id"
+    t.index [ "owner_type", "owner_id" ], name: "index_cards_on_owner"
   end
 
   create_table "games", force: :cascade do |t|
@@ -39,9 +39,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
     t.boolean "owner", default: false, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
-    t.index ["game_id"], name: "index_players_on_game_id"
-    t.index ["user_id"], name: "index_players_on_user_id"
+    t.index [ "game_id", "user_id" ], name: "index_players_on_game_id_and_user_id", unique: true
+    t.index [ "game_id" ], name: "index_players_on_game_id"
+    t.index [ "user_id" ], name: "index_players_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -50,7 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
     t.datetime "updated_at", null: false
     t.string "user_agent"
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_sessions_on_user_id"
+    t.index [ "user_id" ], name: "index_sessions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -59,7 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
     t.string "name", null: false
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
-    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index [ "email_address" ], name: "index_users_on_email_address", unique: true
   end
 
   add_foreign_key "cards", "games"
