@@ -18,8 +18,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.integer "status", default: 0, null: false
     t.string "token"
     t.datetime "updated_at", null: false
-    t.index [ "inviter_id" ], name: "index_friend_invitations_on_inviter_id"
-    t.index [ "token" ], name: "index_friend_invitations_on_token", unique: true
+    t.index ["inviter_id"], name: "index_friend_invitations_on_inviter_id"
+    t.index ["token"], name: "index_friend_invitations_on_token", unique: true
   end
 
   create_table "friendships", force: :cascade do |t|
@@ -27,9 +27,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.integer "friend_id", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index [ "friend_id" ], name: "index_friendships_on_friend_id"
-    t.index [ "user_id", "friend_id" ], name: "index_friendships_on_user_id_and_friend_id", unique: true
-    t.index [ "user_id" ], name: "index_friendships_on_user_id"
+    t.index ["friend_id"], name: "index_friendships_on_friend_id"
+    t.index ["user_id", "friend_id"], name: "index_friendships_on_user_id_and_friend_id", unique: true
+    t.index ["user_id"], name: "index_friendships_on_user_id"
   end
 
   create_table "games", force: :cascade do |t|
@@ -44,9 +44,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.boolean "owner", default: false, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index [ "game_id", "user_id" ], name: "index_players_on_game_id_and_user_id", unique: true
-    t.index [ "game_id" ], name: "index_players_on_game_id"
-    t.index [ "user_id" ], name: "index_players_on_user_id"
+    t.index ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
+    t.index ["game_id"], name: "index_players_on_game_id"
+    t.index ["user_id"], name: "index_players_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -55,7 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.datetime "updated_at", null: false
     t.string "user_agent"
     t.integer "user_id", null: false
-    t.index [ "user_id" ], name: "index_sessions_on_user_id"
+    t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -65,8 +65,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.string "user_code"
-    t.index [ "email_address" ], name: "index_users_on_email_address", unique: true
-    t.index [ "user_code" ], name: "index_users_on_user_code", unique: true
+    t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
   add_foreign_key "friend_invitations", "users", column: "inviter_id"
