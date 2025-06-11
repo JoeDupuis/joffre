@@ -9,7 +9,6 @@
 #   end
 
 if Rails.env.development?
-  # Combine both sets of development users
   dev_users = [
     { name: "Test User", email: "test@example.com" },
     { name: "Alice Johnson", email: "alice@example.com" },
@@ -26,10 +25,5 @@ if Rails.env.development?
       user.name = user_data[:name]
       user.password = "password"
     end
-  end
-
-  # Ensure all users have user codes
-  User.where(user_code: nil).each do |user|
-    user.update!(user_code: SecureRandom.alphanumeric(8).upcase)
   end
 end
