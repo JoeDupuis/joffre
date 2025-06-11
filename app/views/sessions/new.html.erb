@@ -9,3 +9,8 @@
 <br>
 
 <%= link_to "Forgot password?", new_password_path %>
+
+<% if Rails.env.development? %>
+  <hr style="margin: 20px 0;">
+  <%= button_to "Dev Sign In", dev_signin_session_path, method: :post, style: "background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;" %>
+<% end %>
