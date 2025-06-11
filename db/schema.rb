@@ -10,7 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_11_030752) do
+ActiveRecord::Schema[8.1].define(version: 2025_06_11_032351) do
+  create_table "cards", force: :cascade do |t|
+    t.integer "color", null: false
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "owner_id"
+    t.string "owner_type"
+    t.integer "play_bonus", default: 0, null: false
+    t.integer "position", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", null: false
+    t.index ["game_id", "color", "value"], name: "index_cards_on_game_id_and_color_and_value", unique: true
+    t.index ["game_id", "position"], name: "index_cards_on_game_id_and_position", unique: true
+    t.index ["game_id"], name: "index_cards_on_game_id"
+    t.index ["owner_type", "owner_id"], name: "index_cards_on_owner"
+  end
+
   create_table "friendships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "friend_id", null: false
@@ -60,6 +76,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030752) do
     t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
+  add_foreign_key "cards", "games"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"

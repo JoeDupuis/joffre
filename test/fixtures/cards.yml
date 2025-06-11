@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game: one
+  owner: one
+  owner_type: Owner
+  value: 1
+  color: 1
+  play_bonus: 1
+  position: 1
+
+two:
+  game: two
+  owner: two
+  owner_type: Owner
+  value: 1
+  color: 1
+  play_bonus: 1
+  position: 1
