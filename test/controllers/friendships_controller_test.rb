@@ -70,6 +70,9 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
+
+
+
   test "should redirect to login when not authenticated for index" do
     sign_out
     get friendships_url
