@@ -96,6 +96,21 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
     assert Friendship.exists?(friendship.id)
   end
 
+  test "should not accept own sent friend request" do
+    no_friends = users(:no_friends)
+    # User one sends request to no_friends
+    friendship = Friendship.create!(user: @user, friend: no_friends, pending: true)
+
+    # User one tries to accept their own sent request - should fail
+    patch friendship_url(friendship)
+
+    assert_response :not_found
+
+    # Verify the friendship is still pending
+    friendship.reload
+    assert friendship.pending
+  end
+
 
 
 
