@@ -1,0 +1,22 @@
+.errors {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c00;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.errors h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.errors ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.errors li {
+  margin-bottom: 0.25rem;
+}
