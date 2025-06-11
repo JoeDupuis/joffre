@@ -1,4 +1,6 @@
 class FriendshipsController < ApplicationController
+  rate_limit to: 10, within: 1.hour, only: :create, with: -> { redirect_to new_friendship_path, alert: "Too many invitations sent. Please wait before sending more." }
+
   def index
     @friends = Current.user.all_friends
     @sent_requests = Current.user.sent_friend_requests

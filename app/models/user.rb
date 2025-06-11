@@ -30,13 +30,6 @@ class User < ApplicationRecord
   end
 
   def invite(invitee)
-    # Rate limiting: max 10 invitations per hour
-    recent_invitations = sent_friend_requests.where("created_at > ?", 1.hour.ago).count
-    if recent_invitations >= 10
-      errors.add(:base, "Too many invitations sent. Please wait before sending more.")
-      return false
-    end
-
     friendship = friendships.build(friend: invitee, pending: true)
     friendship.save
     friendship
