@@ -35,13 +35,13 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
   test "should accept friend request" do
     no_friends = users(:no_friends)
     friendship = Friendship.create!(user: no_friends, friend: @user, pending: true)
-    
+
     patch friendship_url(friendship)
     assert_redirected_to friendships_url
-    
+
     friendship.reload
     assert_not friendship.pending
-    
+
     reciprocal = Friendship.find_by(user: @user, friend: no_friends)
     assert reciprocal
     assert_not reciprocal.pending
@@ -50,24 +50,25 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
   test "should decline friend request" do
     no_friends = users(:no_friends)
     friendship = Friendship.create!(user: no_friends, friend: @user, pending: true)
-    
+
     assert_difference("Friendship.count", -1) do
       delete friendship_url(friendship)
     end
-    
+
     assert_redirected_to friendships_url
   end
 
   test "should cancel sent friend request" do
     no_friends = users(:no_friends)
     friendship = Friendship.create!(user: @user, friend: no_friends, pending: true)
-    
+
     assert_difference("Friendship.count", -1) do
       delete friendship_url(friendship)
     end
-    
+
     assert_redirected_to friendships_url
   end
+
 
 
 
