@@ -10,6 +10,7 @@
 
 if Rails.env.development?
   User.find_or_create_by!(email_address: "test@example.com") do |user|
+    user.name = "Test User"
     user.password = "password"
   end
 end
