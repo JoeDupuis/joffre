@@ -2,7 +2,7 @@ require "test_helper"
 
 class GamesControllerTest < ActionDispatch::IntegrationTest
   def setup
-    @user = User.create!(email_address: "test@example.com", password: "password")
+    @user = users(:one)
     sign_in_as(@user)
   end
 

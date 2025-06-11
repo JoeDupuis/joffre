@@ -1,16 +1,7 @@
 <h1>New Game</h1>
 
 <%= form_with model: @game do |form| %>
-  <% if @game.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(@game.errors.count, "error") %> prohibited this game from being saved:</h2>
-      <ul>
-        <% @game.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= render "application/form_errors", instance: @game %>
 
   <div>
     <%= form.label :name %>
