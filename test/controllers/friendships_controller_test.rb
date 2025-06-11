@@ -32,9 +32,37 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to friendships_url
   end
 
-  test "should redirect to login when not authenticated" do
+  test "should redirect to login when not authenticated for index" do
     sign_out
     get friendships_url
+    assert_redirected_to new_session_url
+  end
+
+  test "should redirect to login when not authenticated for new" do
+    sign_out
+    get new_friendship_url
+    assert_redirected_to new_session_url
+  end
+
+  test "should redirect to login when not authenticated for create" do
+    sign_out
+    assert_no_difference("Friendship.count") do
+      post friendships_url, params: { friendship: { friend_identifier: "no_friends@example.com" } }
+    end
+    assert_redirected_to new_session_url
+  end
+
+  test "should redirect to login when not authenticated for update" do
+    sign_out
+    patch friendship_url(friendships(:one))
+    assert_redirected_to new_session_url
+  end
+
+  test "should redirect to login when not authenticated for destroy" do
+    sign_out
+    assert_no_difference("Friendship.count") do
+      delete friendship_url(friendships(:one))
+    end
     assert_redirected_to new_session_url
   end
 end
