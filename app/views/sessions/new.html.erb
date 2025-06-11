@@ -1,4 +1,4 @@
-<%= form_with url: session_path do |form| %>
+<%= form_with url: session_path, data: { dev_signin_target: "form" } do |form| %>
   <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
   <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
   <%= form.submit "Sign in" %>
@@ -10,12 +10,14 @@
 <%= link_to "Don't have an account? Sign up", new_registration_path %>
 
 <% if Rails.env.development? %>
-  <hr style="margin: 20px 0;">
-  <h3>Development Sign In</h3>
-  <% dev_users = User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"]) %>
-  <% dev_users.each do |user| %>
-    <%= button_to "#{user.name} (#{user.email_address})", session_path, 
-        params: { email_address: user.email_address, password: "password" },
-        style: "margin: 5px 0; padding: 8px 16px; width: 100%;" %>
-  <% end %>
+  <div data-controller="dev-signin">
+    <hr style="margin: 20px 0;">
+    <h3>Development Sign In</h3>
+    <% dev_users = User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"]) %>
+    <%= select_tag :dev_user_email, 
+        options_from_collection_for_select(dev_users, :email_address, :name, nil),
+        { prompt: "Select a user to sign in as", data: { dev_signin_target: "select" }, style: "margin-bottom: 10px; width: 100%; padding: 8px;" } %>
+    <br>
+    <%= button_tag "Dev Sign In", data: { action: "click->dev-signin#signIn" }, style: "padding: 8px 16px;" %>
+  </div>
 <% end %>
