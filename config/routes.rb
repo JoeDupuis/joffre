@@ -1,7 +1,12 @@
 Rails.application.routes.draw do
+  resource :session
   root "dashboard#index"
 
-  resource :session
+  resource :session do
+    collection do
+      post :dev_signin if Rails.env.development? || Rails.env.test?
+    end
+  end
   resources :passwords, param: :token
   resources :games, only: [ :new, :create ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
