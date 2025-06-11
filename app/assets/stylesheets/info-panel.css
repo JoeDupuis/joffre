@@ -1,0 +1,11 @@
+/* Info panel component */
+.info-panel {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #e9ecef;
+  border-radius: 8px;
+}
+
+.info-panel > .-title {
+  margin-top: 0;
+}

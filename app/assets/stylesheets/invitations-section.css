@@ -1,0 +1,35 @@
+/* Invitations section component */
+.invitations-section {
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.invitations-section > .-title {
+  margin-top: 0;
+  color: #333;
+}
+
+.invitations-section > .-list {
+  list-style: none;
+  padding: 0;
+}
+
+.invitations-section > .-list > .-item {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invitations-section > .-list > .-item:last-child {
+  border-bottom: none;
+}
+
+.invitations-section > .-list > .-item > .-friend-code {
+  color: #666;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
