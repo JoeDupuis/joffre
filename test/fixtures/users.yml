@@ -17,3 +17,15 @@ no_friends:
   email_address: no_friends@example.com
   password_digest: <%= password_digest %>
   user_code: NOFRIEND
+
+stranger_one:
+  name: Stranger One
+  email_address: stranger1@example.com
+  password_digest: <%= password_digest %>
+  user_code: STRANGE1
+
+stranger_two:
+  name: Stranger Two
+  email_address: stranger2@example.com
+  password_digest: <%= password_digest %>
+  user_code: STRANGE2

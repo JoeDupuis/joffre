@@ -70,35 +70,29 @@ class FriendshipsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not accept friend request from unrelated users" do
-    stranger1 = User.create!(name: "Stranger 1", email_address: "stranger1@example.com", password: "password")
-    stranger2 = User.create!(name: "Stranger 2", email_address: "stranger2@example.com", password: "password")
-    
+    stranger1 = users(:stranger_one)
+    stranger2 = users(:stranger_two)
+
     friendship = Friendship.create!(user: stranger1, friend: stranger2, pending: true)
-    
-    # The controller should not allow current user to accept a friendship they're not part of
+
     patch friendship_url(friendship)
-    
-    # Should get a 404 since the friendship doesn't belong to current user
+
     assert_response :not_found
-    
-    # Verify the friendship is still pending
+
     friendship.reload
     assert friendship.pending
   end
 
   test "should not delete friend request from unrelated users" do
-    stranger3 = User.create!(name: "Stranger 3", email_address: "stranger3@example.com", password: "password")
-    stranger4 = User.create!(name: "Stranger 4", email_address: "stranger4@example.com", password: "password")
-    
-    friendship = Friendship.create!(user: stranger3, friend: stranger4, pending: true)
-    
-    # The controller should not allow current user to delete a friendship they're not part of
+    stranger1 = users(:stranger_one)
+    stranger2 = users(:stranger_two)
+
+    friendship = Friendship.create!(user: stranger1, friend: stranger2, pending: true)
+
     delete friendship_url(friendship)
-    
-    # Should get a 404 since the friendship doesn't belong to current user
+
     assert_response :not_found
-    
-    # Verify the friendship still exists
+
     assert Friendship.exists?(friendship.id)
   end
 
