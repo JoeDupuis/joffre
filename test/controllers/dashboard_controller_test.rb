@@ -1,7 +1,7 @@
 require "test_helper"
 
 class DashboardControllerTest < ActionDispatch::IntegrationTest
-  test "should redirect to login when not authenticated then succeed when authenticated" do
+  test "dashboard requires authentication" do
     get root_url
     assert_redirected_to new_session_path
 
