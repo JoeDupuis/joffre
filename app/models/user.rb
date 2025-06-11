@@ -4,11 +4,11 @@ class User < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :games, through: :players
   has_many :friendships, dependent: :destroy
-  has_many :friends, through: :friendships
+  has_many :friends, -> { where(friendships: { pending: false }) }, through: :friendships
   has_many :inverse_friendships, class_name: "Friendship", foreign_key: "friend_id", dependent: :destroy
-  has_many :inverse_friends, through: :inverse_friendships, source: :user
-  has_many :sent_invitations, class_name: "FriendInvitation", foreign_key: "inviter_id", dependent: :destroy
-  has_many :received_invitations, -> { pending }, class_name: "FriendInvitation", foreign_key: "invitee_email", primary_key: "email_address"
+  has_many :inverse_friends, -> { where(friendships: { pending: false }) }, through: :inverse_friendships, source: :user
+  has_many :sent_friend_requests, -> { pending }, class_name: "Friendship", foreign_key: "user_id"
+  has_many :received_friend_requests, -> { pending }, class_name: "Friendship", foreign_key: "friend_id"
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
@@ -27,6 +27,19 @@ class User < ApplicationRecord
 
   def all_friends
     (friends + inverse_friends).uniq
+  end
+
+  def invite(invitee)
+    # Rate limiting: max 10 invitations per hour
+    recent_invitations = sent_friend_requests.where("created_at > ?", 1.hour.ago).count
+    if recent_invitations >= 10
+      errors.add(:base, "Too many invitations sent. Please wait before sending more.")
+      return false
+    end
+
+    friendship = friendships.build(friend: invitee, pending: true)
+    friendship.save
+    friendship
   end
 
   private

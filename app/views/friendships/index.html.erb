@@ -1,0 +1,77 @@
+<div class="friends-page">
+  <h1>Friends</h1>
+
+  <div class="friends-page -current">
+    <h2>Your Friends</h2>
+    <% if @friends.any? %>
+      <section class="invitations-section">
+        <ul class="-list">
+          <% @friends.each do |friend| %>
+            <li class="-item">
+              <div class="invitation-card">
+                <div class="-content"><strong><%= friend.name %></strong></div>
+                <div class="-content">Email: <%= friend.email_address %></div>
+                <div class="-content">Friend code: <span class="user-info -code"><%= friend.user_code %></span></div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% else %>
+      <p>You don't have any friends yet.</p>
+    <% end %>
+  </div>
+
+  <div class="friends-page -pending">
+    <h2>Received Friend Requests</h2>
+    <% if @received_requests.any? %>
+      <section class="invitations-section">
+        <ul class="-list">
+          <% @received_requests.each do |request| %>
+            <li class="-item">
+              <div class="invitation-card">
+                <div class="-content"><strong><%= request.user.name %></strong> wants to be your friend!</div>
+                <div class="-content">Email: <%= request.user.email_address %></div>
+                <div class="-content">Friend code: <span class="user-info -code"><%= request.user.user_code %></span></div>
+                <div class="-actions">
+                  <%= button_to "Accept", accept_friendship_path(request), method: :post, class: "button" %>
+                  <%= button_to "Decline", decline_friendship_path(request), method: :post, class: "button --small" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% else %>
+      <p>You don't have any pending friend requests.</p>
+    <% end %>
+  </div>
+
+  <div class="friends-page -sent">
+    <h2>Sent Friend Requests</h2>
+    <% if @sent_requests.any? %>
+      <section class="invitations-section">
+        <ul class="-list">
+          <% @sent_requests.each do |request| %>
+            <li class="-item">
+              <div class="invitation-card">
+                <div class="-content">Request sent to <strong><%= request.friend.name %></strong></div>
+                <div class="-content">Email: <%= request.friend.email_address %></div>
+                <div class="-content">Friend code: <span class="user-info -code"><%= request.friend.user_code %></span></div>
+                <div class="-actions">
+                  <%= button_to "Cancel", friendship_path(request), method: :delete, class: "button --small" %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% else %>
+      <p>You haven't sent any friend requests.</p>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= link_to "Send Friend Request", new_friendship_path, class: "button" %>
+  </div>
+</div>

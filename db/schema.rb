@@ -10,24 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
-  create_table "friend_invitations", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "invitee_email"
-    t.integer "inviter_id", null: false
-    t.integer "status", default: 0, null: false
-    t.string "token"
-    t.datetime "updated_at", null: false
-    t.index ["inviter_id"], name: "index_friend_invitations_on_inviter_id"
-    t.index ["token"], name: "index_friend_invitations_on_token", unique: true
-  end
-
+ActiveRecord::Schema[8.1].define(version: 2025_06_11_043602) do
   create_table "friendships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "friend_id", null: false
+    t.boolean "pending", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["friend_id"], name: "index_friendships_on_friend_id"
+    t.index ["pending"], name: "index_friendships_on_pending"
     t.index ["user_id", "friend_id"], name: "index_friendships_on_user_id_and_friend_id", unique: true
     t.index ["user_id"], name: "index_friendships_on_user_id"
   end
@@ -69,7 +60,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_11_030817) do
     t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
-  add_foreign_key "friend_invitations", "users", column: "inviter_id"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"

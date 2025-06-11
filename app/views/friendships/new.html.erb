@@ -1,11 +1,11 @@
 <div class="invitation-form">
-  <h1>Send Friend Invitation</h1>
+  <h1>Send Friend Request</h1>
 
-  <%= form_with model: @invitation, url: friend_invitations_path do |form| %>
-    <% if @invitation.errors.any? %>
+  <%= form_with model: @friendship, url: friendships_path do |form| %>
+    <% if @friendship.errors.any? %>
       <div class="error-messages">
         <ul class="-list">
-          <% @invitation.errors.full_messages.each do |message| %>
+          <% @friendship.errors.full_messages.each do |message| %>
             <li><%= message %></li>
           <% end %>
         </ul>
@@ -13,14 +13,14 @@
     <% end %>
 
     <div class="form-field">
-      <%= form.label :invitee_identifier, "Friend's email or friend code" %>
-      <%= form.text_field :invitee_identifier, placeholder: "Enter email address or 8-character friend code" %>
+      <%= form.label :friend_identifier, "Friend's email or friend code" %>
+      <%= form.text_field :friend_identifier, placeholder: "Enter email address or 8-character friend code" %>
       <small class="-help">You can enter either an email address or a friend code like ABC12345</small>
     </div>
 
     <div class="actions">
-      <%= form.submit "Send Invitation", class: "button" %>
-      <%= link_to "Cancel", friends_path %>
+      <%= form.submit "Send Request", class: "button" %>
+      <%= link_to "Cancel", friendships_path %>
     </div>
   <% end %>
 

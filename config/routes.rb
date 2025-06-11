@@ -6,8 +6,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resources :games, only: [ :new, :create ]
 
-  resources :friends, only: [ :index ]
-  resources :friend_invitations, only: [ :new, :create, :index, :destroy ] do
+  resources :friendships do
     member do
       post :accept
       post :decline
