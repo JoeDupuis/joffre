@@ -58,20 +58,11 @@ module Games
     end
 
     test "should not allow joining full game" do
-      sign_in_as(@other_user)
-      
-      # Add 3 more players to make it full (owner + 3 = 4)
-      3.times do |i|
-        user = User.create!(
-          name: "Player #{i}",
-          email_address: "player#{i}@example.com",
-          password: "password"
-        )
-        @game.players.create!(user: user)
-      end
+      full_game = games(:full_game)
+      sign_in_as(users(:stranger_two))
       
       assert_no_difference("Player.count") do
-        post games_players_url, params: { player: { game_code: "ABC123" } }
+        post games_players_url, params: { player: { game_code: "FULL01" } }
       end
       
       assert_response :unprocessable_entity
