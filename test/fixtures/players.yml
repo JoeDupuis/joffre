@@ -3,9 +3,29 @@
 one:
   user: one
   game: one
-  owner: false
+  owner: true
 
 two:
   user: two
   game: two
+  owner: false
+
+full_game_player_one:
+  user: one
+  game: full_game
+  owner: true
+
+full_game_player_two:
+  user: two
+  game: full_game
+  owner: false
+
+full_game_player_three:
+  user: no_friends
+  game: full_game
+  owner: false
+
+full_game_player_four:
+  user: stranger_one
+  game: full_game
   owner: false

@@ -5,3 +5,7 @@ one:
 
 two:
   name: Game Two
+
+full_game:
+  name: Full Game
+  game_code: FULL01

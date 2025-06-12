@@ -1,0 +1,28 @@
+<div class="container">
+  <h1><%= @game.name %></h1>
+
+  <div class="game-info">
+    <p><strong>Game Code:</strong> <%= @game.game_code %></p>
+    <% if @game.password_digest.present? %>
+      <p><em>This game is password protected</em></p>
+    <% end %>
+  </div>
+
+  <div class="players">
+    <h2>Players (<%= @game.players.count %>/4)</h2>
+    <ul>
+      <% @game.players.includes(:user).each do |player| %>
+        <li>
+          <%= player.user.name %>
+          <% if player.owner? %>
+            <span class="badge">Owner</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <%= link_to "Back to Dashboard", root_path, class: "button" %>
+  </div>
+</div>

@@ -4,7 +4,9 @@
   <p>Your friend code: <strong><%= Current.session.user.user_code %></strong></p>
   
   <div class="actions">
+    <%= link_to "My Games", games_path, class: "button" %>
     <%= link_to "New Game", new_game_path, class: "button" %>
+    <%= link_to "Join Game", new_games_player_path, class: "button" %>
     <%= link_to "Friends", friendships_path, class: "button" %>
     <%= link_to "Sign out", session_path, data: { turbo_method: :delete } %>
   </div>
