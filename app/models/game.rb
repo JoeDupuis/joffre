@@ -1,6 +1,6 @@
 class Game < ApplicationRecord
   has_secure_password validations: false
-  validates :password, confirmation: true, if: :password_digest_changed?
+  validates :password, confirmation: true, if: -> { password.present? }
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players

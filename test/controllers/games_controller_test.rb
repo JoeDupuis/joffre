@@ -32,6 +32,24 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert game.players.find_by(user: @user).owner?
   end
 
+  test "should create password protected game" do
+    assert_difference("Game.count") do
+      post games_url, params: { 
+        game: { 
+          name: "Protected Game", 
+          password: "secret123",
+          password_confirmation: "secret123"
+        } 
+      }
+    end
+
+    game = Game.last
+    assert_redirected_to game_path(game)
+    assert_equal "Protected Game", game.name
+    assert game.password_digest.present?
+    assert game.authenticate("secret123")
+  end
+
   test "should not create game with invalid params" do
     assert_no_difference("Game.count") do
       post games_url, params: { game: { name: "" } }
