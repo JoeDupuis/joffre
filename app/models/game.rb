@@ -7,7 +7,6 @@ class Game < ApplicationRecord
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
-  validates :password, length: { minimum: 6 }, allow_blank: true
 
   before_validation :generate_game_code, on: :create
 
