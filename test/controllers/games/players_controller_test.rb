@@ -44,7 +44,7 @@ module Games
       end
       
       assert_response :unprocessable_entity
-      assert_select "div", text: /Invalid game code/
+      assert_select "div", text: /invalid game code/
     end
 
     test "should not allow joining same game twice" do
