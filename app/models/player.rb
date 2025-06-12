@@ -4,7 +4,7 @@ class Player < ApplicationRecord
 
   attr_accessor :password
 
-  validates :user_id, uniqueness: { scope: :game_id, message: "already in this game" }
+  validates :user_id, uniqueness: { scope: :game_id, message: "are already in this game" }
   validates :game, presence: { message: "invalid game code" }
   validate :game_not_full, on: :create
   validate :correct_password, on: :create

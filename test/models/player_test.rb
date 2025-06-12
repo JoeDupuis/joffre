@@ -9,7 +9,7 @@ class PlayerTest < ActiveSupport::TestCase
     duplicate = Player.new(user: user, game: game)
 
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:user_id], "already in this game"
+    assert_includes duplicate.errors[:user_id], "are already in this game"
   end
 
   test "same user can join different games" do

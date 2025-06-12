@@ -1,21 +1,23 @@
 <div class="container">
   <h1>Join Game</h1>
 
-  <%= form_with model: [:games, @player] do |form| %>
-    <%= form_errors(@player) %>
-    <div class="field">
-      <%= form.label :game_code, "Game Code" %>
-      <%= form.text_field :game_code, required: true, placeholder: "Enter 6-character code" %>
-    </div>
+  <%= turbo_frame_tag "join_game_form" do %>
+    <%= form_with model: [:games, @player] do |form| %>
+      <%= form_errors(@player) %>
+      <div class="field">
+        <%= form.label :game_code, "Game Code" %>
+        <%= form.text_field :game_code, required: true, placeholder: "Enter 6-character code", value: params.dig(:player, :game_code) %>
+      </div>
 
-    <div class="field">
-      <%= form.label :password, "Password (if required)" %>
-      <%= form.password_field :password %>
-    </div>
+      <div class="field">
+        <%= form.label :password, "Password (if required)" %>
+        <%= form.password_field :password %>
+      </div>
 
-    <div class="actions">
-      <%= form.submit "Join Game", class: "btn-primary" %>
-    </div>
+      <div class="actions">
+        <%= form.submit "Join Game", class: "btn-primary" %>
+      </div>
+    <% end %>
   <% end %>
 
   <%= link_to "Back", root_path %>
