@@ -11,7 +11,7 @@ class Player < ApplicationRecord
 
   def game_not_full
     return unless game
-    
+
     if game.players.count >= 4
       errors.add(:base, "Game is full")
     end

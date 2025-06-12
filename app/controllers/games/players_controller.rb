@@ -8,7 +8,7 @@ module Games
 
     def create
       @game = Game.find_by(game_code: player_params[:game_code]&.upcase)
-      
+
       if @game.nil?
         @player = Player.new
         @player.errors.add(:base, "Invalid game code")
@@ -17,7 +17,7 @@ module Games
       end
 
       @player = @game.join_player(Current.user, player_params[:password])
-      
+
       if @player.nil?
         @player = Player.new
         @player.errors.add(:base, "Invalid password")

@@ -1,7 +1,7 @@
 class Game < ApplicationRecord
   has_secure_password validations: false
   validates :password, confirmation: true, if: :password_digest_changed?
-  
+
   has_many :players, dependent: :destroy
   has_many :users, through: :players
 
@@ -17,7 +17,7 @@ class Game < ApplicationRecord
 
   def join_player(user, password = nil)
     return nil unless authenticate_for_join(password)
-    
+
     players.create(user: user)
   end
 

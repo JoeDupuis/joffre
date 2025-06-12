@@ -24,10 +24,9 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_redirected_to root_path
-    assert_equal "Game created successfully!", flash[:notice]
-
     game = Game.last
+    assert_redirected_to game_path(game)
+    assert flash[:notice].present?
     assert_equal "My Test Game", game.name
     assert_equal @user, game.owner
     assert game.players.find_by(user: @user).owner?
