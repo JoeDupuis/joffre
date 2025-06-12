@@ -1,7 +1,7 @@
 <div class="container">
   <h1>Join Game</h1>
 
-  <%= form_with model: [:games, @player], local: true do |form| %>
+  <%= form_with model: [:games, @player] do |form| %>
     <%= form_errors(@player) %>
     <div class="field">
       <%= form.label :game_code, "Game Code" %>
