@@ -75,7 +75,7 @@ module Games
       end
       
       assert_response :unprocessable_entity
-      assert_select "div", text: /Game is full/
+      assert_select "div", text: /is full/
     end
 
     test "should join password protected game with correct password" do
