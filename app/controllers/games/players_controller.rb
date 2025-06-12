@@ -11,7 +11,7 @@ module Games
       @player = Player.new(game: @game, user: Current.user, password: player_params[:password])
 
       if @player.save
-        redirect_to @game, notice: success_message
+        redirect_to @game, notice: success_message(@player)
       else
         render :new, status: :unprocessable_entity
       end
