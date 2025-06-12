@@ -1,0 +1,21 @@
+<div class="container">
+  <h1>Join Game</h1>
+
+  <%= form_with url: join_games_path, local: true do |form| %>
+    <div class="field">
+      <%= form.label :game_code, "Game Code" %>
+      <%= form.text_field :game_code, required: true, placeholder: "Enter 6-character code" %>
+    </div>
+
+    <div class="field">
+      <%= form.label :password, "Password (if required)" %>
+      <%= form.password_field :password %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Join Game", class: "btn-primary" %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back", root_path %>
+</div>

@@ -1,0 +1,33 @@
+<div class="container">
+  <h1>My Games</h1>
+
+  <% if @games.any? %>
+    <div class="games-list">
+      <% @games.each do |game| %>
+        <div class="game-item">
+          <h3><%= link_to game.name, game %></h3>
+          <p>
+            <strong>Code:</strong> <%= game.game_code %>
+            <span class="player-count">(<%= game.players.count %>/4 players)</span>
+          </p>
+          <p>
+            <% if game.owner == Current.user %>
+              <span class="badge">Owner</span>
+            <% end %>
+            <% if game.password_digest.present? %>
+              <span class="badge">Password Protected</span>
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>You haven't joined any games yet.</p>
+  <% end %>
+
+  <div class="actions">
+    <%= link_to "Create New Game", new_game_path, class: "button" %>
+    <%= link_to "Join Game", join_games_path, class: "button" %>
+    <%= link_to "Back to Dashboard", root_path, class: "button" %>
+  </div>
+</div>
