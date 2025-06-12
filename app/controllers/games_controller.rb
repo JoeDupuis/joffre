@@ -14,7 +14,7 @@ class GamesController < ApplicationController
 
     if @game.save
       @game.players.create!(user: Current.user, owner: true)
-      redirect_to @game, notice: "Game created successfully!"
+      redirect_to @game, notice: success_message(@game)
     else
       render :new, status: :unprocessable_entity
     end
@@ -54,7 +54,7 @@ class GamesController < ApplicationController
     end
 
     @game.players.create!(user: Current.user)
-    redirect_to @game, notice: "Successfully joined the game!"
+    redirect_to @game, notice: success_message
   end
 
   private
