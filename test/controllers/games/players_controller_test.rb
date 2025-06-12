@@ -98,7 +98,7 @@ module Games
       end
       
       assert_response :unprocessable_entity
-      assert_select "div", text: /Invalid password/
+      assert_select "div", text: /is invalid/
     end
 
     test "should not join password protected game without password" do
@@ -110,7 +110,7 @@ module Games
       end
       
       assert_response :unprocessable_entity
-      assert_select "div", text: /Invalid password/
+      assert_select "div", text: /is invalid/
     end
 
     test "should handle case insensitive game codes" do

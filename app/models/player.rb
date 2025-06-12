@@ -23,6 +23,6 @@ class Player < ApplicationRecord
     return unless game
     return if game.authenticate_for_join(password)
 
-    errors.add(:base, "Invalid password")
+    errors.add(:password, :invalid)
   end
 end
