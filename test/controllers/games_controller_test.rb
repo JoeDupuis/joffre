@@ -34,12 +34,12 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create password protected game" do
     assert_difference("Game.count") do
-      post games_url, params: { 
-        game: { 
-          name: "Protected Game", 
+      post games_url, params: {
+        game: {
+          name: "Protected Game",
           password: "secret123",
           password_confirmation: "secret123"
-        } 
+        }
       }
     end
 
