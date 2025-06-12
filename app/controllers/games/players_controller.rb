@@ -8,12 +8,9 @@ module Games
 
     def create
       @game = Game.find_by(game_code: player_params[:game_code]&.upcase)
-      @player = Player.new(game: @game, user: Current.user)
+      @player = Player.new(game: @game, user: Current.user, password: player_params[:password])
 
-      if @game && !@game.authenticate_for_join(player_params[:password])
-        @player.errors.add(:base, "Invalid password")
-        render :new, status: :unprocessable_entity
-      elsif @player.save
+      if @player.save
         redirect_to @game, notice: success_message
       else
         render :new, status: :unprocessable_entity
