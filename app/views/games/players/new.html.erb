@@ -1,7 +1,8 @@
 <div class="container">
   <h1>Join Game</h1>
 
-  <%= form_with url: join_games_path, local: true do |form| %>
+  <%= form_with model: [:games, @player], url: games_players_path, local: true do |form| %>
+    <%= form_errors(@player) %>
     <div class="field">
       <%= form.label :game_code, "Game Code" %>
       <%= form.text_field :game_code, required: true, placeholder: "Enter 6-character code" %>

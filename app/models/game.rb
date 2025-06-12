@@ -15,6 +15,17 @@ class Game < ApplicationRecord
     players.owner.first&.user
   end
 
+  def join_player(user, password = nil)
+    return nil unless authenticate_for_join(password)
+    
+    players.create(user: user)
+  end
+
+  def authenticate_for_join(password)
+    return true unless password_digest.present?
+    authenticate(password)
+  end
+
   private
 
   def generate_game_code
