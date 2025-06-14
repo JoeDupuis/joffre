@@ -104,57 +104,57 @@ module Games
       assert_select "div", text: /is invalid/
     end
 
-  test "should handle case insensitive game codes" do
-    sign_in_as(@other_user)
+    test "should handle case insensitive game codes" do
+      sign_in_as(@other_user)
 
-    assert_difference("@game.players.count") do
-      post games_players_url, params: { player: { game_code: "abc123" } }
+      assert_difference("@game.players.count") do
+        post games_players_url, params: { player: { game_code: "abc123" } }
+      end
+
+      assert_redirected_to game_path(@game)
     end
 
-    assert_redirected_to game_path(@game)
-  end
+    test "should quit game" do
+      sign_in_as(users(:two))
+      player = players(:game_one_player_two)
 
-  test "should quit game" do
-    sign_in_as(users(:two))
-    player = players(:game_one_player_two)
+      assert_difference("Player.count", -1) do
+        delete games_player_url(player)
+      end
 
-    assert_difference("Player.count", -1) do
-      delete games_player_url(player)
+      assert_redirected_to games_url
     end
 
-    assert_redirected_to games_url
-  end
+    test "owner should kick player" do
+      sign_in_as(@user)
+      player = players(:game_one_player_two)
 
-  test "owner should kick player" do
-    sign_in_as(@user)
-    player = players(:game_one_player_two)
+      assert_difference("Player.count", -1) do
+        delete games_player_url(player)
+      end
 
-    assert_difference("Player.count", -1) do
-      delete games_player_url(player)
+      assert_redirected_to game_url(@game)
     end
 
-    assert_redirected_to game_url(@game)
-  end
+    test "non owner cannot kick others" do
+      sign_in_as(users(:two))
+      player = players(:one)
 
-  test "non owner cannot kick others" do
-    sign_in_as(users(:two))
-    player = players(:one)
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
 
-    assert_no_difference("Player.count") do
-      delete games_player_url(player)
+      assert_response :not_found
     end
 
-    assert_response :not_found
-  end
+    test "should require login for destroy" do
+      player = players(:game_one_player_two)
 
-  test "should require login for destroy" do
-    player = players(:game_one_player_two)
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
 
-    assert_no_difference("Player.count") do
-      delete games_player_url(player)
+      assert_redirected_to new_session_url
     end
-
-    assert_redirected_to new_session_url
-  end
   end
 end

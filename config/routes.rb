@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   resources :games, only: [ :index, :new, :create, :show, :destroy ]
 
   namespace :games do
-    resources :players, only: [ :new, :create, :destroy ]
+    resources :players
   end
   resources :friendships, only: [ :index, :new, :create, :update, :destroy ]
 
