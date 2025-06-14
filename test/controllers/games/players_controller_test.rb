@@ -4,7 +4,7 @@ module Games
   class PlayersControllerTest < ActionDispatch::IntegrationTest
     def setup
       @user = users(:one)
-      @other_user = users(:two)
+      @other_user = users(:stranger_two)
       @game = games(:one)
       @game.update!(game_code: "ABC123")
     end
@@ -112,6 +112,49 @@ module Games
       end
 
       assert_redirected_to game_path(@game)
+    end
+
+    test "should quit game" do
+      sign_in_as(users(:two))
+      player = players(:game_one_player_two)
+
+      assert_difference("Player.count", -1) do
+        delete games_player_url(player)
+      end
+
+      assert_redirected_to games_url
+    end
+
+    test "owner should kick player" do
+      sign_in_as(@user)
+      player = players(:game_one_player_two)
+
+      assert_difference("Player.count", -1) do
+        delete games_player_url(player)
+      end
+
+      assert_redirected_to game_url(@game)
+    end
+
+    test "non owner cannot kick others" do
+      sign_in_as(users(:two))
+      player = players(:one)
+
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
+
+      assert_response :not_found
+    end
+
+    test "should require login for destroy" do
+      player = players(:game_one_player_two)
+
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
+
+      assert_redirected_to new_session_url
     end
   end
 end

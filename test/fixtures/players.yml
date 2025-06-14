@@ -10,6 +10,11 @@ two:
   game: two
   owner: false
 
+game_one_player_two:
+  user: two
+  game: one
+  owner: false
+
 full_game_player_one:
   user: one
   game: full_game

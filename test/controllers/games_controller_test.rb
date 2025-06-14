@@ -57,4 +57,25 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
   end
+
+  test "owner should delete game" do
+    game = games(:one)
+
+    assert_difference("Game.count", -1) do
+      delete game_url(game)
+    end
+
+    assert_redirected_to games_url
+  end
+
+  test "non owner cannot delete game" do
+    sign_in_as(users(:two))
+    game = games(:one)
+
+    assert_no_difference("Game.count") do
+      delete game_url(game)
+    end
+
+    assert_response :not_found
+  end
 end
