@@ -24,6 +24,12 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
+  def destroy
+    @game = Current.user.owned_games.find(params[:id])
+    @game.destroy
+    redirect_to games_path, notice: success_message(@game)
+  end
+
   private
 
   def game_params

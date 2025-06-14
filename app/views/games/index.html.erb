@@ -18,6 +18,15 @@
               <span class="badge">Password Protected</span>
             <% end %>
           </p>
+          <p>
+            <% if game.owner == Current.user %>
+              <%= button_to "Delete", game_path(game), method: :delete, form_class: "inline" %>
+            <% else %>
+              <% if player = game.players.find_by(user: Current.user) %>
+                <%= button_to "Quit", games_player_path(player), method: :delete, form_class: "inline" %>
+              <% end %>
+            <% end %>
+          </p>
         </div>
       <% end %>
     </div>

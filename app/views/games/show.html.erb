@@ -17,12 +17,20 @@
           <% if player.owner? %>
             <span class="badge">Owner</span>
           <% end %>
+          <% if @game.owner == Current.user && player.user != Current.user %>
+            <%= button_to "Kick", games_player_path(player), method: :delete, form_class: "inline" %>
+          <% end %>
         </li>
       <% end %>
     </ul>
   </div>
 
   <div class="actions">
+    <% if @game.owner == Current.user %>
+      <%= button_to "Delete Game", game_path(@game), method: :delete %>
+    <% elsif player = @game.players.find_by(user: Current.user) %>
+      <%= button_to "Quit Game", games_player_path(player), method: :delete %>
+    <% end %>
     <%= link_to "Back to Dashboard", root_path, class: "button" %>
   </div>
 </div>

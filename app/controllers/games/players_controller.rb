@@ -17,6 +17,21 @@ module Games
       end
     end
 
+    def destroy
+      @player = Player.find(params[:id])
+
+      if @player.user == Current.user
+        @player.destroy
+        redirect_to games_path, notice: success_message(@player)
+      elsif @player.game.owner == Current.user
+        game = @player.game
+        @player.destroy
+        redirect_to game_path(game), notice: success_message(@player)
+      else
+        head :not_found
+      end
+    end
+
     private
 
     def player_params
