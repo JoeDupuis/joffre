@@ -20,6 +20,11 @@ module Games
     def destroy
       @player = Player.find(params[:id])
 
+      if @player.game.started?
+        head :unprocessable_entity
+        return
+      end
+
       if @player.user == Current.user
         @player.destroy
         redirect_to games_path, notice: success_message(@player)

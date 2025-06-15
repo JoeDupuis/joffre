@@ -1,6 +1,9 @@
 class Game < ApplicationRecord
+  enum :status, { pending: 0, started: 1, done: 2 }
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
+
+  validate :startable, if: :starting?
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
@@ -20,6 +23,14 @@ class Game < ApplicationRecord
   end
 
   private
+
+  def starting?
+    will_save_change_to_status? && status == "started"
+  end
+
+  def startable
+    errors.add(:status, :invalid) unless players.count == 4 && status_was == "pending"
+  end
 
   def generate_game_code
     self.game_code = loop do

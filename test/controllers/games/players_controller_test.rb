@@ -69,6 +69,17 @@ module Games
       assert_select "div", text: /is full/
     end
 
+    test "should not allow joining started game" do
+      sign_in_as(users(:stranger_two))
+
+      assert_no_difference("Player.count") do
+        post games_players_url, params: { player: { game_code: games(:started_game).game_code } }
+      end
+
+      assert_response :unprocessable_entity
+      assert_select "div", text: /has already started/
+    end
+
     test "should join password protected game with correct password" do
       sign_in_as(@other_user)
       @game.update!(password: "secret")
@@ -145,6 +156,28 @@ module Games
       end
 
       assert_response :not_found
+    end
+
+    test "cannot quit started game" do
+      sign_in_as(users(:two))
+      player = players(:started_game_player_two)
+
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
+
+      assert_response :unprocessable_entity
+    end
+
+    test "owner cannot kick after game started" do
+      sign_in_as(users(:one))
+      player = players(:started_game_player_two)
+
+      assert_no_difference("Player.count") do
+        delete games_player_url(player)
+      end
+
+      assert_response :unprocessable_entity
     end
 
     test "should require login for destroy" do

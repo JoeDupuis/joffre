@@ -9,3 +9,8 @@ two:
 full_game:
   name: Full Game
   game_code: FULL01
+
+started_game:
+  name: Started Game
+  status: 1
+  game_code: START1

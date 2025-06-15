@@ -24,8 +24,19 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
+  def update
+    @game = Current.user.owned_games.find(params[:id])
+
+    if @game.update(update_game_params)
+      redirect_to @game, notice: success_message(@game)
+    else
+      head :unprocessable_entity
+    end
+  end
+
   def destroy
     @game = Current.user.owned_games.find(params[:id])
+    return head :unprocessable_entity if @game.started?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end
@@ -34,5 +45,9 @@ class GamesController < ApplicationController
 
   def game_params
     params.require(:game).permit(:name, :password, :password_confirmation)
+  end
+
+  def update_game_params
+    params.require(:game).permit(:status)
   end
 end
