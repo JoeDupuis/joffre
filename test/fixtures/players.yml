@@ -34,3 +34,13 @@ full_game_player_four:
   user: stranger_one
   game: full_game
   owner: false
+
+started_game_owner:
+  user: one
+  game: started_game
+  owner: true
+
+started_game_player_two:
+  user: two
+  game: started_game
+  owner: false

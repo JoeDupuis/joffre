@@ -24,8 +24,24 @@ class GamesController < ApplicationController
     @game = Game.find(params[:id])
   end
 
+  def update
+    @game = Current.user.owned_games.find(params[:id])
+
+    if params[:game]&.key?(:status) && params[:game][:status] == "started"
+      if @game.players.count == 4 && @game.pending?
+        @game.update!(status: :started)
+        redirect_to @game, notice: success_message(@game)
+      else
+        head :unprocessable_entity
+      end
+    else
+      head :unprocessable_entity
+    end
+  end
+
   def destroy
     @game = Current.user.owned_games.find(params[:id])
+    return head :unprocessable_entity if @game.started?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end

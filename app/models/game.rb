@@ -1,4 +1,5 @@
 class Game < ApplicationRecord
+  enum :status, { pending: 0, started: 1, done: 2 }
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
