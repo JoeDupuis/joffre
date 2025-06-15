@@ -27,13 +27,8 @@ class GamesController < ApplicationController
   def update
     @game = Current.user.owned_games.find(params[:id])
 
-    if params[:game]&.key?(:status) && params[:game][:status] == "started"
-      if @game.players.count == 4 && @game.pending?
-        @game.update!(status: :started)
-        redirect_to @game, notice: success_message(@game)
-      else
-        head :unprocessable_entity
-      end
+    if @game.update(update_game_params)
+      redirect_to @game, notice: success_message(@game)
     else
       head :unprocessable_entity
     end
@@ -50,5 +45,9 @@ class GamesController < ApplicationController
 
   def game_params
     params.require(:game).permit(:name, :password, :password_confirmation)
+  end
+
+  def update_game_params
+    params.require(:game).permit(:status)
   end
 end
