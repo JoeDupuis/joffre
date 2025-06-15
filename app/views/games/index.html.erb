@@ -19,10 +19,12 @@
             <% end %>
           </p>
           <p>
-            <% if game.owner == Current.user %>
-              <%= button_to "Delete", game_path(game), method: :delete, class: "button --small" %>
-            <% elsif (player = game.players.find_by(user: Current.user)) %>
-              <%= button_to "Quit", games_player_path(player), method: :delete, class: "button --small" %>
+            <% unless game.started? %>
+              <% if game.owner == Current.user %>
+                <%= button_to "Delete", game_path(game), method: :delete, class: "button --small" %>
+              <% elsif (player = game.players.find_by(user: Current.user)) %>
+                <%= button_to "Quit", games_player_path(player), method: :delete, class: "button --small" %>
+              <% end %>
             <% end %>
           </p>
         </div>
