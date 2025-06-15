@@ -78,4 +78,33 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "owner can start full game" do
+    game = games(:full_game)
+    sign_in_as(game.owner)
+
+    patch game_url(game), params: { game: { status: "started" } }
+
+    assert_redirected_to game_url(game)
+    assert game.reload.started?
+  end
+
+  test "cannot start non full game" do
+    game = games(:one)
+
+    patch game_url(game), params: { game: { status: "started" } }
+
+    assert_response :unprocessable_entity
+    assert_not game.reload.started?
+  end
+
+  test "cannot delete started game" do
+    game = games(:started_game)
+    sign_in_as(game.owner)
+
+    delete game_url(game)
+
+    assert_response :unprocessable_entity
+    assert Game.exists?(game.id)
+  end
 end

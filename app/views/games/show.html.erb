@@ -1,36 +1,5 @@
-<div class="container">
-  <h1><%= @game.name %></h1>
-
-  <div class="game-info">
-    <p><strong>Game Code:</strong> <%= @game.game_code %></p>
-    <% if @game.password_digest.present? %>
-      <p><em>This game is password protected</em></p>
-    <% end %>
-  </div>
-
-  <div class="players">
-    <h2>Players (<%= @game.players.count %>/4)</h2>
-    <ul>
-      <% @game.players.includes(:user).each do |player| %>
-        <li>
-          <%= player.user.name %>
-          <% if player.owner? %>
-            <span class="badge">Owner</span>
-          <% end %>
-          <% if @game.owner == Current.user && player.user != Current.user %>
-            <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-
-  <div class="actions">
-    <% if @game.owner == Current.user %>
-      <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button" %>
-    <% elsif (player = @game.players.find_by(user: Current.user)) %>
-      <%= button_to "Quit Game", games_player_path(player), method: :delete, class: "button" %>
-    <% end %>
-    <%= link_to "Back to Dashboard", root_path, class: "button" %>
-  </div>
-</div>
+<% if @game.started? %>
+  <%= render 'play' %>
+<% else %>
+  <%= render 'lobby' %>
+<% end %>

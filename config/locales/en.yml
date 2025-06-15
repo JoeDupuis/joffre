@@ -36,6 +36,7 @@ en:
           attributes:
             game:
               full: "is full"
+              started: "has already started"
   application:
     form_errors:
       title:

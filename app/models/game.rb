@@ -5,6 +5,8 @@ class Game < ApplicationRecord
   has_many :players, dependent: :destroy
   has_many :users, through: :players
 
+  enum :status, { pending: 0, started: 1, done: 2 }
+
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
 
