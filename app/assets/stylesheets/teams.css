@@ -14,27 +14,27 @@
   margin-top: 1rem;
 }
 
-.teams > .-container > .-team {
+.teams > .-team {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1rem;
   background-color: #f9f9f9;
 }
 
-.teams > .-container > .-team > .-heading {
+.teams > .-team > .-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #ddd;
 }
 
-.teams > .-container > .-team > .-players {
+.teams > .-team > .-players {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.teams > .-container > .-team > .-players > .-player {
+.teams > .-player {
   padding: 0.75rem;
   margin-bottom: 0.5rem;
   background-color: white;
@@ -46,7 +46,7 @@
   flex-wrap: wrap;
 }
 
-.teams > .-container > .-team > .-players > .-player > .badge {
+.teams > .-player > .badge {
   background-color: #007bff;
   color: white;
   padding: 0.2rem 0.5rem;
@@ -55,7 +55,7 @@
   font-weight: bold;
 }
 
-.teams > .-container > .-team > .-players > .-player > .button--small {
+.teams > .-player > .button--small {
   margin-left: auto;
 }
 
