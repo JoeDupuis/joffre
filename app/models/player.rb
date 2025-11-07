@@ -6,7 +6,7 @@ class Player < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: :game_id, message: "are already in this game" }
   validates :game, presence: { message: "invalid game code" }
-  validates :team, inclusion: { in: [1, 2], allow_nil: true }
+  validates :team, inclusion: { in: [ 1, 2 ], allow_nil: true }
   validate :game_not_full, on: :create
   validate :correct_password, on: :create, unless: :owner?
   validate :game_not_started, on: :create
