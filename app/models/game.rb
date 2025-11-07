@@ -35,12 +35,12 @@ class Game < ApplicationRecord
     end
 
     unless players.all? { |p| p.team.present? }
-      errors.add(:status, "cannot start - all players must be assigned to a team")
+      errors.add(:status, :teams_not_assigned)
       return
     end
 
     unless players.team_one.count == 2 && players.team_two.count == 2
-      errors.add(:status, "cannot start - teams must be balanced (2 players each)")
+      errors.add(:status, :teams_not_balanced)
     end
   end
 
