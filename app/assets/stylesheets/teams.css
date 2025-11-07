@@ -1,39 +1,40 @@
+/* Teams component */
 .teams {
   margin: 2rem 0;
 }
 
-.teams h2 {
+.teams > .-title {
   margin-bottom: 1rem;
 }
 
-.teams-container {
+.teams > .-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
   margin-top: 1rem;
 }
 
-.team {
+.teams > .-container > .-team {
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 1rem;
   background-color: #f9f9f9;
 }
 
-.team h3 {
+.teams > .-container > .-team > .-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #ddd;
 }
 
-.team ul {
+.teams > .-container > .-team > .-players {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.team li {
+.teams > .-container > .-team > .-players > .-player {
   padding: 0.75rem;
   margin-bottom: 0.5rem;
   background-color: white;
@@ -45,7 +46,7 @@
   flex-wrap: wrap;
 }
 
-.team li .badge {
+.teams > .-container > .-team > .-players > .-player > .badge {
   background-color: #007bff;
   color: white;
   padding: 0.2rem 0.5rem;
@@ -54,12 +55,12 @@
   font-weight: bold;
 }
 
-.team li .button--small {
+.teams > .-container > .-team > .-players > .-player > .button--small {
   margin-left: auto;
 }
 
 @media (max-width: 768px) {
-  .teams-container {
+  .teams > .-container {
     grid-template-columns: 1fr;
   }
 }
