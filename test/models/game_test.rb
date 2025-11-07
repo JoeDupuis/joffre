@@ -62,4 +62,17 @@ class GameTest < ActiveSupport::TestCase
       game.deal_cards!
     end
   end
+
+  test "starting game should automatically deal cards" do
+    game = games(:full_game)
+
+    assert_difference "Card.count", 32 do
+      game.update!(status: :started)
+    end
+
+    assert_equal 32, game.cards.count
+    game.players.each do |player|
+      assert_equal 8, player.cards.count
+    end
+  end
 end
