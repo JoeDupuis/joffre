@@ -7,13 +7,25 @@ class Player < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: :game_id, message: "are already in this game" }
   validates :game, presence: { message: "invalid game code" }
+  validates :team, inclusion: { in: [ 1, 2 ], allow_nil: true }
   validate :game_not_full, on: :create
   validate :correct_password, on: :create, unless: :owner?
   validate :game_not_started, on: :create
 
+  before_create :assign_team
+
   scope :owner, -> { where(owner: true) }
+  scope :team_one, -> { where(team: 1) }
+  scope :team_two, -> { where(team: 2) }
 
   private
+
+  def assign_team
+    return unless game
+
+    player_count = game.players.count
+    self.team = player_count < 2 ? 1 : 2
+  end
 
   def game_not_full
     return unless game

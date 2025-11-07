@@ -42,7 +42,19 @@ class Game < ApplicationRecord
   end
 
   def startable
-    errors.add(:status, :invalid) unless players.count == 4 && status_was == "pending"
+    unless players.count == 4 && status_was == "pending"
+      errors.add(:status, :invalid)
+      return
+    end
+
+    unless players.all? { |p| p.team.present? }
+      errors.add(:status, :teams_not_assigned)
+      return
+    end
+
+    unless players.team_one.count == 2 && players.team_two.count == 2
+      errors.add(:status, :teams_not_balanced)
+    end
   end
 
   def generate_game_code
