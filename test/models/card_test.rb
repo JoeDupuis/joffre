@@ -29,7 +29,7 @@ class CardTest < ActiveSupport::TestCase
     assert card.valid?
   end
 
-  test "should validate uniqueness of suite scoped to game_id and rank" do
+  test "should validate uniqueness of card in game" do
     card1 = Card.create!(game: games(:one), player: players(:one), suite: :blue, rank: 5)
     card2 = Card.new(game: games(:one), player: players(:two), suite: :blue, rank: 5)
 
@@ -40,7 +40,7 @@ class CardTest < ActiveSupport::TestCase
     assert card2.valid?
   end
 
-  test "should allow same suite and rank in different games" do
+  test "card uniqueness is scoped to game" do
     card1 = Card.create!(game: games(:one), player: players(:one), suite: :blue, rank: 5)
     card2 = Card.new(game: games(:two), player: players(:two), suite: :blue, rank: 5)
 

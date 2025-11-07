@@ -26,11 +26,7 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "deal_cards! should create 32 cards" do
-    game = Game.create!(name: "Test Game")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
+    game = games(:full_game)
 
     assert_difference "Card.count", 32 do
       game.deal_cards!
@@ -38,11 +34,7 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "deal_cards! should deal 8 cards to each player" do
-    game = Game.create!(name: "Test Game")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
+    game = games(:full_game)
 
     game.deal_cards!
 
@@ -52,11 +44,7 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "deal_cards! should create all combinations of suites and ranks" do
-    game = Game.create!(name: "Test Game")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
+    game = games(:full_game)
 
     game.deal_cards!
 
