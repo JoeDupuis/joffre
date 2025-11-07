@@ -10,7 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_14_081354) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_015642) do
+  create_table "cards", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "number", null: false
+    t.integer "player_id", null: false
+    t.integer "suite", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "suite", "number"], name: "index_cards_on_game_id_and_suite_and_number", unique: true
+    t.index ["game_id"], name: "index_cards_on_game_id"
+    t.index ["player_id"], name: "index_cards_on_player_id"
+  end
+
   create_table "friendships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "friend_id", null: false
@@ -64,6 +76,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_14_081354) do
     t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
+  add_foreign_key "cards", "games"
+  add_foreign_key "cards", "players"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"

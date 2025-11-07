@@ -7,6 +7,7 @@ class Game < ApplicationRecord
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
+  has_many :cards, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
