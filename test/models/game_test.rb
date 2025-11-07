@@ -51,7 +51,7 @@ class GameTest < ActiveSupport::TestCase
     end
   end
 
-  test "deal_cards! should create all combinations of suites and numbers" do
+  test "deal_cards! should create all combinations of suites and ranks" do
     game = Game.create!(name: "Test Game")
     4.times do |i|
       user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
@@ -61,8 +61,8 @@ class GameTest < ActiveSupport::TestCase
     game.deal_cards!
 
     Card.suites.each_key do |suite|
-      (0..7).each do |number|
-        assert game.cards.exists?(suite: suite, number: number), "Missing card: #{suite} #{number}"
+      (0..7).each do |rank|
+        assert game.cards.exists?(suite: suite, rank: rank), "Missing card: #{suite} #{rank}"
       end
     end
   end

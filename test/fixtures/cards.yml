@@ -4,10 +4,10 @@ one:
   game: one
   player: one
   suite: 1
-  number: 1
+  rank: 1
 
 two:
   game: two
   player: two
   suite: 1
-  number: 1
+  rank: 1

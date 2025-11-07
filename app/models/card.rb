@@ -5,14 +5,14 @@ class Card < ApplicationRecord
   enum :suite, { blue: 0, green: 1, brown: 2, red: 3 }
 
   validates :suite, presence: true
-  validates :number, presence: true, inclusion: { in: 0..7 }
-  validates :suite, uniqueness: { scope: [ :game_id, :number ] }
+  validates :rank, presence: true, inclusion: { in: 0..7 }
+  validates :suite, uniqueness: { scope: [ :game_id, :rank ] }
 
   def self.deck
     cards = []
     suites.each_key do |suite_name|
-      (0..7).each do |number|
-        cards << { suite: suite_name, number: number }
+      (0..7).each do |rank|
+        cards << { suite: suite_name, rank: rank }
       end
     end
     cards.shuffle
