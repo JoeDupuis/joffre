@@ -22,7 +22,7 @@ module Games
 
     def update
       if @player.update(update_player_params)
-        redirect_to @player.game, notice: "Team assignment updated"
+        redirect_to @player.game, notice: success_message(@player)
       else
         head :unprocessable_entity
       end
