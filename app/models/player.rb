@@ -1,6 +1,7 @@
 class Player < ApplicationRecord
   belongs_to :user
   belongs_to :game
+  has_many :cards, dependent: :destroy
 
   attr_accessor :password
 

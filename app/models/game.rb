@@ -7,6 +7,7 @@ class Game < ApplicationRecord
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
+  has_many :cards, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -20,6 +21,18 @@ class Game < ApplicationRecord
   def authenticate_for_join(password)
     return true unless password_digest.present?
     authenticate(password)
+  end
+
+  def deal_cards!
+    raise ArgumentError, "Game must have exactly 4 players" unless players.count == 4
+
+    deck = Card.deck
+    player_list = players.to_a
+
+    deck.each_with_index do |card_attrs, index|
+      player = player_list[index % 4]
+      cards.create!(card_attrs.merge(player: player))
+    end
   end
 
   private
