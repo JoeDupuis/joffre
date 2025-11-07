@@ -37,6 +37,11 @@ en:
             game:
               full: "is full"
               started: "has already started"
+        game:
+          attributes:
+            status:
+              teams_not_assigned: "cannot be started - all players must be assigned to a team"
+              teams_not_balanced: "cannot be started - teams must be balanced (2 players each)"
   application:
     form_errors:
       title:

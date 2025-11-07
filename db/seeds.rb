@@ -36,9 +36,18 @@ if Rails.env.development?
 
   Player.find_or_create_by!(user: alice, game: game) do |p|
     p.owner = true
+    p.team = 1
   end
 
-  Player.find_or_create_by!(user: bob, game: game)
-  Player.find_or_create_by!(user: carol, game: game)
-  Player.find_or_create_by!(user: david, game: game)
+  Player.find_or_create_by!(user: bob, game: game) do |p|
+    p.team = 1
+  end
+
+  Player.find_or_create_by!(user: carol, game: game) do |p|
+    p.team = 2
+  end
+
+  Player.find_or_create_by!(user: david, game: game) do |p|
+    p.team = 2
+  end
 end

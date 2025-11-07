@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_14_081354) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_014359) do
   create_table "friendships", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "friend_id", null: false
@@ -37,6 +37,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_14_081354) do
     t.datetime "created_at", null: false
     t.integer "game_id", null: false
     t.boolean "owner", default: false, null: false
+    t.integer "team"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
