@@ -8,49 +8,7 @@
     <% end %>
   </div>
 
-  <div class="teams">
-    <h2 class="-title">Teams (<%= @game.players.count %>/4 players)</h2>
-    <div class="-container">
-      <div class="-team">
-        <h3 class="-heading">Team 1</h3>
-        <ul class="-players">
-          <% @game.players.team_one.includes(:user).each do |player| %>
-            <li class="-player">
-              <%= player.user.name %>
-              <% if player.owner? %>
-                <span class="badge">Owner</span>
-              <% end %>
-              <% if @game.owner == Current.user %>
-                <%= button_to "→ Move to Team 2", games_player_path(player), method: :patch, params: { player: { team: 2 } }, class: "button --small" %>
-              <% end %>
-              <% if @game.owner == Current.user && player.user != Current.user %>
-                <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-      <div class="-team">
-        <h3 class="-heading">Team 2</h3>
-        <ul class="-players">
-          <% @game.players.team_two.includes(:user).each do |player| %>
-            <li class="-player">
-              <%= player.user.name %>
-              <% if player.owner? %>
-                <span class="badge">Owner</span>
-              <% end %>
-              <% if @game.owner == Current.user %>
-                <%= button_to "← Move to Team 1", games_player_path(player), method: :patch, params: { player: { team: 1 } }, class: "button --small" %>
-              <% end %>
-              <% if @game.owner == Current.user && player.user != Current.user %>
-                <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <%= render "team_picker", game: @game %>
 
   <div class="actions">
     <% if @game.owner == Current.user && @game.players.count == 4 %>
