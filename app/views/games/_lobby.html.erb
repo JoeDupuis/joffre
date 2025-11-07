@@ -8,21 +8,48 @@
     <% end %>
   </div>
 
-  <div class="players">
-    <h2>Players (<%= @game.players.count %>/4)</h2>
-    <ul>
-      <% @game.players.includes(:user).each do |player| %>
-        <li>
-          <%= player.user.name %>
-          <% if player.owner? %>
-            <span class="badge">Owner</span>
+  <div class="teams">
+    <h2>Teams (<%= @game.players.count %>/4 players)</h2>
+    <div class="teams-container">
+      <div class="team">
+        <h3>Team 1</h3>
+        <ul>
+          <% @game.players.team_one.includes(:user).each do |player| %>
+            <li>
+              <%= player.user.name %>
+              <% if player.owner? %>
+                <span class="badge">Owner</span>
+              <% end %>
+              <% if @game.owner == Current.user %>
+                <%= button_to "→ Move to Team 2", games_player_path(player), method: :patch, params: { player: { team: 2 } }, class: "button --small" %>
+              <% end %>
+              <% if @game.owner == Current.user && player.user != Current.user %>
+                <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
+              <% end %>
+            </li>
           <% end %>
-          <% if @game.owner == Current.user && player.user != Current.user %>
-            <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
+        </ul>
+      </div>
+      <div class="team">
+        <h3>Team 2</h3>
+        <ul>
+          <% @game.players.team_two.includes(:user).each do |player| %>
+            <li>
+              <%= player.user.name %>
+              <% if player.owner? %>
+                <span class="badge">Owner</span>
+              <% end %>
+              <% if @game.owner == Current.user %>
+                <%= button_to "← Move to Team 1", games_player_path(player), method: :patch, params: { player: { team: 1 } }, class: "button --small" %>
+              <% end %>
+              <% if @game.owner == Current.user && player.user != Current.user %>
+                <%= button_to "Kick", games_player_path(player), method: :delete, class: "button --small" %>
+              <% end %>
+            </li>
           <% end %>
-        </li>
-      <% end %>
-    </ul>
+        </ul>
+      </div>
+    </div>
   </div>
 
   <div class="actions">

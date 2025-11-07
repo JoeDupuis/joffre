@@ -17,6 +17,26 @@ module Games
       end
     end
 
+    def update
+      @player = Player.find(params[:id])
+
+      unless @player.game.owner == Current.user
+        head :forbidden
+        return
+      end
+
+      if @player.game.started?
+        head :unprocessable_entity
+        return
+      end
+
+      if @player.update(update_player_params)
+        redirect_to @player.game, notice: "Team assignment updated"
+      else
+        head :unprocessable_entity
+      end
+    end
+
     def destroy
       @player = Player.find(params[:id])
 
@@ -41,6 +61,10 @@ module Games
 
     def player_params
       params.require(:player).permit(:game_code, :password)
+    end
+
+    def update_player_params
+      params.require(:player).permit(:team)
     end
   end
 end
