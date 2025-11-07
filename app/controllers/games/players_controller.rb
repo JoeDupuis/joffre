@@ -1,6 +1,9 @@
 module Games
   class PlayersController < ApplicationController
     before_action :require_authentication
+    before_action :set_player, only: [ :update, :destroy ]
+    before_action :ensure_owner, only: [ :update ]
+    before_action :ensure_game_not_started, only: [ :update ]
 
     def new
       @player = Player.new
@@ -18,18 +21,6 @@ module Games
     end
 
     def update
-      @player = Player.find(params[:id])
-
-      unless @player.game.owner == Current.user
-        head :forbidden
-        return
-      end
-
-      if @player.game.started?
-        head :unprocessable_entity
-        return
-      end
-
       if @player.update(update_player_params)
         redirect_to @player.game, notice: "Team assignment updated"
       else
@@ -38,8 +29,6 @@ module Games
     end
 
     def destroy
-      @player = Player.find(params[:id])
-
       if @player.game.started?
         head :unprocessable_entity
         return
@@ -58,6 +47,18 @@ module Games
     end
 
     private
+
+    def set_player
+      @player = Player.find(params[:id])
+    end
+
+    def ensure_owner
+      head :forbidden unless @player.game.owner == Current.user
+    end
+
+    def ensure_game_not_started
+      head :unprocessable_entity if @player.game.started?
+    end
 
     def player_params
       params.require(:player).permit(:game_code, :password)
