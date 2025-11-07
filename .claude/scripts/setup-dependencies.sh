@@ -16,7 +16,13 @@ echo "📦 Current Ruby version: $CURRENT_RUBY"
 # Install Ruby version if using rbenv and version doesn't match
 if command -v rbenv &> /dev/null; then
   if ! rbenv versions | grep -q "$REQUIRED_RUBY"; then
-    echo "⚠️  Ruby $REQUIRED_RUBY not found in rbenv, attempting to install..."
+    echo ""
+    echo "⚠️  WARNING: Ruby $REQUIRED_RUBY is not installed!"
+    echo "⚠️  This will attempt to install it now, which may take several minutes."
+    echo "⚠️  For faster startup, pre-install Ruby $REQUIRED_RUBY before starting Claude Code:"
+    echo "    rbenv install $REQUIRED_RUBY"
+    echo ""
+    echo "📦 Installing Ruby $REQUIRED_RUBY..."
     rbenv install "$REQUIRED_RUBY" --skip-existing
     rbenv local "$REQUIRED_RUBY"
   else
