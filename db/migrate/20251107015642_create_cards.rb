@@ -4,11 +4,11 @@ class CreateCards < ActiveRecord::Migration[8.1]
       t.references :game, null: false, foreign_key: true
       t.references :player, null: false, foreign_key: true
       t.integer :suite, null: false
-      t.integer :number, null: false
+      t.integer :rank, null: false
 
       t.timestamps
     end
 
-    add_index :cards, [ :game_id, :suite, :number ], unique: true
+    add_index :cards, [ :game_id, :suite, :rank ], unique: true
   end
 end
