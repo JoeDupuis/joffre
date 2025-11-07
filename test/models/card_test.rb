@@ -47,53 +47,26 @@ class CardTest < ActiveSupport::TestCase
     assert card2.valid?
   end
 
-  test "create_and_deal_for_game should create 32 cards" do
-    game = Game.create!(name: "Test Game", game_code: "TEST#{rand(1000)}")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
-
-    assert_difference "Card.count", 32 do
-      Card.create_and_deal_for_game(game)
-    end
+  test "deck should return 32 cards" do
+    deck = Card.deck
+    assert_equal 32, deck.length
   end
 
-  test "create_and_deal_for_game should deal 8 cards to each player" do
-    game = Game.create!(name: "Test Game", game_code: "TEST#{rand(1000)}")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
-
-    Card.create_and_deal_for_game(game)
-
-    game.players.each do |player|
-      assert_equal 8, player.cards.count
-    end
-  end
-
-  test "create_and_deal_for_game should create all combinations of suites and numbers" do
-    game = Game.create!(name: "Test Game", game_code: "TEST#{rand(1000)}")
-    4.times do |i|
-      user = User.create!(name: "User#{i}", email_address: "user#{i}#{rand(10000)}@example.com", password: "password")
-      game.players.create!(user: user)
-    end
-
-    Card.create_and_deal_for_game(game)
+  test "deck should return all combinations of suites and numbers" do
+    deck = Card.deck
 
     Card.suites.each_key do |suite|
       (0..7).each do |number|
-        assert game.cards.exists?(suite: suite, number: number), "Missing card: #{suite} #{number}"
+        assert deck.any? { |card| card[:suite] == suite && card[:number] == number },
+               "Missing card: #{suite} #{number}"
       end
     end
   end
 
-  test "create_and_deal_for_game should raise error if game does not have 4 players" do
-    game = games(:one)
+  test "deck should be shuffled" do
+    deck1 = Card.deck
+    deck2 = Card.deck
 
-    assert_raises(ArgumentError, "Game must have exactly 4 players") do
-      Card.create_and_deal_for_game(game)
-    end
+    assert_not_equal deck1, deck2, "Deck should be shuffled randomly"
   end
 end

@@ -23,6 +23,18 @@ class Game < ApplicationRecord
     authenticate(password)
   end
 
+  def deal_cards!
+    raise ArgumentError, "Game must have exactly 4 players" unless players.count == 4
+
+    deck = Card.deck
+    player_list = players.to_a
+
+    deck.each_with_index do |card_attrs, index|
+      player = player_list[index % 4]
+      cards.create!(card_attrs.merge(player: player))
+    end
+  end
+
   private
 
   def starting?
