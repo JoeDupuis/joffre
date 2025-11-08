@@ -77,29 +77,21 @@ class Game < ApplicationRecord
     deal_cards!
   end
 
-  def start_playing_phase!
-    update!(status: :playing)
-  end
-
   def place_bid!(player:, amount:)
     bid = bids.build(player: player, amount: amount)
 
     if bid.save
-      process_bid_completion!
+      if all_players_passed?
+        reshuffle_and_rebid!
+      elsif bid_complete?
+        update!(status: :playing)
+      end
     end
 
     bid
   end
 
   private
-
-  def process_bid_completion!
-    if all_players_passed?
-      reshuffle_and_rebid!
-    elsif bid_complete?
-      start_playing_phase!
-    end
-  end
 
   def starting?
     will_save_change_to_status? && status == "bidding"
