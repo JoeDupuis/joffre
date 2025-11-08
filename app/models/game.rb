@@ -21,7 +21,7 @@ class Game < ApplicationRecord
   end
 
   def dealer
-    players.dealer.first
+    players.dealer.sole
   end
 
   def authenticate_for_join(password)
