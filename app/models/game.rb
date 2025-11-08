@@ -4,6 +4,7 @@ class Game < ApplicationRecord
   validates :password, confirmation: true, if: -> { password.present? }
 
   validate :startable, if: :starting?
+  after_update :deal_cards!, if: :just_started?
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
@@ -39,6 +40,10 @@ class Game < ApplicationRecord
 
   def starting?
     will_save_change_to_status? && status == "started"
+  end
+
+  def just_started?
+    saved_change_to_status? && status == "started"
   end
 
   def startable

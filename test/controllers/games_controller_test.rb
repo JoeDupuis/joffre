@@ -83,11 +83,15 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     game = games(:full_game)
     sign_in_as(game.owner)
 
-    patch game_url(game), params: { game: { status: :started } }
+    assert_difference("Card.count", 32) do
+      patch game_url(game), params: { game: { status: :started } }
+    end
 
     assert_redirected_to game_url(game)
     game.reload
     assert game.started?
+    assert_equal 32, game.cards.count
+    assert_equal 8, game.players.first.cards.count
   end
 
   test "cannot start non full game" do
