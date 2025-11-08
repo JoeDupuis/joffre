@@ -112,4 +112,21 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert Game.exists?(game.id)
   end
+
+  test "player can view their own game" do
+    game = games(:one)
+
+    get game_url(game)
+
+    assert_response :success
+  end
+
+  test "non-player cannot view game they are not a member of" do
+    sign_in_as(users(:no_friends))
+    game = games(:one)
+
+    get game_url(game)
+
+    assert_response :not_found
+  end
 end
