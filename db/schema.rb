@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_08_062230) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_08_203456) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -96,7 +96,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_062230) do
   add_foreign_key "cards", "players"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
-  add_foreign_key "games", "players", column: "dealer_id"
+  add_foreign_key "games", "players", column: "dealer_id", on_delete: :nullify
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
   add_foreign_key "sessions", "users"

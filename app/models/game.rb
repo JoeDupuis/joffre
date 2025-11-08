@@ -5,7 +5,6 @@ class Game < ApplicationRecord
 
   validate :startable, if: :starting?
   after_update :setup_bidding_phase!, if: :just_started_bidding?
-  before_destroy :nullify_dealer
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
@@ -129,10 +128,6 @@ class Game < ApplicationRecord
 
   def setup_bidding_phase!
     deal_cards!
-  end
-
-  def nullify_dealer
-    update_column(:dealer_id, nil)
   end
 
   def startable
