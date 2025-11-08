@@ -42,8 +42,7 @@ class Game < ApplicationRecord
   def bidding_order
     return [] unless players.count == 4
 
-    dealer_player = dealer || players.owner.first
-    dealer_team = dealer_player.team
+    dealer_team = dealer.team
     opposite_team = dealer_team == 1 ? 2 : 1
 
     # Get players by team, sorted by ID
@@ -51,14 +50,14 @@ class Game < ApplicationRecord
     dealer_team_players = players.where(team: dealer_team).order(:id).to_a
 
     # Remove dealer from their team's players
-    dealer_team_players.delete(dealer_player)
+    dealer_team_players.delete(dealer)
 
     # Order: opposite team player 1, dealer team player, opposite team player 2, dealer
     [
       opposite_players[0],
       dealer_team_players[0],
       opposite_players[1],
-      dealer_player
+      dealer
     ].compact
   end
 
