@@ -2,8 +2,7 @@ require "test_helper"
 
 class BidTest < ActiveSupport::TestCase
   test "valid bid" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     player = game.current_bidder
 
     bid = Bid.new(game: game, player: player, amount: 7)
@@ -11,8 +10,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "valid pass" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     player = game.current_bidder
 
     bid = Bid.new(game: game, player: player, amount: nil)
@@ -20,8 +18,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "invalid bid below minimum" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     player = game.current_bidder
 
     bid = Bid.new(game: game, player: player, amount: 5)
@@ -30,8 +27,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "invalid bid above maximum" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     player = game.current_bidder
 
     bid = Bid.new(game: game, player: player, amount: 13)
@@ -40,8 +36,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "bid must be higher than current highest bid" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     order = game.bidding_order
 
     game.bids.create!(player: order[0], amount: 8)
@@ -53,8 +48,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "player must be current bidder" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
+    game = games(:bidding_game)
     wrong_player = game.players.where.not(id: game.current_bidder.id).first
 
     bid = Bid.new(game: game, player: wrong_player, amount: 7)
@@ -79,7 +73,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "requires player" do
-    game = games(:full_game)
+    game = games(:bidding_game)
     bid = Bid.new(game: game, amount: 7)
     assert_not bid.valid?
     assert_includes bid.errors[:player_id], "can't be blank"

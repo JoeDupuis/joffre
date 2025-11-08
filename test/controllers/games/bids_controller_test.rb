@@ -3,8 +3,7 @@ require "test_helper"
 module Games
   class BidsControllerTest < ActionDispatch::IntegrationTest
     test "should create valid bid" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       sign_in_as(game.current_bidder.user)
 
       assert_difference("Bid.count") do
@@ -15,8 +14,7 @@ module Games
     end
 
     test "should create pass (nil bid)" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       sign_in_as(game.current_bidder.user)
 
       assert_difference("Bid.count") do
@@ -28,8 +26,7 @@ module Games
     end
 
     test "should not create bid if not current bidder" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       wrong_player = game.players.where.not(id: game.current_bidder.id).first
       sign_in_as(wrong_player.user)
 
@@ -42,8 +39,7 @@ module Games
     end
 
     test "should not create bid with invalid amount" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       sign_in_as(game.current_bidder.user)
 
       assert_no_difference("Bid.count") do
@@ -55,8 +51,7 @@ module Games
     end
 
     test "should transition to playing when bidding complete" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       order = game.bidding_order
 
       # Place 3 bids
@@ -74,8 +69,7 @@ module Games
     end
 
     test "should reshuffle when all players pass" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       order = game.bidding_order
       initial_card_count = game.cards.count
 
@@ -95,14 +89,13 @@ module Games
     end
 
     test "should require authentication" do
-      game = games(:full_game)
+      game = games(:bidding_game)
       post game_bids_url(game), params: { bid: { amount: 7 } }
       assert_redirected_to new_session_url
     end
 
     test "should require player in game" do
-      game = games(:full_game)
-      game.update!(status: :bidding)
+      game = games(:bidding_game)
       sign_in_as(users(:stranger_two))
 
       assert_no_difference("Bid.count") do

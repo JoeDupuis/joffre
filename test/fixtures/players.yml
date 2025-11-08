@@ -59,3 +59,46 @@ started_game_player_two:
   owner: false
   team: 2
   order: 2
+
+started_game_player_three:
+  user: no_friends
+  game: started_game
+  owner: false
+  team: 1
+  order: 3
+
+started_game_player_four:
+  user: stranger_one
+  game: started_game
+  owner: false
+  team: 2
+  order: 4
+
+bidding_game_player_one:
+  user: one
+  game: bidding_game
+  owner: true
+  dealer: true
+  team: 1
+  order: 1
+
+bidding_game_player_two:
+  user: two
+  game: bidding_game
+  owner: false
+  team: 1
+  order: 3
+
+bidding_game_player_three:
+  user: no_friends
+  game: bidding_game
+  owner: false
+  team: 2
+  order: 2
+
+bidding_game_player_four:
+  user: stranger_one
+  game: bidding_game
+  owner: false
+  team: 2
+  order: 4
