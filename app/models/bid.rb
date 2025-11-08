@@ -4,7 +4,14 @@ class Bid < ApplicationRecord
 
   validates :player_id, presence: true
   validates :game_id, presence: true
-  validate :valid_bid_amount
+  validates :amount,
+    numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: ->(bid) { bid.game.minimum_bid },
+      less_than_or_equal_to: 12
+    },
+    allow_nil: true
+  validate :amount_higher_than_current_bid
   validate :player_is_current_bidder, on: :create
   validate :game_is_in_bidding_phase, on: :create
 
@@ -12,13 +19,8 @@ class Bid < ApplicationRecord
 
   private
 
-  def valid_bid_amount
-    return if amount.nil? # nil is valid (pass)
-
-    unless amount.is_a?(Integer) && amount >= game.minimum_bid && amount <= 12
-      errors.add(:amount, "must be between #{game.minimum_bid} and 12")
-      return
-    end
+  def amount_higher_than_current_bid
+    return if amount.nil?
 
     highest = game.highest_bid
     if highest && amount <= highest.amount
