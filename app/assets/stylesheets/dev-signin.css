@@ -35,3 +35,26 @@
 .dev-user-button:active {
   transform: scale(0.98);
 }
+
+.dev-signout-button {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  padding: 8px 16px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  z-index: 1000;
+  transition: background-color 0.2s;
+}
+
+.dev-signout-button:hover {
+  background-color: #c82333;
+}
+
+.dev-signout-button:active {
+  transform: scale(0.98);
+}
