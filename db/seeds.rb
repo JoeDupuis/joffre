@@ -43,7 +43,7 @@ if Rails.env.development?
     p.team = 1
   end
 
-  game.update!(dealer: alice_owner) unless game.dealer
+  alice_owner.update!(dealer: true) unless game.dealer
 
   Player.find_or_create_by!(user: bob, game: game) do |p|
     p.team = 1
@@ -67,7 +67,7 @@ if Rails.env.development?
     p.team = 1
   end
 
-  bidding_game.update!(dealer: alice_player) unless bidding_game.dealer
+  alice_player.update!(dealer: true) unless bidding_game.dealer
 
   bob_player = Player.find_or_create_by!(user: bob, game: bidding_game) do |p|
     p.team = 1

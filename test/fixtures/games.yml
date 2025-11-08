@@ -2,19 +2,15 @@
 
 one:
   name: Game One
-  dealer: one
 
 two:
   name: Game Two
-  dealer: two
 
 full_game:
   name: Full Game
   game_code: FULL01
-  dealer: full_game_player_one
 
 started_game:
   name: Started Game
   status: 1
   game_code: START1
-  dealer: started_game_owner

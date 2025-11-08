@@ -4,12 +4,14 @@ one:
   user: one
   game: one
   owner: true
+  dealer: true
   team: 1
 
 two:
   user: two
   game: two
   owner: false
+  dealer: true
   team: 2
 
 game_one_player_two:
@@ -22,6 +24,7 @@ full_game_player_one:
   user: one
   game: full_game
   owner: true
+  dealer: true
   team: 1
 
 full_game_player_two:
@@ -46,6 +49,7 @@ started_game_owner:
   user: one
   game: started_game
   owner: true
+  dealer: true
   team: 1
 
 started_game_player_two:

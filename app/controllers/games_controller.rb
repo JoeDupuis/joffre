@@ -11,8 +11,7 @@ class GamesController < ApplicationController
 
   def create
     @game = Game.new(game_params)
-    owner_player = @game.players.build(user: Current.user, owner: true)
-    @game.dealer = owner_player
+    @game.players.build(user: Current.user, owner: true, dealer: true)
 
     if @game.save
       redirect_to @game, notice: success_message(@game)

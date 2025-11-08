@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_08_062230) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_08_205910) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -47,19 +47,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_062230) do
 
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "dealer_id"
     t.string "game_code"
     t.integer "minimum_bid", default: 6, null: false
     t.string "name"
     t.string "password_digest"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
-    t.index ["dealer_id"], name: "index_games_on_dealer_id"
     t.index ["game_code"], name: "index_games_on_game_code", unique: true
   end
 
   create_table "players", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "dealer", default: false, null: false
     t.integer "game_id", null: false
     t.boolean "owner", default: false, null: false
     t.integer "team"
@@ -96,7 +95,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_062230) do
   add_foreign_key "cards", "players"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
-  add_foreign_key "games", "players", column: "dealer_id"
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
   add_foreign_key "sessions", "users"

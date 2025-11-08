@@ -9,16 +9,14 @@ class GameTest < ActiveSupport::TestCase
 
   test "should save game with name" do
     game = Game.new(name: "Test Game")
-    owner_player = game.players.build(user: users(:one), owner: true)
-    game.dealer = owner_player
+    game.players.build(user: users(:one), owner: true, dealer: true)
     assert game.save
   end
 
   test "owner method returns the game owner" do
     user = users(:one)
     game = Game.new(name: "Test Game")
-    owner_player = game.players.build(user: user, owner: true)
-    game.dealer = owner_player
+    game.players.build(user: user, owner: true, dealer: true)
     game.save!
 
     assert_equal user, game.owner
@@ -26,8 +24,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "owner method returns nil when no owner" do
     game = Game.new(name: "Test Game")
-    non_owner = game.players.build(user: users(:one), owner: false)
-    game.dealer = non_owner
+    game.players.build(user: users(:one), owner: false, dealer: true)
     game.save!
     assert_nil game.owner
   end

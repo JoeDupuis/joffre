@@ -9,6 +9,7 @@ class Player < ApplicationRecord
   validates :user_id, uniqueness: { scope: :game_id, message: "are already in this game" }
   validates :game, presence: { message: "invalid game code" }
   validates :team, inclusion: { in: [ 1, 2 ], allow_nil: true }
+  validates :dealer, uniqueness: { scope: :game_id, if: :dealer?, message: "already exists for this game" }
   validate :game_not_full, on: :create
   validate :correct_password, on: :create, unless: :owner?
   validate :game_not_started, on: :create
@@ -16,6 +17,7 @@ class Player < ApplicationRecord
   before_create :assign_team
 
   scope :owner, -> { where(owner: true) }
+  scope :dealer, -> { where(dealer: true) }
   scope :team_one, -> { where(team: 1) }
   scope :team_two, -> { where(team: 2) }
 
