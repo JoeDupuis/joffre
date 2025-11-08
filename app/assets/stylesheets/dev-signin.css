@@ -38,7 +38,7 @@
 
 .dev-signout-button {
   position: fixed;
-  top: 10px;
+  bottom: 10px;
   left: 10px;
   padding: 8px 16px;
   background-color: #dc3545;
