@@ -91,14 +91,14 @@ if Rails.env.development?
   friend1 = User.find_by!(email_address: "friend1@example.com")
   friend2 = User.find_by!(email_address: "friend2@example.com")
 
-  bidding_game2 = Game.find_or_create_by!(name: "Eve's Bidding Game")
+  bidding_game2 = Game.find_or_create_by!(name: "Alice's Second Game")
 
-  eve_player = Player.find_or_create_by!(user: eve, game: bidding_game2) do |p|
+  alice_player2 = Player.find_or_create_by!(user: alice, game: bidding_game2) do |p|
     p.owner = true
     p.team = 1
   end
 
-  alice_player2 = Player.find_or_create_by!(user: alice, game: bidding_game2) do |p|
+  eve_player = Player.find_or_create_by!(user: eve, game: bidding_game2) do |p|
     p.team = 1
   end
 
@@ -115,11 +115,11 @@ if Rails.env.development?
     bidding_game2.update!(status: :bidding)
   end
 
-  # Create bids: Friend1 (6), Alice (pass), Friend2 (9)
-  # Bidding order: Friend1, Alice, Friend2, Eve (waiting for Eve's bid)
+  # Create bids: Friend1 (6), Eve (pass), Friend2 (9)
+  # Bidding order: Friend1, Eve, Friend2, Alice (waiting for Alice's bid)
   if bidding_game2.bids.empty?
     Bid.create!(game: bidding_game2, player: friend1_player, amount: 6)
-    Bid.create!(game: bidding_game2, player: alice_player2, amount: nil)
+    Bid.create!(game: bidding_game2, player: eve_player, amount: nil)
     Bid.create!(game: bidding_game2, player: friend2_player, amount: 9)
   end
 end
