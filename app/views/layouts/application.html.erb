@@ -29,6 +29,9 @@
     <%= yield %>
 
     <% if Rails.env.development? %>
+      <% if authenticated? %>
+        <%= button_to "Signout", session_path, method: :delete, class: "dev-signout-button" %>
+      <% end %>
       <div class="branch-indicator">
         <%= current_git_branch || "unknown" %>
       </div>
