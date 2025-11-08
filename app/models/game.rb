@@ -98,7 +98,21 @@ class Game < ApplicationRecord
   end
 
   def setup_bidding_phase!
+    assign_player_orders!
     deal_cards!
+  end
+
+  def assign_player_orders!
+    dealer_player = dealer
+    dealer_player.update!(order: 1)
+
+    opposite_team = dealer_player.team == 1 ? 2 : 1
+    opposite_players = players.where(team: opposite_team).where.not(id: dealer_player.id).order(:id).to_a
+    opposite_players[0].update!(order: 2)
+    opposite_players[1].update!(order: 4)
+
+    teammate = players.where(team: dealer_player.team).where.not(id: dealer_player.id).sole
+    teammate.update!(order: 3)
   end
 
   def startable

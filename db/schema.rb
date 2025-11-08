@@ -60,7 +60,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_212030) do
     t.datetime "created_at", null: false
     t.boolean "dealer", default: false, null: false
     t.integer "game_id", null: false
-    t.integer "order", null: false
+    t.integer "order"
     t.boolean "owner", default: false, null: false
     t.integer "team"
     t.datetime "updated_at", null: false

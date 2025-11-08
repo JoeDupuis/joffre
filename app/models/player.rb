@@ -15,7 +15,6 @@ class Player < ApplicationRecord
   validate :game_not_started, on: :create
 
   before_create :assign_team
-  before_create :assign_order
 
   scope :owner, -> { where(owner: true) }
   scope :dealer, -> { where(dealer: true) }
@@ -29,20 +28,6 @@ class Player < ApplicationRecord
 
     player_count = game.players.count
     self.team = player_count < 2 ? 1 : 2
-  end
-
-  def assign_order
-    return unless game
-
-    if dealer?
-      self.order = 1
-    elsif team == 1
-      self.order = 3
-    elsif game.players.where(team: 2).count.zero?
-      self.order = 2
-    else
-      self.order = 4
-    end
   end
 
   def game_not_full
