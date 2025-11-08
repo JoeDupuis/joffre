@@ -14,8 +14,6 @@ class Bid < ApplicationRecord
   validate :player_is_current_bidder, on: :create
   validate :game_is_in_bidding_phase, on: :create
 
-  after_create :check_bidding_completion
-
   private
 
   def minimum_valid_amount
@@ -35,14 +33,6 @@ class Bid < ApplicationRecord
 
     unless game.bidding?
       errors.add(:game, :invalid)
-    end
-  end
-
-  def check_bidding_completion
-    if game.all_players_passed?
-      game.reshuffle_and_rebid!
-    elsif game.bid_complete?
-      game.start_playing_phase!
     end
   end
 end

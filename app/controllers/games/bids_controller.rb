@@ -5,12 +5,12 @@ module Games
     before_action :set_player
 
     def create
-      @bid = @game.bids.build(
+      @bid = @game.place_bid!(
         player: @player,
         amount: bid_params[:amount].presence
       )
 
-      if @bid.save
+      if @bid.persisted?
         flash[:notice] = success_message(@bid) if @game.reload.playing?
         redirect_to @game
       else

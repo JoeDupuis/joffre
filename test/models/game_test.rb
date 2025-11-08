@@ -123,12 +123,9 @@ class GameTest < ActiveSupport::TestCase
 
     order = game.bidding_order
 
-    # Disable validations to test the logic independently
-    Bid.skip_callback(:create, :after, :check_bidding_completion)
     order.each do |player|
       Bid.create!(player: player, game: game, amount: nil)
     end
-    Bid.set_callback(:create, :after, :check_bidding_completion)
 
     assert game.all_players_passed?
   end
@@ -139,13 +136,10 @@ class GameTest < ActiveSupport::TestCase
 
     order = game.bidding_order
 
-    # Disable validations to test the logic independently
-    Bid.skip_callback(:create, :after, :check_bidding_completion)
     Bid.create!(player: order[0], game: game, amount: 7)
     order[1..3].each do |player|
       Bid.create!(player: player, game: game, amount: nil)
     end
-    Bid.set_callback(:create, :after, :check_bidding_completion)
 
     assert_not game.all_players_passed?
   end

@@ -98,7 +98,26 @@ class Game < ApplicationRecord
     update!(status: :playing)
   end
 
+  # Create a bid and process game state transitions
+  def place_bid!(player:, amount:)
+    bid = bids.build(player: player, amount: amount)
+
+    if bid.save
+      process_bid_completion!
+    end
+
+    bid
+  end
+
   private
+
+  def process_bid_completion!
+    if all_players_passed?
+      reshuffle_and_rebid!
+    elsif bid_complete?
+      start_playing_phase!
+    end
+  end
 
   def starting?
     will_save_change_to_status? && status == "bidding"
