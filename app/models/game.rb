@@ -41,21 +41,17 @@ class Game < ApplicationRecord
     end
   end
 
-  # Returns array of players in bidding order
   def bidding_order
     return [] unless players.count == 4
 
     dealer_team = dealer.team
     opposite_team = dealer_team == 1 ? 2 : 1
 
-    # Get players by team, sorted by ID
     opposite_players = players.where(team: opposite_team).order(:id).to_a
     dealer_team_players = players.where(team: dealer_team).order(:id).to_a
 
-    # Remove dealer from their team's players
     dealer_team_players.delete(dealer)
 
-    # Order: opposite team player 1, dealer team player, opposite team player 2, dealer
     [
       opposite_players[0],
       dealer_team_players[0],
@@ -64,7 +60,6 @@ class Game < ApplicationRecord
     ].compact
   end
 
-  # Returns the player whose turn it is to bid
   def current_bidder
     order = bidding_order
     return nil if order.empty?
@@ -73,34 +68,28 @@ class Game < ApplicationRecord
     order[bid_count % 4]
   end
 
-  # Returns the highest bid (or nil if no bids or only passes)
   def highest_bid
     bids.where.not(amount: nil).order(amount: :desc, created_at: :asc).first
   end
 
-  # Check if all 4 players passed
   def all_players_passed?
     bids.count == 4 && bids.where(amount: nil).count == 4
   end
 
-  # Check if bidding is complete (each player gets one turn or someone bid 12)
   def bid_complete?
     (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
 
-  # Reshuffle when everyone passes
   def reshuffle_and_rebid!
     cards.destroy_all
     bids.destroy_all
     deal_cards!
   end
 
-  # Transition to playing phase
   def start_playing_phase!
     update!(status: :playing)
   end
 
-  # Create a bid and process game state transitions
   def place_bid!(player:, amount:)
     bid = bids.build(player: player, amount: amount)
 
