@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   resources :games, only: [ :index, :new, :create, :show, :update, :destroy ] do
     scope module: :games do
-      resources :bids, only: [:create]
+      resources :bids, only: [ :create ]
     end
   end
 
