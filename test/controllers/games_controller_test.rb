@@ -17,6 +17,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
+  test "should get index" do
+    get games_url
+    assert_response :success
+  end
+
   test "should create game with valid params" do
     assert_difference("Game.count") do
       assert_difference("Player.count") do
