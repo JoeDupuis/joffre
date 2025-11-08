@@ -32,6 +32,7 @@ class Game < ApplicationRecord
   def deal_cards!
     raise ArgumentError, "Game must have exactly 4 players" unless players.count == 4
 
+    cards.destroy_all
     deck = Card.deck
     player_list = players.to_a
 
@@ -71,18 +72,13 @@ class Game < ApplicationRecord
     (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
 
-  def reshuffle_and_rebid!
-    cards.destroy_all
-    bids.destroy_all
-    deal_cards!
-  end
-
   def place_bid!(player:, amount:)
     bid = bids.build(player: player, amount: amount)
 
     if bid.save
       if all_players_passed?
-        reshuffle_and_rebid!
+        bids.destroy_all
+        deal_cards!
       elsif bid_complete?
         update!(status: :playing)
       end
