@@ -25,9 +25,8 @@ class Bid < ApplicationRecord
   def player_is_current_bidder
     return unless game
 
-    current_bidder = game.current_bidder
-    unless current_bidder == player
-      errors.add(:player, "it's not your turn to bid")
+    unless game.current_bidder == player
+      errors.add(:player, :invalid)
     end
   end
 
