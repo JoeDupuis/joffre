@@ -6,6 +6,7 @@ one:
   owner: true
   dealer: true
   team: 1
+  order: 1
 
 two:
   user: two
@@ -13,12 +14,14 @@ two:
   owner: false
   dealer: true
   team: 2
+  order: 1
 
 game_one_player_two:
   user: two
   game: one
   owner: false
   team: 2
+  order: 2
 
 full_game_player_one:
   user: one
@@ -26,24 +29,28 @@ full_game_player_one:
   owner: true
   dealer: true
   team: 1
+  order: 1
 
 full_game_player_two:
   user: two
   game: full_game
   owner: false
   team: 1
+  order: 2
 
 full_game_player_three:
   user: no_friends
   game: full_game
   owner: false
   team: 2
+  order: 3
 
 full_game_player_four:
   user: stranger_one
   game: full_game
   owner: false
   team: 2
+  order: 4
 
 started_game_owner:
   user: one
@@ -51,9 +58,11 @@ started_game_owner:
   owner: true
   dealer: true
   team: 1
+  order: 1
 
 started_game_player_two:
   user: two
   game: started_game
   owner: false
   team: 2
+  order: 2

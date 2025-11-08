@@ -44,20 +44,11 @@ class Game < ApplicationRecord
   def bidding_order
     return [] unless players.count == 4
 
-    dealer_team = dealer.team
-    opposite_team = dealer_team == 1 ? 2 : 1
+    ordered_players = players.order(:order).to_a
+    dealer_index = ordered_players.index(dealer)
+    return [] unless dealer_index
 
-    opposite_players = players.where(team: opposite_team).order(:id).to_a
-    dealer_team_players = players.where(team: dealer_team).order(:id).to_a
-
-    dealer_team_players.delete(dealer)
-
-    [
-      opposite_players[0],
-      dealer_team_players[0],
-      opposite_players[1],
-      dealer
-    ].compact
+    ordered_players.rotate(dealer_index + 1)
   end
 
   def current_bidder

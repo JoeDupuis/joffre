@@ -87,13 +87,13 @@ class GameTest < ActiveSupport::TestCase
     order = game.bidding_order
     assert_equal 4, order.length
 
-    # Dealer should be last
-    assert_equal game.dealer, order.last
+    dealer = game.dealer
+    assert_equal dealer, order.last
 
-    # First bidder should be from opposite team
-    dealer_team = game.dealer.team
-    opposite_team = dealer_team == 1 ? 2 : 1
-    assert_equal opposite_team, order.first.team
+    ordered_players = game.players.order(:order).to_a
+    dealer_index = ordered_players.index(dealer)
+    expected_order = ordered_players.rotate(dealer_index + 1)
+    assert_equal expected_order, order
   end
 
   test "current_bidder should return first player when no bids" do
