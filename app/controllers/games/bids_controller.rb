@@ -13,7 +13,7 @@ module Games
       if @bid.save
         handle_bid_success
       else
-        redirect_to @game, alert: @bid.errors.full_messages.join(", ")
+        redirect_to @game, alert: failure_message(@bid)
       end
     end
 
@@ -26,7 +26,7 @@ module Games
     def set_player
       @player = @game.players.find_by(user: Current.user)
       unless @player
-        redirect_to @game, alert: "You are not a player in this game"
+        redirect_to @game, alert: failure_message
       end
     end
 
@@ -38,7 +38,7 @@ module Games
       if @game.reload.bidding?
         redirect_to @game
       elsif @game.playing?
-        redirect_to @game, notice: "Bidding complete! #{@game.highest_bid.player.user.name} won with a bid of #{@game.highest_bid.amount}"
+        redirect_to @game, notice: success_message(@bid)
       else
         redirect_to @game
       end
