@@ -7,11 +7,10 @@ class Bid < ApplicationRecord
   validates :amount,
     numericality: {
       only_integer: true,
-      greater_than_or_equal_to: ->(bid) { bid.game.minimum_bid },
+      greater_than_or_equal_to: :minimum_valid_amount,
       less_than_or_equal_to: 12
     },
     allow_nil: true
-  validate :amount_higher_than_current_bid
   validate :player_is_current_bidder, on: :create
   validate :game_is_in_bidding_phase, on: :create
 
@@ -19,13 +18,8 @@ class Bid < ApplicationRecord
 
   private
 
-  def amount_higher_than_current_bid
-    return if amount.nil?
-
-    highest = game.highest_bid
-    if highest && amount <= highest.amount
-      errors.add(:amount, "must be higher than current bid of #{highest.amount}")
-    end
+  def minimum_valid_amount
+    game.highest_bid&.amount&.+(1) || game.minimum_bid
   end
 
   def player_is_current_bidder
@@ -41,7 +35,7 @@ class Bid < ApplicationRecord
     return unless game
 
     unless game.bidding?
-      errors.add(:game, "is not in bidding phase")
+      errors.add(:game, :invalid)
     end
   end
 
