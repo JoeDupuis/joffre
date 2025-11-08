@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   resource :session
   resource :registration, only: %i[new create]
   resources :passwords, param: :token
-  resources :games, only: [ :index, :new, :create, :show, :update, :destroy ]
+  resources :games, only: [ :index, :new, :create, :show, :update, :destroy ] do
+    scope module: :games do
+      resources :bids, only: [:create]
+    end
+  end
 
   namespace :games do
     resources :players

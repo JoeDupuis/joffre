@@ -12,7 +12,7 @@
 
   <div class="actions">
     <% if @game.owner == Current.user && @game.players.count == 4 %>
-      <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :started } }, class: "button" %>
+      <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :bidding } }, class: "button" %>
     <% end %>
     <% if @game.owner == Current.user %>
       <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button" %>

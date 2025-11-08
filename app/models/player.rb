@@ -2,6 +2,7 @@ class Player < ApplicationRecord
   belongs_to :user
   belongs_to :game
   has_many :cards, dependent: :destroy
+  has_many :bids, dependent: :destroy
 
   attr_accessor :password
 
@@ -43,6 +44,6 @@ class Player < ApplicationRecord
   def game_not_started
     return unless game
 
-    errors.add(:game, :started) if game.started?
+    errors.add(:game, :started) unless game.pending?
   end
 end

@@ -36,7 +36,7 @@ class GamesController < ApplicationController
 
   def destroy
     @game = Current.user.owned_games.find(params[:id])
-    return head :unprocessable_entity if @game.started?
+    return head :unprocessable_entity unless @game.pending?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end

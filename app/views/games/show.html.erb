@@ -1,5 +1,7 @@
-<% if @game.started? %>
-  <%= render 'play' %>
-<% else %>
+<% if @game.pending? %>
   <%= render 'lobby' %>
+<% elsif @game.bidding? %>
+  <%= render 'bidding' %>
+<% else %>
+  <%= render 'play' %>
 <% end %>
