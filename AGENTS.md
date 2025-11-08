@@ -24,3 +24,8 @@ This is a rails project using the default stack:
 
 # Comments
 - Do not put comments unless asked.
+
+# Flash Messages
+- Use `notice: success_message(...)` for success messages
+- Use `alert: failure_message(...)` for failure messages
+- See `app/controllers/games_controller.rb` or `app/controllers/games/players_controller.rb` for usage examples
