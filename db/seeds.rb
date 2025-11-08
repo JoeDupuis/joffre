@@ -38,10 +38,12 @@ if Rails.env.development?
     g.status = :pending
   end
 
-  Player.find_or_create_by!(user: alice, game: game) do |p|
+  alice_owner = Player.find_or_create_by!(user: alice, game: game) do |p|
     p.owner = true
     p.team = 1
   end
+
+  game.update!(dealer: alice_owner) unless game.dealer
 
   Player.find_or_create_by!(user: bob, game: game) do |p|
     p.team = 1
@@ -64,6 +66,8 @@ if Rails.env.development?
     p.owner = true
     p.team = 1
   end
+
+  bidding_game.update!(dealer: alice_player) unless bidding_game.dealer
 
   bob_player = Player.find_or_create_by!(user: bob, game: bidding_game) do |p|
     p.team = 1

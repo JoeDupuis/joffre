@@ -3,7 +3,7 @@ class Game < ApplicationRecord
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
-  before_validation :set_dealer, if: :starting?
+  before_validation :set_dealer_if_missing, if: :starting?
   validate :startable, if: :starting?
   after_update :setup_bidding_phase!, if: :just_started_bidding?
 
@@ -128,7 +128,7 @@ class Game < ApplicationRecord
     saved_change_to_status? && status == "bidding"
   end
 
-  def set_dealer
+  def set_dealer_if_missing
     self.dealer = players.owner.first unless dealer
   end
 
