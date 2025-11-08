@@ -21,6 +21,10 @@ class Player < ApplicationRecord
   scope :team_one, -> { where(team: 1) }
   scope :team_two, -> { where(team: 2) }
 
+  def is_current_bidder?
+    game.current_bidder == self
+  end
+
   private
 
   def assign_team

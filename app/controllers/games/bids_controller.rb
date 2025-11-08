@@ -2,11 +2,11 @@ module Games
   class BidsController < ApplicationController
     before_action :require_authentication
     before_action :set_game
-    before_action :set_player
+    before_action :set_current_player
 
     def create
       @bid = @game.place_bid!(
-        player: @player,
+        player: Current.player,
         amount: bid_params[:amount].presence
       )
 
@@ -24,9 +24,9 @@ module Games
       @game = Game.find(params[:game_id])
     end
 
-    def set_player
-      @player = @game.players.find_by(user: Current.user)
-      unless @player
+    def set_current_player
+      Current.player = @game.players.find_by(user: Current.user)
+      unless Current.player
         redirect_to @game, alert: failure_message
       end
     end

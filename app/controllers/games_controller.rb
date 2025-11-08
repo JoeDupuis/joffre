@@ -1,5 +1,7 @@
 class GamesController < ApplicationController
   before_action :require_authentication
+  before_action :set_game, only: [ :show, :update, :destroy ]
+  before_action :set_current_player, only: [ :show ]
 
   def index
     @games = Current.user.games.includes(:players, :users)
@@ -21,11 +23,10 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = Game.find(params[:id])
   end
 
   def update
-    @game = Current.user.owned_games.find(params[:id])
+    return head :not_found unless @game.players.exists?(user: Current.user, owner: true)
 
     if @game.update(update_game_params)
       redirect_to @game, notice: success_message(@game)
@@ -35,13 +36,21 @@ class GamesController < ApplicationController
   end
 
   def destroy
-    @game = Current.user.owned_games.find(params[:id])
+    return head :not_found unless @game.players.exists?(user: Current.user, owner: true)
     return head :unprocessable_entity unless @game.pending?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end
 
   private
+
+  def set_game
+    @game = Game.find(params[:id])
+  end
+
+  def set_current_player
+    Current.player = @game.players.find_by(user: Current.user)
+  end
 
   def game_params
     params.require(:game).permit(:name, :password, :password_confirmation)
