@@ -16,7 +16,7 @@ two:
   players = ['bidding_game_player_one', 'bidding_game_player_two', 'bidding_game_player_three', 'bidding_game_player_four']
   card_index = 0
   [1, 2, 3, 4].each do |suite|
-    [7, 8, 9, 10, 11, 12, 13, 14].each do |rank|
+    [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
       player = players[card_index % 4]
 %>
 bidding_game_card_<%= card_index %>:
