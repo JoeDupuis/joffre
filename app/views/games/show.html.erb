@@ -2,6 +2,8 @@
   <%= render 'lobby' %>
 <% elsif @game.bidding? %>
   <%= render 'bidding' %>
+  <%= render 'cards' %>
 <% else %>
   <%= render 'play' %>
+  <%= render 'cards' %>
 <% end %>
