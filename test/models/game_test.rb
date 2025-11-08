@@ -221,4 +221,24 @@ class GameTest < ActiveSupport::TestCase
     assert game.bid_complete?
     assert_equal 2, game.bids.count
   end
+
+  test "bidding order changes when dealer changes" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    original_dealer = game.dealer
+    original_order = game.bidding_order
+
+    # Change dealer to next player in order
+    next_dealer = original_order[1]
+    original_dealer.update!(dealer: false)
+    next_dealer.update!(dealer: true)
+    game.reload
+
+    new_order = game.bidding_order
+
+    # New order should start after new dealer
+    assert_equal next_dealer, new_order.last
+    assert_not_equal original_order, new_order
+  end
 end

@@ -17,6 +17,7 @@ class Bid < ApplicationRecord
   private
 
   def minimum_valid_amount
+    return 0 unless game
     game.highest_bid&.amount&.+(1) || game.minimum_bid
   end
 
