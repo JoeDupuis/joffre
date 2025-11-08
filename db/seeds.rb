@@ -52,4 +52,37 @@ if Rails.env.development?
   Player.find_or_create_by!(user: david, game: game) do |p|
     p.team = 2
   end
+
+  # Create a game in bidding phase with 3 bids already placed
+  bidding_game = Game.find_or_create_by!(name: "Bidding Game")
+
+  alice_player = Player.find_or_create_by!(user: alice, game: bidding_game) do |p|
+    p.owner = true
+    p.team = 1
+  end
+
+  bob_player = Player.find_or_create_by!(user: bob, game: bidding_game) do |p|
+    p.team = 1
+  end
+
+  carol_player = Player.find_or_create_by!(user: carol, game: bidding_game) do |p|
+    p.team = 2
+  end
+
+  david_player = Player.find_or_create_by!(user: david, game: bidding_game) do |p|
+    p.team = 2
+  end
+
+  # Transition to bidding phase (this will set dealer and deal cards)
+  if bidding_game.pending?
+    bidding_game.update!(status: :bidding)
+  end
+
+  # Create bids: Carol (7), Bob (pass), David (8)
+  # Bidding order: Carol, Bob, David, Alice (waiting for Alice's bid)
+  if bidding_game.bids.empty?
+    Bid.create!(game: bidding_game, player: carol_player, amount: 7)
+    Bid.create!(game: bidding_game, player: bob_player, amount: nil)
+    Bid.create!(game: bidding_game, player: david_player, amount: 8)
+  end
 end
