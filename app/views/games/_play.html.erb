@@ -1,3 +1,14 @@
 <div class="container">
   <h1><%= @game.name %> - Play Area</h1>
+
+  <% if @game.highest_bid %>
+    <div class="winning-bid">
+      <h2>Winning Bid</h2>
+      <p>
+        <strong><%= @game.highest_bid.player.user.name %></strong>
+        (Team <%= @game.highest_bid.player.team %>)
+        won the bid with <strong><%= @game.highest_bid.amount %></strong>
+      </p>
+    </div>
+  <% end %>
 </div>
