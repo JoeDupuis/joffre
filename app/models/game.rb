@@ -3,19 +3,18 @@ class Game < ApplicationRecord
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
-  before_validation :set_dealer_if_missing, if: :starting?
   validate :startable, if: :starting?
   after_update :setup_bidding_phase!, if: :just_started_bidding?
+  before_destroy :nullify_dealer
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
-  belongs_to :dealer, class_name: "Player", optional: true
+  belongs_to :dealer, class_name: "Player"
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
-  validates :dealer, presence: true, unless: :pending?
 
   before_validation :generate_game_code, on: :create
 
@@ -128,12 +127,12 @@ class Game < ApplicationRecord
     saved_change_to_status? && status == "bidding"
   end
 
-  def set_dealer_if_missing
-    self.dealer = players.owner.first unless dealer
-  end
-
   def setup_bidding_phase!
     deal_cards!
+  end
+
+  def nullify_dealer
+    update_column(:dealer_id, nil)
   end
 
   def startable

@@ -11,10 +11,10 @@ class GamesController < ApplicationController
 
   def create
     @game = Game.new(game_params)
+    owner_player = @game.players.build(user: Current.user, owner: true)
+    @game.dealer = owner_player
 
     if @game.save
-      owner_player = @game.players.create!(user: Current.user, owner: true)
-      @game.update!(dealer: owner_player)
       redirect_to @game, notice: success_message(@game)
     else
       render :new, status: :unprocessable_entity
