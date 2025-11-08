@@ -32,7 +32,9 @@ if Rails.env.development?
   carol = User.find_by!(email_address: "carol@example.com")
   david = User.find_by!(email_address: "david@example.com")
 
-  game = Game.find_or_create_by!(name: "Alice's Game")
+  game = Game.find_or_create_by!(name: "Alice's Game") do |g|
+    g.status = :pending
+  end
 
   Player.find_or_create_by!(user: alice, game: game) do |p|
     p.owner = true
