@@ -3,6 +3,7 @@ class Game < ApplicationRecord
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
+  before_validation :set_dealer, if: :starting?
   validate :startable, if: :starting?
   after_update :setup_bidding_phase!, if: :just_started_bidding?
 
@@ -14,6 +15,7 @@ class Game < ApplicationRecord
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
+  validates :dealer, presence: true, unless: :pending?
 
   before_validation :generate_game_code, on: :create
 
@@ -126,9 +128,11 @@ class Game < ApplicationRecord
     saved_change_to_status? && status == "bidding"
   end
 
+  def set_dealer
+    self.dealer = players.owner.first unless dealer
+  end
+
   def setup_bidding_phase!
-    # Set dealer to owner for first round
-    update_column(:dealer_id, players.owner.first.id) unless dealer
     deal_cards!
   end
 
