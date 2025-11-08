@@ -36,14 +36,14 @@ full_game_player_two:
   game: full_game
   owner: false
   team: 1
-  order: 2
+  order: 3
 
 full_game_player_three:
   user: no_friends
   game: full_game
   owner: false
   team: 2
-  order: 3
+  order: 2
 
 full_game_player_four:
   user: stranger_one

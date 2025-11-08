@@ -34,7 +34,15 @@ class Player < ApplicationRecord
   def assign_order
     return unless game
 
-    self.order = game.players.count + 1
+    if dealer?
+      self.order = 1
+    elsif team == 1
+      self.order = 3
+    elsif game.players.where(team: 2).count.zero?
+      self.order = 2
+    else
+      self.order = 4
+    end
   end
 
   def game_not_full
