@@ -35,13 +35,8 @@ module Games
     end
 
     def handle_bid_success
-      if @game.reload.bidding?
-        redirect_to @game
-      elsif @game.playing?
-        redirect_to @game, notice: success_message(@bid)
-      else
-        redirect_to @game
-      end
+      flash[:notice] = success_message(@bid) if @game.reload.playing?
+      redirect_to @game
     end
   end
 end
