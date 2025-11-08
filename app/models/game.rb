@@ -81,14 +81,9 @@ class Game < ApplicationRecord
     bids.count == 4 && bids.where(amount: nil).count == 4
   end
 
-  # Check if bidding is complete (at least one bid, then 3 passes)
+  # Check if bidding is complete (each player gets one turn)
   def bidding_complete?
-    return false if bids.count < 4
-    return false unless highest_bid # need at least one real bid
-
-    # Check if last 3 bids were all passes
-    last_three = bids.order(created_at: :desc).limit(3)
-    last_three.count == 3 && last_three.all? { |b| b.amount.nil? }
+    bids.count == 4 && highest_bid.present?
   end
 
   # Reshuffle when everyone passes

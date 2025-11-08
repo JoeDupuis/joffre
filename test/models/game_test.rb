@@ -163,6 +163,19 @@ class GameTest < ActiveSupport::TestCase
     assert game.bidding_complete?
   end
 
+  test "bidding_complete? should return true after 4 bids with mixed bids and passes" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+    game.bids.create!(player: order[0], amount: 7)
+    game.bids.create!(player: order[1], amount: nil)
+    game.bids.create!(player: order[2], amount: 8)
+    game.bids.create!(player: order[3], amount: nil)
+
+    assert game.bidding_complete?
+  end
+
   test "bidding_complete? should return false with less than 4 bids" do
     game = games(:full_game)
     game.update!(status: :bidding)
