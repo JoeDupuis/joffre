@@ -81,9 +81,9 @@ class Game < ApplicationRecord
     bids.count == 4 && bids.where(amount: nil).count == 4
   end
 
-  # Check if bidding is complete (each player gets one turn)
+  # Check if bidding is complete (each player gets one turn or someone bid 12)
   def bidding_complete?
-    bids.count == 4 && highest_bid.present?
+    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
 
   # Reshuffle when everyone passes

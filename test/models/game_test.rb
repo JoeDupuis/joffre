@@ -210,4 +210,17 @@ class GameTest < ActiveSupport::TestCase
 
     assert_equal highest, game.highest_bid
   end
+
+  test "bidding_complete? should return true immediately when someone bids 12" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+    game.bids.create!(player: order[0], amount: 7)
+    game.bids.create!(player: order[1], amount: 12)
+
+    # Only 2 bids, but bidding is complete because someone bid the maximum
+    assert game.bidding_complete?
+    assert_equal 2, game.bids.count
+  end
 end
