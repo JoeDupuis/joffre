@@ -11,7 +11,8 @@ module Games
       )
 
       if @bid.save
-        handle_bid_success
+        flash[:notice] = success_message(@bid) if @game.reload.playing?
+        redirect_to @game
       else
         redirect_to @game, alert: failure_message(@bid)
       end
@@ -32,11 +33,6 @@ module Games
 
     def bid_params
       params.require(:bid).permit(:amount)
-    end
-
-    def handle_bid_success
-      flash[:notice] = success_message(@bid) if @game.reload.playing?
-      redirect_to @game
     end
   end
 end
