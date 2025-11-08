@@ -77,12 +77,12 @@ class Game < ApplicationRecord
   end
 
   # Check if all 4 players passed
-  def all_passed?
+  def all_players_passed?
     bids.count == 4 && bids.where(amount: nil).count == 4
   end
 
   # Check if bidding is complete (each player gets one turn or someone bid 12)
-  def bidding_complete?
+  def bid_complete?
     (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
 

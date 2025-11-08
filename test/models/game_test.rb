@@ -117,7 +117,7 @@ class GameTest < ActiveSupport::TestCase
     assert_equal order[2], game.current_bidder
   end
 
-  test "all_passed? should return true when all 4 players pass" do
+  test "all_players_passed? should return true when all 4 players pass" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -130,10 +130,10 @@ class GameTest < ActiveSupport::TestCase
     end
     Bid.set_callback(:create, :after, :check_bidding_completion)
 
-    assert game.all_passed?
+    assert game.all_players_passed?
   end
 
-  test "all_passed? should return false when at least one bid" do
+  test "all_players_passed? should return false when at least one bid" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -147,10 +147,10 @@ class GameTest < ActiveSupport::TestCase
     end
     Bid.set_callback(:create, :after, :check_bidding_completion)
 
-    assert_not game.all_passed?
+    assert_not game.all_players_passed?
   end
 
-  test "bidding_complete? should return true after a bid and 3 passes" do
+  test "bid_complete? should return true after a bid and 3 passes" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -160,10 +160,10 @@ class GameTest < ActiveSupport::TestCase
     game.bids.create!(player: order[2], amount: nil)
     game.bids.create!(player: order[3], amount: nil)
 
-    assert game.bidding_complete?
+    assert game.bid_complete?
   end
 
-  test "bidding_complete? should return true after 4 bids with mixed bids and passes" do
+  test "bid_complete? should return true after 4 bids with mixed bids and passes" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -173,10 +173,10 @@ class GameTest < ActiveSupport::TestCase
     game.bids.create!(player: order[2], amount: 8)
     game.bids.create!(player: order[3], amount: nil)
 
-    assert game.bidding_complete?
+    assert game.bid_complete?
   end
 
-  test "bidding_complete? should return false with less than 4 bids" do
+  test "bid_complete? should return false with less than 4 bids" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -184,7 +184,7 @@ class GameTest < ActiveSupport::TestCase
     game.bids.create!(player: order[0], amount: 7)
     game.bids.create!(player: order[1], amount: nil)
 
-    assert_not game.bidding_complete?
+    assert_not game.bid_complete?
   end
 
   test "highest_bid should return the bid with highest amount" do
@@ -211,7 +211,7 @@ class GameTest < ActiveSupport::TestCase
     assert_equal highest, game.highest_bid
   end
 
-  test "bidding_complete? should return true immediately when someone bids 12" do
+  test "bid_complete? should return true immediately when someone bids 12" do
     game = games(:full_game)
     game.update!(status: :bidding)
 
@@ -220,7 +220,7 @@ class GameTest < ActiveSupport::TestCase
     game.bids.create!(player: order[1], amount: 12)
 
     # Only 2 bids, but bidding is complete because someone bid the maximum
-    assert game.bidding_complete?
+    assert game.bid_complete?
     assert_equal 2, game.bids.count
   end
 end

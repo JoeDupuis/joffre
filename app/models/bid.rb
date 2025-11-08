@@ -39,9 +39,9 @@ class Bid < ApplicationRecord
   end
 
   def check_bidding_completion
-    if game.all_passed?
+    if game.all_players_passed?
       game.reshuffle_and_rebid!
-    elsif game.bidding_complete?
+    elsif game.bid_complete?
       game.start_playing_phase!
     end
   end
