@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_015642) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_08_221832) do
+  create_table "bids", force: :cascade do |t|
+    t.integer "amount"
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "player_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id"], name: "index_bids_on_game_id"
+    t.index ["player_id"], name: "index_bids_on_player_id"
+  end
+
   create_table "cards", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "game_id", null: false
@@ -38,6 +48,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_015642) do
   create_table "games", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "game_code"
+    t.integer "minimum_bid", default: 6, null: false
     t.string "name"
     t.string "password_digest"
     t.integer "status", default: 0, null: false
@@ -47,7 +58,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_015642) do
 
   create_table "players", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "dealer", default: false, null: false
     t.integer "game_id", null: false
+    t.integer "order"
     t.boolean "owner", default: false, null: false
     t.integer "team"
     t.datetime "updated_at", null: false
@@ -77,6 +90,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_015642) do
     t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
+  add_foreign_key "bids", "games"
+  add_foreign_key "bids", "players"
   add_foreign_key "cards", "games"
   add_foreign_key "cards", "players"
   add_foreign_key "friendships", "users"

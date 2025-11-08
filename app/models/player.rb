@@ -2,12 +2,14 @@ class Player < ApplicationRecord
   belongs_to :user
   belongs_to :game
   has_many :cards, dependent: :destroy
+  has_many :bids, dependent: :destroy
 
   attr_accessor :password
 
   validates :user_id, uniqueness: { scope: :game_id, message: "are already in this game" }
   validates :game, presence: { message: "invalid game code" }
   validates :team, inclusion: { in: [ 1, 2 ], allow_nil: true }
+  validates :dealer, uniqueness: { scope: :game_id, if: :dealer?, message: "already exists for this game" }
   validate :game_not_full, on: :create
   validate :correct_password, on: :create, unless: :owner?
   validate :game_not_started, on: :create
@@ -15,8 +17,13 @@ class Player < ApplicationRecord
   before_create :assign_team
 
   scope :owner, -> { where(owner: true) }
+  scope :dealer, -> { where(dealer: true) }
   scope :team_one, -> { where(team: 1) }
   scope :team_two, -> { where(team: 2) }
+
+  def is_current_bidder?
+    game.current_bidder == self
+  end
 
   private
 
@@ -43,6 +50,6 @@ class Player < ApplicationRecord
   def game_not_started
     return unless game
 
-    errors.add(:game, :started) if game.started?
+    errors.add(:game, :started) unless game.pending?
   end
 end

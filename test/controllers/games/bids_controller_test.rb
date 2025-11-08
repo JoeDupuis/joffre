@@ -1,0 +1,108 @@
+require "test_helper"
+
+module Games
+  class BidsControllerTest < ActionDispatch::IntegrationTest
+    test "should create valid bid" do
+      game = games(:bidding_game)
+      sign_in_as(game.current_bidder.user)
+
+      assert_difference("Bid.count") do
+        post game_bids_url(game), params: { bid: { amount: 7 } }
+      end
+
+      assert_redirected_to game
+    end
+
+    test "should create pass (nil bid)" do
+      game = games(:bidding_game)
+      sign_in_as(game.current_bidder.user)
+
+      assert_difference("Bid.count") do
+        post game_bids_url(game), params: { bid: { amount: "" } }
+      end
+
+      assert_redirected_to game
+      assert_nil Bid.last.amount
+    end
+
+    test "should not create bid if not current bidder" do
+      game = games(:bidding_game)
+      wrong_player = game.players.where.not(id: game.current_bidder.id).first
+      sign_in_as(wrong_player.user)
+
+      assert_no_difference("Bid.count") do
+        post game_bids_url(game), params: { bid: { amount: 7 } }
+      end
+
+      assert_redirected_to game
+      assert_not_nil flash[:alert]
+    end
+
+    test "should not create bid with invalid amount" do
+      game = games(:bidding_game)
+      sign_in_as(game.current_bidder.user)
+
+      assert_no_difference("Bid.count") do
+        post game_bids_url(game), params: { bid: { amount: 5 } }
+      end
+
+      assert_redirected_to game
+      assert_not_nil flash[:alert]
+    end
+
+    test "should transition to playing when bidding complete" do
+      game = games(:bidding_game)
+      order = game.bidding_order
+
+      # Place 3 bids
+      game.bids.create!(player: order[0], amount: 7)
+      game.bids.create!(player: order[1], amount: nil)
+      game.bids.create!(player: order[2], amount: 8)
+
+      # Fourth bid should complete bidding
+      sign_in_as(order[3].user)
+      post game_bids_url(game), params: { bid: { amount: "" } }
+
+      game.reload
+      assert game.playing?
+      assert_not_nil flash[:notice]
+    end
+
+    test "should reshuffle when all players pass" do
+      game = games(:bidding_game)
+      order = game.bidding_order
+      initial_card_count = game.cards.count
+
+      # Place 3 passes
+      game.bids.create!(player: order[0], amount: nil)
+      game.bids.create!(player: order[1], amount: nil)
+      game.bids.create!(player: order[2], amount: nil)
+
+      # Fourth pass should trigger reshuffle
+      sign_in_as(order[3].user)
+      post game_bids_url(game), params: { bid: { amount: "" } }
+
+      game.reload
+      assert game.bidding?
+      assert_equal 0, game.bids.count
+      assert_equal initial_card_count, game.cards.count
+    end
+
+    test "should require authentication" do
+      game = games(:bidding_game)
+      post game_bids_url(game), params: { bid: { amount: 7 } }
+      assert_redirected_to new_session_url
+    end
+
+    test "should require player in game" do
+      game = games(:bidding_game)
+      sign_in_as(users(:stranger_two))
+
+      assert_no_difference("Bid.count") do
+        post game_bids_url(game), params: { bid: { amount: 7 } }
+      end
+
+      assert_redirected_to game
+    end
+  end
+end

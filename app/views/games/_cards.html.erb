@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="your-cards">
+    <h3>Your Cards</h3>
+    <% if Current.player %>
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Current.player.cards.order(:suite, :rank).each do |card| %>
+            <tr>
+              <td><%= card.suite %></td>
+              <td><%= card.rank %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>
