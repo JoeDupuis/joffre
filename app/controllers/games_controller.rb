@@ -1,7 +1,6 @@
 class GamesController < ApplicationController
   before_action :require_authentication
   before_action :set_game, only: [ :show, :update, :destroy ]
-  before_action :set_current_player, only: [ :show ]
 
   def index
     @games = Current.user.games.includes(:players, :users)
@@ -45,11 +44,7 @@ class GamesController < ApplicationController
   private
 
   def set_game
-    @game = Game.find(params[:id])
-  end
-
-  def set_current_player
-    Current.player = @game.players.find_by(user: Current.user)
+    Current.game = @game = Game.find(params[:id])
   end
 
   def game_params

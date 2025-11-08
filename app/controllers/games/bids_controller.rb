@@ -1,8 +1,9 @@
 module Games
   class BidsController < ApplicationController
+    include GameScoped
+
     before_action :require_authentication
-    before_action :set_game
-    before_action :set_current_player
+    before_action :require_player
 
     def create
       @bid = @game.place_bid!(
@@ -20,12 +21,7 @@ module Games
 
     private
 
-    def set_game
-      @game = Game.find(params[:game_id])
-    end
-
-    def set_current_player
-      Current.player = @game.players.find_by(user: Current.user)
+    def require_player
       unless Current.player
         redirect_to @game, alert: failure_message
       end
