@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_08_221832) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_09_044443) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -27,10 +27,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_221832) do
     t.integer "player_id", null: false
     t.integer "rank", null: false
     t.integer "suite", null: false
+    t.integer "trick_id"
     t.datetime "updated_at", null: false
     t.index ["game_id", "suite", "rank"], name: "index_cards_on_game_id_and_suite_and_rank", unique: true
     t.index ["game_id"], name: "index_cards_on_game_id"
     t.index ["player_id"], name: "index_cards_on_player_id"
+    t.index ["trick_id"], name: "index_cards_on_trick_id"
   end
 
   create_table "friendships", force: :cascade do |t|
@@ -79,6 +81,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_221832) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "tricks", force: :cascade do |t|
+    t.boolean "completed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "winner_id"
+    t.index ["game_id"], name: "index_tricks_on_game_id"
+    t.index ["winner_id"], name: "index_tricks_on_winner_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
@@ -94,9 +106,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_08_221832) do
   add_foreign_key "bids", "players"
   add_foreign_key "cards", "games"
   add_foreign_key "cards", "players"
+  add_foreign_key "cards", "tricks"
   add_foreign_key "friendships", "users"
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tricks", "games"
+  add_foreign_key "tricks", "players", column: "winner_id"
 end

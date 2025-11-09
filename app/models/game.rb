@@ -10,6 +10,7 @@ class Game < ApplicationRecord
   has_many :users, through: :players
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
+  has_many :tricks, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -85,6 +86,97 @@ class Game < ApplicationRecord
     end
 
     bid
+  end
+
+  def current_trick
+    tricks.where(completed: false).first || tricks.create!
+  end
+
+  def play_order
+    return [] unless players.count == 4
+
+    ordered_players = players.order(:order).to_a
+
+    if current_trick.cards.empty?
+      if tricks.where(completed: true).empty?
+        bid_winner = highest_bid&.player
+        return ordered_players unless bid_winner
+
+        bid_winner_index = ordered_players.index(bid_winner)
+        return ordered_players unless bid_winner_index
+
+        return ordered_players.rotate(bid_winner_index)
+      else
+        last_trick_winner = tricks.where(completed: true).order(created_at: :desc).first&.winner
+        return ordered_players unless last_trick_winner
+
+        winner_index = ordered_players.index(last_trick_winner)
+        return ordered_players unless winner_index
+
+        return ordered_players.rotate(winner_index)
+      end
+    end
+
+    first_player = current_trick.cards.order(:created_at).first.player
+    first_player_index = ordered_players.index(first_player)
+    return [] unless first_player_index
+
+    ordered_players.rotate(first_player_index)
+  end
+
+  def current_player_to_play
+    order = play_order
+    return nil if order.empty?
+
+    cards_played = current_trick.cards.count
+    return nil if cards_played >= 4
+
+    order[cards_played]
+  end
+
+  def play_card!(player:, card:)
+    raise ArgumentError, "Not this player's turn" unless current_player_to_play == player
+    raise ArgumentError, "Card not in player's hand" unless card.player == player && card.trick_id.nil?
+
+    trick = current_trick
+    card.update!(trick: trick)
+
+    if trick.complete?
+      trick.complete_trick!
+      check_round_complete!
+    end
+
+    card
+  end
+
+  def all_cards_played?
+    cards.in_hand.count == 0
+  end
+
+  def check_round_complete!
+    return unless all_cards_played?
+
+    rotate_dealer!
+    reset_for_bidding!
+  end
+
+  def rotate_dealer!
+    current_dealer = dealer
+    ordered_players = players.order(:order).to_a
+    dealer_index = ordered_players.index(current_dealer)
+    return unless dealer_index
+
+    new_dealer_index = (dealer_index + 1) % 4
+    new_dealer = ordered_players[new_dealer_index]
+
+    current_dealer.update!(dealer: false)
+    new_dealer.update!(dealer: true)
+  end
+
+  def reset_for_bidding!
+    tricks.destroy_all
+    bids.destroy_all
+    update!(status: :bidding)
   end
 
   private

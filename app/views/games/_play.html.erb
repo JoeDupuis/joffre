@@ -11,4 +11,64 @@
       </p>
     </div>
   <% end %>
+
+  <div class="tricks-won">
+    <h2>Tricks Won</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th>Tricks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @game.players.order(:order).each do |player| %>
+          <tr>
+            <td><%= player.user.name %></td>
+            <td><%= player.team %></td>
+            <td><%= player.tricks_won.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% current_trick = @game.current_trick %>
+  <div class="current-trick">
+    <h2>Current Trick</h2>
+    <% if current_trick.cards.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Team</th>
+            <th>Suite</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% current_trick.cards.order(:created_at).each do |card| %>
+            <tr>
+              <td><%= card.player.user.name %></td>
+              <td><%= card.player.team %></td>
+              <td><%= card.suite %></td>
+              <td><%= card.rank %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No cards played yet in this trick</p>
+    <% end %>
+
+    <% if Current.player&.is_current_player? %>
+      <p class="highlight"><strong>Your turn to play!</strong></p>
+    <% else %>
+      <% next_player = @game.current_player_to_play %>
+      <% if next_player %>
+        <p>Waiting for <%= next_player.user.name %> to play...</p>
+      <% end %>
+    <% end %>
+  </div>
 </div>

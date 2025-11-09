@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :games, only: [ :index, :new, :create, :show, :update, :destroy ] do
     scope module: :games do
       resources :bids, only: [ :create ]
+      resources :plays, only: [ :create ]
     end
   end
 

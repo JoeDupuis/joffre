@@ -3,6 +3,7 @@ class Player < ApplicationRecord
   belongs_to :game
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
+  has_many :tricks_won, class_name: "Trick", foreign_key: :winner_id, dependent: :nullify
 
   attr_accessor :password
 
@@ -23,6 +24,10 @@ class Player < ApplicationRecord
 
   def is_current_bidder?
     game.current_bidder == self
+  end
+
+  def is_current_player?
+    game.current_player_to_play == self
   end
 
   private
