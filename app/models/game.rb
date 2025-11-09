@@ -103,7 +103,7 @@ class Game < ApplicationRecord
         return ordered_players unless bid_winner
 
         bid_winner_index = ordered_players.index(bid_winner)
-        return ordered_players unless bid_winner_index
+        return ordered_players if bid_winner_index.nil?
 
         return ordered_players.rotate(bid_winner_index)
       else
@@ -111,7 +111,7 @@ class Game < ApplicationRecord
         return ordered_players unless last_trick_winner
 
         winner_index = ordered_players.index(last_trick_winner)
-        return ordered_players unless winner_index
+        return ordered_players if winner_index.nil?
 
         return ordered_players.rotate(winner_index)
       end
@@ -119,7 +119,7 @@ class Game < ApplicationRecord
 
     first_player = current_trick.cards.order(:created_at).first.player
     first_player_index = ordered_players.index(first_player)
-    return [] unless first_player_index
+    return [] if first_player_index.nil?
 
     ordered_players.rotate(first_player_index)
   end
