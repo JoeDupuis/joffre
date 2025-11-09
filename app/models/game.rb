@@ -89,11 +89,12 @@ class Game < ApplicationRecord
   end
 
   def current_trick
+    return nil unless playing?
     tricks.where(completed: false).first || tricks.create!
   end
 
   def play_order
-    return [] unless players.count == 4
+    return [] unless playing? && players.count == 4
 
     ordered_players = players.order(:order).to_a
 
@@ -116,6 +117,8 @@ class Game < ApplicationRecord
   end
 
   def current_player_to_play
+    return nil unless playing?
+
     order = play_order
     return nil if order.empty?
 
