@@ -3,7 +3,7 @@
 <% elsif @game.bidding? %>
   <%= render 'bidding' %>
   <%= render 'cards' %>
-<% else %>
+<% elsif @game.playing? %>
   <%= render 'play' %>
   <%= render 'cards' %>
 <% end %>

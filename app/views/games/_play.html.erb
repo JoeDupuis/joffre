@@ -37,7 +37,7 @@
   <% current_trick = @game.current_trick %>
   <div class="current-trick">
     <h2>Current Trick</h2>
-    <% if current_trick&.cards&.any? %>
+    <% if current_trick.cards.any? %>
       <table>
         <thead>
           <tr>
