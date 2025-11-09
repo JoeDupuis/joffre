@@ -12,7 +12,7 @@ module Games
         @game.play_card!(player: Current.player, card: card)
         redirect_to @game, notice: success_message(card)
       rescue ArgumentError => e
-        redirect_to @game, alert: failure_message(card, message: e.message)
+        redirect_to @game, alert: e.message
       end
     end
 

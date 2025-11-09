@@ -19,3 +19,8 @@ bidding_game:
   name: Bidding Game
   status: 1
   game_code: BIDD01
+
+playing_game:
+  name: Playing Game
+  status: 2
+  game_code: PLAY01

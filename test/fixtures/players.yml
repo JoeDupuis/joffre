@@ -102,3 +102,32 @@ bidding_game_player_four:
   owner: false
   team: 2
   order: 4
+
+playing_game_player_one:
+  user: one
+  game: playing_game
+  owner: true
+  dealer: true
+  team: 1
+  order: 1
+
+playing_game_player_two:
+  user: two
+  game: playing_game
+  owner: false
+  team: 2
+  order: 2
+
+playing_game_player_three:
+  user: no_friends
+  game: playing_game
+  owner: false
+  team: 1
+  order: 3
+
+playing_game_player_four:
+  user: stranger_one
+  game: playing_game
+  owner: false
+  team: 2
+  order: 4
