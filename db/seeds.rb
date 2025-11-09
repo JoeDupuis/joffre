@@ -90,4 +90,83 @@ if Rails.env.development?
     Bid.create!(game: bidding_game, player: bob_player, amount: nil)
     Bid.create!(game: bidding_game, player: david_player, amount: 8)
   end
+
+  # Game 3 - Almost complete, last card of last trick
+  almost_done_game = Game.find_by(name: "Almost Done Game")
+  if almost_done_game
+    almost_done_game.destroy
+  end
+
+  almost_done_game = Game.create!(name: "Almost Done Game", status: :pending)
+
+  if almost_done_game
+    alice_p = Player.create!(user: alice, game: almost_done_game, owner: true, dealer: true, team: 1, order: 1)
+    bob_p = Player.create!(user: bob, game: almost_done_game, team: 2, order: 2)
+    carol_p = Player.create!(user: carol, game: almost_done_game, team: 1, order: 3)
+    david_p = Player.create!(user: david, game: almost_done_game, team: 2, order: 4)
+
+    # Update to bidding to allow creating bids
+    almost_done_game.update_column(:status, Game.statuses[:bidding])
+
+    Bid.create!(game: almost_done_game, player: bob_p, amount: nil)
+    Bid.create!(game: almost_done_game, player: carol_p, amount: 7)
+    Bid.create!(game: almost_done_game, player: david_p, amount: nil)
+    Bid.create!(game: almost_done_game, player: alice_p, amount: 8)
+
+    # Now update to playing
+    almost_done_game.update_column(:status, Game.statuses[:playing])
+
+    players_array = [ alice_p, bob_p, carol_p, david_p ]
+
+    all_cards = []
+    Card.suites.each_key do |suite_name|
+      (0..7).each do |rank|
+        all_cards << { suite: suite_name, rank: rank }
+      end
+    end
+    all_cards.shuffle!
+
+    cards_with_players = all_cards.map.with_index do |card_data, index|
+      { **card_data, player: players_array[index % 4] }
+    end
+
+    # Create 7 completed tricks (28 cards)
+    7.times do |trick_num|
+      trick = Trick.create!(game: almost_done_game, winner: alice_p, completed: true)
+      4.times do |card_in_trick|
+        card_index = trick_num * 4 + card_in_trick
+        card_data = cards_with_players[card_index]
+        Card.create!(
+          game: almost_done_game,
+          player: card_data[:player],
+          suite: card_data[:suite],
+          rank: card_data[:rank],
+          trick: trick
+        )
+      end
+    end
+
+    # Create 8th trick with 3 cards
+    last_trick = Trick.create!(game: almost_done_game, winner: nil, completed: false)
+    3.times do |card_in_trick|
+      card_index = 28 + card_in_trick
+      card_data = cards_with_players[card_index]
+      Card.create!(
+        game: almost_done_game,
+        player: card_data[:player],
+        suite: card_data[:suite],
+        rank: card_data[:rank],
+        trick: last_trick
+      )
+    end
+
+    # Create the last card (card 32) without a trick - it's still in hand
+    last_card_data = cards_with_players[31]
+    Card.create!(
+      game: almost_done_game,
+      player: last_card_data[:player],
+      suite: last_card_data[:suite],
+      rank: last_card_data[:rank]
+    )
+  end
 end
