@@ -97,31 +97,22 @@ class Game < ApplicationRecord
 
     ordered_players = players.order(:order).to_a
 
-    if current_trick.cards.empty?
-      if tricks.where(completed: true).empty?
-        bid_winner = highest_bid&.player
-        return ordered_players unless bid_winner
+    starting_player = if first_trick?
+                        then
+                        highest_bid.player
+                      else
+                        last_trick_winner
+                      end
+    index = ordered_players.index(starting_player)
+    ordered_players.rotate(index)
+  end
 
-        bid_winner_index = ordered_players.index(bid_winner)
-        return ordered_players if bid_winner_index.nil?
+  def first_trick?
+    tricks.where(completed: true).empty?
+  end
 
-        return ordered_players.rotate(bid_winner_index)
-      else
-        last_trick_winner = tricks.where(completed: true).order(created_at: :desc).first&.winner
-        return ordered_players unless last_trick_winner
-
-        winner_index = ordered_players.index(last_trick_winner)
-        return ordered_players if winner_index.nil?
-
-        return ordered_players.rotate(winner_index)
-      end
-    end
-
-    first_player = current_trick.cards.order(:created_at).first.player
-    first_player_index = ordered_players.index(first_player)
-    return [] if first_player_index.nil?
-
-    ordered_players.rotate(first_player_index)
+  def last_trick_winner
+    tricks.where(completed: true).order(created_at: :desc).first.winner
   end
 
   def current_player_to_play
