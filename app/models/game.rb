@@ -173,7 +173,7 @@ class Game < ApplicationRecord
   private
 
   def starting?
-    will_save_change_to_status? && status == "bidding"
+    will_save_change_to_status? && status == "bidding" && status_was == "pending"
   end
 
   def just_started_bidding?
