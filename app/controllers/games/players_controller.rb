@@ -29,7 +29,7 @@ module Games
     end
 
     def destroy
-      if @player.game.started?
+      unless @player.game.pending?
         head :unprocessable_entity
         return
       end
@@ -57,7 +57,7 @@ module Games
     end
 
     def ensure_game_not_started
-      head :unprocessable_entity if @player.game.started?
+      head :unprocessable_entity unless @player.game.pending?
     end
 
     def player_params

@@ -12,12 +12,12 @@
 
   <div class="actions">
     <% if @game.owner == Current.user && @game.players.count == 4 %>
-      <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :started } }, class: "button" %>
+      <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :bidding } }, class: "button" %>
     <% end %>
     <% if @game.owner == Current.user %>
       <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button" %>
-    <% elsif (player = @game.players.find_by(user: Current.user)) %>
-      <%= button_to "Quit Game", games_player_path(player), method: :delete, class: "button" %>
+    <% elsif Current.player %>
+      <%= button_to "Quit Game", games_player_path(Current.player), method: :delete, class: "button" %>
     <% end %>
     <%= link_to "Back to Dashboard", root_path, class: "button" %>
   </div>

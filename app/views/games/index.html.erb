@@ -19,7 +19,7 @@
             <% end %>
           </p>
           <p>
-            <% unless game.started? %>
+            <% if game.pending? %>
               <% if game.owner == Current.user %>
                 <%= button_to "Delete", game_path(game), method: :delete, class: "button --small" %>
               <% elsif (player = game.players.find_by(user: Current.user)) %>

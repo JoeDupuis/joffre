@@ -17,6 +17,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
+  test "should get index" do
+    get games_url
+    assert_response :success
+  end
+
   test "should create game with valid params" do
     assert_difference("Game.count") do
       assert_difference("Player.count") do
@@ -84,12 +89,12 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(game.owner)
 
     assert_difference("Card.count", 32) do
-      patch game_url(game), params: { game: { status: :started } }
+      patch game_url(game), params: { game: { status: :bidding } }
     end
 
     assert_redirected_to game_url(game)
     game.reload
-    assert game.started?
+    assert game.bidding?
     assert_equal 32, game.cards.count
     assert_equal 8, game.players.first.cards.count
   end
@@ -97,10 +102,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
   test "cannot start non full game" do
     game = games(:one)
 
-    patch game_url(game), params: { game: { status: :started } }
+    patch game_url(game), params: { game: { status: :bidding } }
 
     assert_response :unprocessable_entity
-    assert_not game.reload.started?
+    game.reload
+    assert game.pending?
   end
 
   test "cannot delete started game" do
