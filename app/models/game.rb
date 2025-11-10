@@ -100,9 +100,9 @@ class Game < ApplicationRecord
     starting_player = if first_trick?
                         then
                         highest_bid.player
-                      else
+    else
                         last_trick_winner
-                      end
+    end
     index = ordered_players.index(starting_player)
     ordered_players.rotate(index)
   end
