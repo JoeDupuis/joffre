@@ -85,7 +85,11 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).sole || tricks.create!
+    tricks.where(completed: false).sole || tricks.create!(sequence: next_trick_sequence)
+  end
+
+  def next_trick_sequence
+    (tricks.maximum(:sequence) || 0) + 1
   end
 
   def play_order
@@ -105,7 +109,7 @@ class Game < ApplicationRecord
   end
 
   def last_trick_winner
-    tricks.where(completed: true).order(created_at: :desc).first.winner
+    tricks.where(completed: true).order(sequence: :desc).first.winner
   end
 
   def current_player_to_play

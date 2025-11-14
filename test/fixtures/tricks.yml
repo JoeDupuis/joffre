@@ -4,8 +4,10 @@ one:
   game: one
   winner: one
   completed: false
+  sequence: 1
 
 two:
   game: two
   winner: two
   completed: false
+  sequence: 1

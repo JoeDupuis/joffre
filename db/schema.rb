@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_10_065523) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_14_045505) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -85,8 +85,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_10_065523) do
     t.boolean "completed", default: false, null: false
     t.datetime "created_at", null: false
     t.integer "game_id", null: false
+    t.integer "sequence", null: false
     t.datetime "updated_at", null: false
     t.integer "winner_id"
+    t.index ["game_id", "sequence"], name: "index_tricks_on_game_id_and_sequence", unique: true
     t.index ["game_id"], name: "index_tricks_on_game_id"
     t.index ["winner_id"], name: "index_tricks_on_winner_id"
   end

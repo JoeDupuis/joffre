@@ -3,6 +3,9 @@ class Trick < ApplicationRecord
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
+  validates :sequence, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :sequence, uniqueness: { scope: :game_id }
+
   def add_card(card)
     self.cards << card
     complete_trick!  cards.count == 4
