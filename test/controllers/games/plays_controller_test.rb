@@ -87,5 +87,60 @@ module Games
       assert_redirected_to game
       assert_not_nil flash[:alert]
     end
+
+    test "should play two complete rounds with bidding in between" do
+      game = games(:playing_game)
+      players = game.players.order(:order).to_a
+      initial_dealer_id = game.dealer.id
+      expected_second_dealer_id = players[(players.index { |p| p.id == initial_dealer_id } + 1) % 4].id
+
+      # Round 1: Play all 32 cards (8 tricks)
+      32.times do
+        game.reload
+        active_player = game.active_player
+        sign_in_as(active_player.user)
+        card = active_player.cards.in_hand.first
+        post game_plays_url(game), params: { play: { card_id: card.id } }
+      end
+
+      game.reload
+      assert game.bidding?, "Game should be in bidding phase after round 1"
+      assert_equal 0, game.tricks.count, "Tricks should be cleared after round 1"
+      assert_equal 0, game.bids.count, "Bids should be cleared after round 1"
+
+      # Verify dealer rotated to next player
+      second_dealer_id = game.dealer.id
+      assert_equal expected_second_dealer_id, second_dealer_id, "Dealer should have rotated to next player"
+
+      # Round 2: Place bids
+      bidding_order = game.bidding_order
+      bidding_order.each_with_index do |player, index|
+        game.reload
+        sign_in_as(player.user)
+        post game_bids_url(game), params: { bid: { amount: index == 0 ? 7 : nil } }
+      end
+
+      game.reload
+      assert game.playing?, "Game should be playing after bidding"
+
+      # Round 2: Play all 32 cards (8 tricks)
+      32.times do
+        game.reload
+        active_player = game.active_player
+        sign_in_as(active_player.user)
+        card = active_player.cards.in_hand.first
+        post game_plays_url(game), params: { play: { card_id: card.id } }
+      end
+
+      game.reload
+      assert game.bidding?, "Game should be in bidding phase after round 2"
+      assert_equal 0, game.tricks.count, "Tricks should be cleared after round 2"
+      assert_equal 0, game.bids.count, "Bids should be cleared after round 2"
+
+      # Verify dealer rotated again to third dealer
+      expected_third_dealer_id = players[(players.index { |p| p.id == initial_dealer_id } + 2) % 4].id
+      third_dealer_id = game.dealer.id
+      assert_equal expected_third_dealer_id, third_dealer_id, "Dealer should have rotated to third dealer"
+    end
   end
 end
