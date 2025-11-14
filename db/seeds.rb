@@ -137,7 +137,7 @@ if Rails.env.development?
 
     # Create 7 completed tricks (28 cards)
     7.times do |trick_num|
-      trick = Trick.create!(game: almost_done_game, winner: alice_p, completed: true)
+      trick = Trick.create!(game: almost_done_game, winner: alice_p, completed: true, sequence: trick_num + 1)
       4.times do |card_in_trick|
         card_index = trick_num * 4 + card_in_trick
         card_data = cards_with_players[card_index]
@@ -152,7 +152,7 @@ if Rails.env.development?
     end
 
     # Create 8th trick with 3 cards
-    last_trick = Trick.create!(game: almost_done_game, winner: nil, completed: false)
+    last_trick = Trick.create!(game: almost_done_game, winner: nil, completed: false, sequence: 8)
     3.times do |card_in_trick|
       card_index = 28 + card_in_trick
       card_data = cards_with_players[card_index]

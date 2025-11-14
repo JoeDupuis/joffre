@@ -8,7 +8,7 @@ class Trick < ApplicationRecord
 
   def add_card(card)
     self.cards << card
-    complete_trick!  cards.count == 4
+    complete_trick! if cards.count == 4
   end
 
   def complete?
