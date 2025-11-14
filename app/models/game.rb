@@ -85,9 +85,7 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).sole
-  rescue ActiveRecord::RecordNotFound
-    tricks.create!(sequence: next_trick_sequence)
+    tricks.where(completed: false).first || tricks.create!(sequence: next_trick_sequence)
   end
 
   def next_trick_sequence
