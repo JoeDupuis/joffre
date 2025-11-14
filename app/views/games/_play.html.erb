@@ -62,12 +62,12 @@
       <p>No cards played yet in this trick</p>
     <% end %>
 
-    <% if Current.player&.is_current_player? %>
+    <% if Current.player&.is_active_player? %>
       <p class="highlight"><strong>Your turn to play!</strong></p>
     <% else %>
-      <% next_player = @game.current_player_to_play %>
-      <% if next_player %>
-        <p>Waiting for <%= next_player.user.name %> to play...</p>
+      <% active_player = @game.active_player %>
+      <% if active_player %>
+        <p>Waiting for <%= active_player.user.name %> to play...</p>
       <% end %>
     <% end %>
   </div>

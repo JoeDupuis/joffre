@@ -19,7 +19,7 @@
               <td><%= card.rank %></td>
               <% if @game.playing? %>
                 <td>
-                  <% if Current.player.is_current_player? %>
+                  <% if Current.player.is_active_player? %>
                     <%= button_to "Play", game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "button" %>
                   <% end %>
                 </td>
