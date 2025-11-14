@@ -26,7 +26,7 @@ class Player < ApplicationRecord
     game.current_bidder == self
   end
 
-  def is_active_player?
+  def active?
     game.active_player == self
   end
 
