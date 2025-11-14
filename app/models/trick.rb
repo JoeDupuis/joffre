@@ -3,7 +3,7 @@ class Trick < ApplicationRecord
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
-  validates :sequence, presence: true, numericality: { only_integer: true, greater_thanor_equal_to: 1, less_than_or_equal_to: 8 }
+  validates :sequence, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 8 }
   validates :sequence, uniqueness: { scope: :game_id }
 
   def add_card(card)
