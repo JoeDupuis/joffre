@@ -46,11 +46,7 @@ class Game < ApplicationRecord
   def bidding_order
     return [] unless players.count == 4
 
-    ordered_players = players.order(:order).to_a
-    dealer_index = ordered_players.index(dealer)
-    return [] unless dealer_index
-
-    ordered_players.rotate(dealer_index + 1)
+    ordered_players(dealer).rotate(1)
   end
 
   def current_bidder
@@ -95,16 +91,13 @@ class Game < ApplicationRecord
   def play_order
     return [] unless players.count == 4
 
-    ordered_players = players.order(:order).to_a
-
     starting_player = if first_trick?
                         then
                         highest_bid.player
-    else
+                      else
                         last_trick_winner
-    end
-    index = ordered_players.index(starting_player)
-    ordered_players.rotate(index)
+                      end
+    ordered_players(starting_player)
   end
 
   def first_trick?
@@ -171,6 +164,13 @@ class Game < ApplicationRecord
   end
 
   private
+
+  def ordered_players(first_player = nil)
+    @ordered_players ||= players.order(:order).to_a
+    return @ordered_players unless first_player.present?
+    index = @ordered_players.index(first_player)
+    @ordered_players.rotate(index)
+  end
 
   def starting?
     will_save_change_to_status? && status == "bidding" && status_was == "pending"
