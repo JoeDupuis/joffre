@@ -159,14 +159,14 @@ class Game < ApplicationRecord
     update!(status: :bidding)
   end
 
-  private
-
   def ordered_players(first_player = nil)
     @ordered_players ||= players.order(:order).to_a
     return @ordered_players unless first_player.present?
     index = @ordered_players.index(first_player)
     @ordered_players.rotate(index)
   end
+
+  private
 
   def starting?
     will_save_change_to_status? && status == "bidding" && status_was == "pending"

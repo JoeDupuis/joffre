@@ -90,9 +90,8 @@ module Games
 
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
-      players = game.players.order(:order).to_a
-      initial_dealer_id = game.dealer.id
-      expected_second_dealer_id = players[(players.index { |p| p.id == initial_dealer_id } + 1) % 4].id
+      players = game.ordered_players(game.dealer)
+      expected_second_dealer_id = players.rotate(1).first.id
 
       # Round 1: Play all 32 cards (8 tricks)
       32.times do
@@ -138,7 +137,7 @@ module Games
       assert_equal 0, game.bids.count, "Bids should be cleared after round 2"
 
       # Verify dealer rotated again to third dealer
-      expected_third_dealer_id = players[(players.index { |p| p.id == initial_dealer_id } + 2) % 4].id
+      expected_third_dealer_id = players.rotate(2).first.id
       third_dealer_id = game.dealer.id
       assert_equal expected_third_dealer_id, third_dealer_id, "Dealer should have rotated to third dealer"
     end
