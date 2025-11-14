@@ -92,18 +92,23 @@ if Rails.env.development?
   end
 
   # Game 3 - Almost complete, last card of last trick
-  almost_done_game = Game.find_by(name: "Almost Done Game")
-  if almost_done_game
-    almost_done_game.destroy
+  almost_done_game = Game.find_or_create_by!(name: "Almost Done Game") do |g|
+    g.status = :pending
   end
 
-  almost_done_game = Game.create!(name: "Almost Done Game", status: :pending)
-
-  if almost_done_game
+  if almost_done_game.players.empty?
     alice_p = Player.create!(user: alice, game: almost_done_game, owner: true, dealer: true, team: 1, order: 1)
     bob_p = Player.create!(user: bob, game: almost_done_game, team: 2, order: 2)
     carol_p = Player.create!(user: carol, game: almost_done_game, team: 1, order: 3)
     david_p = Player.create!(user: david, game: almost_done_game, team: 2, order: 4)
+  else
+    alice_p = almost_done_game.players.find_by!(user: alice)
+    bob_p = almost_done_game.players.find_by!(user: bob)
+    carol_p = almost_done_game.players.find_by!(user: carol)
+    david_p = almost_done_game.players.find_by!(user: david)
+  end
+
+  if almost_done_game.bids.empty?
 
     # Update to bidding to allow creating bids
     almost_done_game.update_column(:status, Game.statuses[:bidding])
