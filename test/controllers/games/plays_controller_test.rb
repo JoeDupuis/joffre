@@ -88,7 +88,7 @@ module Games
       assert_not_nil flash[:alert]
     end
 
-    test "should play two complete rounds with bidding in between" do
+    test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
       players = game.players.order(:order).to_a
       initial_dealer_id = game.dealer.id
