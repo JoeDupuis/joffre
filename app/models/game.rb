@@ -98,9 +98,9 @@ class Game < ApplicationRecord
     starting_player = if first_trick?
                         then
                         highest_bid.player
-                      else
+    else
                         last_trick_winner
-                      end
+    end
     ordered_players(starting_player)
   end
 
