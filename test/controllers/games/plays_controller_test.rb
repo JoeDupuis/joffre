@@ -93,6 +93,9 @@ module Games
       players = game.ordered_players(game.dealer)
       expected_second_dealer_id = players.rotate(1).first.id
 
+      # Capture round 1 play order
+      round_1_play_order_ids = game.play_order.map(&:id)
+
       # Round 1: Play all 32 cards (8 tricks)
       32.times do
         game.reload
@@ -121,6 +124,15 @@ module Games
 
       game.reload
       assert game.playing?, "Game should be playing after bidding"
+
+      # Verify play order is consistent with round 1 (same player IDs in same relative order)
+      # The starting player may differ, but the relative order should be the same
+      round_2_play_order_ids = game.play_order.map(&:id)
+      first_player_id = round_1_play_order_ids.first
+      round_2_rotation = round_2_play_order_ids.index(first_player_id)
+      normalized_round_2 = round_2_play_order_ids.rotate(round_2_rotation) if round_2_rotation
+
+      assert_equal round_1_play_order_ids, normalized_round_2, "Play order should remain consistent across rounds (same relative positions)"
 
       # Round 2: Play all 32 cards (8 tricks)
       32.times do
