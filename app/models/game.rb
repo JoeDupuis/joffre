@@ -143,12 +143,7 @@ class Game < ApplicationRecord
 
   def rotate_dealer!
     current_dealer = dealer
-    ordered_players = players.order(:order).to_a
-    dealer_index = ordered_players.index(current_dealer)
-    return unless dealer_index
-
-    new_dealer_index = (dealer_index + 1) % 4
-    new_dealer = ordered_players[new_dealer_index]
+    new_dealer = ordered_players(current_dealer)[1]
 
     current_dealer.update!(dealer: false)
     new_dealer.update!(dealer: true)
