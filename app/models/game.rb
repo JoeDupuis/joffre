@@ -85,7 +85,9 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).sole || tricks.create!(sequence: next_trick_sequence)
+    tricks.where(completed: false).sole
+  rescue ActiveRecord::RecordNotFound
+    tricks.create!(sequence: next_trick_sequence)
   end
 
   def next_trick_sequence
@@ -135,7 +137,7 @@ class Game < ApplicationRecord
   end
 
   def all_cards_played?
-    cards.in_hand.count == 0
+    cards.reload.in_hand.count == 0
   end
 
   def check_round_complete!

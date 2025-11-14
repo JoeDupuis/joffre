@@ -51,16 +51,21 @@ module Games
       game = games(:playing_game)
 
       # Play all 32 cards (8 tricks × 4 cards)
+      cards_played = 0
       32.times do
         game.reload
         current_player = game.current_player_to_play
+        break if current_player.nil? # Game has transitioned to bidding
+
         sign_in_as(current_player.user)
         card = current_player.cards.in_hand.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
+        cards_played += 1
       end
 
       game.reload
-      assert game.bidding?, "Game should return to bidding phase after all tricks are complete"
+      assert_equal 32, cards_played, "Should have played all 32 cards"
+      assert game.bidding?, "Game should return to bidding phase after all tricks are complete (status: #{game.status}, cards in hand: #{game.cards.in_hand.count})"
       assert_equal 0, game.tricks.count, "Tricks should be cleared"
       assert_equal 0, game.bids.count, "Bids should be cleared"
     end
