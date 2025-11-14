@@ -3,13 +3,24 @@ class Trick < ApplicationRecord
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
+  def add_card(card)
+    self.cards << card
+    complete_trick!  cards.count == 4
+  end
+
   def complete?
     cards.count == 4
   end
 
-  def complete_trick!
-    return unless complete? && !completed?
+  private
 
-    update!(winner: game.highest_bid.player, completed: true)
+  def complete_trick!
+    return if completed?
+
+    # TODO actually calculate the winner
+    # temp hardcode the highest bid
+    winner = game.highest_bid.player
+
+    update!(winner:, completed: true)
   end
 end

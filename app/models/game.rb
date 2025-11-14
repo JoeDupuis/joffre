@@ -123,12 +123,9 @@ class Game < ApplicationRecord
     raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
     trick = current_trick
-    card.update!(trick: trick)
+    trick.add_card(card)
 
-    if trick.complete?
-      trick.complete_trick!
-      check_round_complete!
-    end
+    check_round_complete!
 
     card
   end
