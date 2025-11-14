@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @game.players.order(:order).each do |player| %>
+        <% @game.play_order.each do |player| %>
           <tr>
             <td><%= player.user.name %></td>
             <td><%= player.team %></td>
