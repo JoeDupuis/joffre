@@ -1,0 +1,16 @@
+<% if Rails.env.development? %>
+  <div class="dev-user-switcher">
+    <h3>Dev: Switch User</h3>
+    <div class="dev-user-switcher-buttons">
+      <% @game.players.includes(:user).each do |player| %>
+        <%= button_to dev_switch_user_path(user_id: player.user.id, game_id: @game.id), class: "dev-user-switcher-button #{'current-user' if player.user == Current.user}" do %>
+          <span class="user-name"><%= player.user.name %></span>
+          <span class="team-badge">Team <%= player.team %></span>
+          <% if player.user == Current.user %>
+            <span class="current-badge">✓</span>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
