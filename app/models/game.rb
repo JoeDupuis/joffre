@@ -112,7 +112,7 @@ class Game < ApplicationRecord
     tricks.where(completed: true).order(sequence: :desc).first.winner
   end
 
-  def current_player_to_play
+  def active_player
     order = play_order
     return nil if order.empty?
 
@@ -123,7 +123,7 @@ class Game < ApplicationRecord
   end
 
   def play_card!(card)
-    raise ArgumentError, "Not this player's turn" unless current_player_to_play == card.player
+    raise ArgumentError, "Not this player's turn" unless active_player == card.player
     raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
     trick = current_trick

@@ -4,10 +4,10 @@ module Games
   class PlaysControllerTest < ActionDispatch::IntegrationTest
     test "should play card when it's player's turn" do
       game = games(:playing_game)
-      current_player = game.current_player_to_play
-      sign_in_as(current_player.user)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
 
-      card = current_player.cards.in_hand.first
+      card = active_player.cards.in_hand.first
 
       post game_plays_url(game), params: { play: { card_id: card.id } }
 
@@ -18,8 +18,8 @@ module Games
 
     test "should not play card when it's not player's turn" do
       game = games(:playing_game)
-      current_player = game.current_player_to_play
-      wrong_player = game.players.where.not(id: current_player.id).first
+      active_player = game.active_player
+      wrong_player = game.players.where.not(id: active_player.id).first
       sign_in_as(wrong_player.user)
 
       card = wrong_player.cards.in_hand.first
@@ -37,7 +37,7 @@ module Games
       play_order = game.play_order
 
       play_order.each_with_index do |player, index|
-        assert_equal player, game.current_player_to_play, "Player #{index + 1} should be current player"
+        assert_equal player, game.active_player, "Player #{index + 1} should be active player"
 
         sign_in_as(player.user)
         card = player.cards.in_hand.first
@@ -54,11 +54,11 @@ module Games
       cards_played = 0
       32.times do
         game.reload
-        current_player = game.current_player_to_play
-        break if current_player.nil? # Game has transitioned to bidding
+        active_player = game.active_player
+        break if active_player.nil? # Game has transitioned to bidding
 
-        sign_in_as(current_player.user)
-        card = current_player.cards.in_hand.first
+        sign_in_as(active_player.user)
+        card = active_player.cards.in_hand.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
         cards_played += 1
       end
