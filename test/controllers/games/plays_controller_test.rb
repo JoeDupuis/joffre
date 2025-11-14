@@ -90,19 +90,29 @@ module Games
 
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
-      players = game.ordered_players(game.dealer)
-      expected_second_dealer_id = players.rotate(1).first.id
+      # Establish the base player order from the dealer
+      base_order = game.ordered_players(game.dealer)
+      expected_second_dealer_id = base_order.rotate(1).first.id
 
-      # Capture round 1 play order
-      round_1_play_order_ids = game.play_order.map(&:id)
+      # Round 1: Play all 8 tricks (32 cards)
+      # Track each trick to verify order consistency
+      round_1_trick_starters = []
+      8.times do |trick_num|
+        trick_players = []
+        4.times do
+          game.reload
+          active_player = game.active_player
+          trick_players << active_player
+          sign_in_as(active_player.user)
+          card = active_player.cards.in_hand.first
+          post game_plays_url(game), params: { play: { card_id: card.id } }
+        end
 
-      # Round 1: Play all 32 cards (8 tricks)
-      32.times do
-        game.reload
-        active_player = game.active_player
-        sign_in_as(active_player.user)
-        card = active_player.cards.in_hand.first
-        post game_plays_url(game), params: { play: { card_id: card.id } }
+        round_1_trick_starters << trick_players.first
+        # Verify this trick followed the base order (starting from the first player of this trick)
+        starting_player = trick_players.first
+        expected_order_for_trick = base_order.rotate(base_order.index(starting_player))
+        assert_equal expected_order_for_trick, trick_players, "Trick #{trick_num + 1} should follow base player order"
       end
 
       game.reload
@@ -125,22 +135,25 @@ module Games
       game.reload
       assert game.playing?, "Game should be playing after bidding"
 
-      # Verify play order is consistent with round 1 (same player IDs in same relative order)
-      # The starting player may differ, but the relative order should be the same
-      round_2_play_order_ids = game.play_order.map(&:id)
-      first_player_id = round_1_play_order_ids.first
-      round_2_rotation = round_2_play_order_ids.index(first_player_id)
-      normalized_round_2 = round_2_play_order_ids.rotate(round_2_rotation) if round_2_rotation
+      # Round 2: Play all 8 tricks (32 cards)
+      # Verify same base order is maintained in round 2
+      round_2_trick_starters = []
+      8.times do |trick_num|
+        trick_players = []
+        4.times do
+          game.reload
+          active_player = game.active_player
+          trick_players << active_player
+          sign_in_as(active_player.user)
+          card = active_player.cards.in_hand.first
+          post game_plays_url(game), params: { play: { card_id: card.id } }
+        end
 
-      assert_equal round_1_play_order_ids, normalized_round_2, "Play order should remain consistent across rounds (same relative positions)"
-
-      # Round 2: Play all 32 cards (8 tricks)
-      32.times do
-        game.reload
-        active_player = game.active_player
-        sign_in_as(active_player.user)
-        card = active_player.cards.in_hand.first
-        post game_plays_url(game), params: { play: { card_id: card.id } }
+        round_2_trick_starters << trick_players.first
+        # Verify this trick followed the base order (starting from the first player of this trick)
+        starting_player = trick_players.first
+        expected_order_for_trick = base_order.rotate(base_order.index(starting_player))
+        assert_equal expected_order_for_trick, trick_players, "Round 2 Trick #{trick_num + 1} should follow base player order"
       end
 
       game.reload
@@ -149,7 +162,7 @@ module Games
       assert_equal 0, game.bids.count, "Bids should be cleared after round 2"
 
       # Verify dealer rotated again to third dealer
-      expected_third_dealer_id = players.rotate(2).first.id
+      expected_third_dealer_id = base_order.rotate(2).first.id
       third_dealer_id = game.dealer.id
       assert_equal expected_third_dealer_id, third_dealer_id, "Dealer should have rotated to third dealer"
     end
