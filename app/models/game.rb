@@ -89,7 +89,7 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).first || tricks.create!
+    tricks.where(completed: false).sole || tricks.create!
   end
 
   def play_order
@@ -125,9 +125,9 @@ class Game < ApplicationRecord
     order[cards_played]
   end
 
-  def play_card!(player:, card:)
-    raise ArgumentError, "Not this player's turn" unless current_player_to_play == player
-    raise ArgumentError, "Card not in player's hand" unless card.player == player && card.trick_id.nil?
+  def play_card!(card)
+    raise ArgumentError, "Not this player's turn" unless current_player_to_play == card.player
+    raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
     trick = current_trick
     card.update!(trick: trick)

@@ -6,10 +6,10 @@ module Games
     before_action :require_player
 
     def create
-      card = Card.find(play_params[:card_id])
+      card = Current.player.cards.find(play_params[:card_id])
 
       begin
-        @game.play_card!(player: Current.player, card: card)
+        @game.play_card!(card)
         redirect_to @game, notice: success_message(card)
       rescue ArgumentError => e
         redirect_to @game, alert: e.message
