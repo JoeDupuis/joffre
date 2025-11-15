@@ -29,23 +29,3 @@ playing_game_bid_four:
   game: playing_game
   player: playing_game_player_one
   amount: 8
-
-playing_game_move_dealer_bid_one:
-  game: playing_game_move_dealer
-  player: playing_game_move_dealer_player_two
-  amount: 7
-
-playing_game_move_dealer_bid_two:
-  game: playing_game_move_dealer
-  player: playing_game_move_dealer_player_three
-  amount: null
-
-playing_game_move_dealer_bid_three:
-  game: playing_game_move_dealer
-  player: playing_game_move_dealer_player_four
-  amount: null
-
-playing_game_move_dealer_bid_four:
-  game: playing_game_move_dealer
-  player: playing_game_move_dealer_player_one
-  amount: 8

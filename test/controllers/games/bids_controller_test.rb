@@ -51,7 +51,8 @@ module Games
     end
 
     test "should transition to playing when bidding complete" do
-      game = games(:bidding_game_move_dealer)
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :move_dealer)
       order = game.bidding_order
 
       # Place 3 bids
@@ -69,7 +70,8 @@ module Games
     end
 
     test "should reshuffle when all players pass" do
-      game = games(:bidding_game_move_dealer)
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :move_dealer)
       order = game.bidding_order
       initial_card_count = game.cards.count
 

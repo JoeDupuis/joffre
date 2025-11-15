@@ -45,31 +45,6 @@ full_game_player_four:
   owner: false
   team: 2
 
-full_game_move_dealer_player_one:
-  user: one
-  game: full_game_move_dealer
-  owner: true
-  dealer: true
-  team: 1
-
-full_game_move_dealer_player_two:
-  user: two
-  game: full_game_move_dealer
-  owner: false
-  team: 1
-
-full_game_move_dealer_player_three:
-  user: no_friends
-  game: full_game_move_dealer
-  owner: false
-  team: 2
-
-full_game_move_dealer_player_four:
-  user: stranger_one
-  game: full_game_move_dealer
-  owner: false
-  team: 2
-
 started_game_owner:
   user: one
   game: started_game
@@ -128,35 +103,6 @@ bidding_game_player_four:
   team: 2
   order: 4
 
-bidding_game_move_dealer_player_one:
-  user: one
-  game: bidding_game_move_dealer
-  owner: true
-  dealer: true
-  team: 1
-  order: 1
-
-bidding_game_move_dealer_player_two:
-  user: two
-  game: bidding_game_move_dealer
-  owner: false
-  team: 1
-  order: 3
-
-bidding_game_move_dealer_player_three:
-  user: no_friends
-  game: bidding_game_move_dealer
-  owner: false
-  team: 2
-  order: 2
-
-bidding_game_move_dealer_player_four:
-  user: stranger_one
-  game: bidding_game_move_dealer
-  owner: false
-  team: 2
-  order: 4
-
 playing_game_player_one:
   user: one
   game: playing_game
@@ -182,35 +128,6 @@ playing_game_player_three:
 playing_game_player_four:
   user: stranger_one
   game: playing_game
-  owner: false
-  team: 2
-  order: 4
-
-playing_game_move_dealer_player_one:
-  user: one
-  game: playing_game_move_dealer
-  owner: true
-  dealer: true
-  team: 1
-  order: 1
-
-playing_game_move_dealer_player_two:
-  user: two
-  game: playing_game_move_dealer
-  owner: false
-  team: 2
-  order: 2
-
-playing_game_move_dealer_player_three:
-  user: no_friends
-  game: playing_game_move_dealer
-  owner: false
-  team: 1
-  order: 3
-
-playing_game_move_dealer_player_four:
-  user: stranger_one
-  game: playing_game_move_dealer
   owner: false
   team: 2
   order: 4

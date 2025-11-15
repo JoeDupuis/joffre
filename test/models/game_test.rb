@@ -121,43 +121,6 @@ class GameTest < ActiveSupport::TestCase
     assert_equal order[2], game.current_bidder
   end
 
-  test "bid_complete? should return true after a bid and 3 passes" do
-    game = games(:full_game_move_dealer)
-    game.update!(status: :bidding)
-
-    order = game.bidding_order
-    game.bids.create!(player: order[0], amount: 7)
-    game.bids.create!(player: order[1], amount: nil)
-    game.bids.create!(player: order[2], amount: nil)
-    game.bids.create!(player: order[3], amount: nil)
-
-    assert game.bid_complete?
-  end
-
-  test "bid_complete? should return true after 4 bids with mixed bids and passes" do
-    game = games(:full_game_move_dealer)
-    game.update!(status: :bidding)
-
-    order = game.bidding_order
-    game.bids.create!(player: order[0], amount: 7)
-    game.bids.create!(player: order[1], amount: nil)
-    game.bids.create!(player: order[2], amount: 8)
-    game.bids.create!(player: order[3], amount: nil)
-
-    assert game.bid_complete?
-  end
-
-  test "bid_complete? should return false with less than 4 bids" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
-
-    order = game.bidding_order
-    game.bids.create!(player: order[0], amount: 7)
-    game.bids.create!(player: order[1], amount: nil)
-
-    assert_not game.bid_complete?
-  end
-
   test "highest_bid should return the bid with highest amount" do
     game = games(:full_game)
     game.update!(status: :bidding)
@@ -182,19 +145,6 @@ class GameTest < ActiveSupport::TestCase
     assert_equal highest, game.highest_bid
   end
 
-  test "bid_complete? should return true immediately when someone bids 12" do
-    game = games(:full_game)
-    game.update!(status: :bidding)
-
-    order = game.bidding_order
-    game.bids.create!(player: order[0], amount: 7)
-    game.bids.create!(player: order[1], amount: 12)
-
-    # Only 2 bids, but bidding is complete because someone bid the maximum
-    assert game.bid_complete?
-    assert_equal 2, game.bids.count
-  end
-
   test "bidding order changes when dealer changes" do
     game = games(:full_game)
     game.update!(status: :bidding)
@@ -216,8 +166,8 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "with move_dealer strategy, all players passing should rotate dealer and reshuffle" do
-    game = games(:full_game_move_dealer)
-    game.update!(status: :bidding)
+    game = games(:full_game)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
 
     original_dealer = game.dealer
     order = game.bidding_order

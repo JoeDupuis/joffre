@@ -32,25 +32,6 @@ bidding_game_card_<%= card_index %>:
 %>
 
 <%
-  bidding_move_dealer_players = ['bidding_game_move_dealer_player_one', 'bidding_game_move_dealer_player_two', 'bidding_game_move_dealer_player_three', 'bidding_game_move_dealer_player_four']
-  bidding_move_dealer_card_index = 0
-  [1, 2, 3, 4].each do |suite|
-    [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
-      player = bidding_move_dealer_players[bidding_move_dealer_card_index % 4]
-%>
-bidding_game_move_dealer_card_<%= bidding_move_dealer_card_index %>:
-  game: bidding_game_move_dealer
-  player: <%= player %>
-  suite: <%= suite %>
-  rank: <%= rank %>
-
-<%
-      bidding_move_dealer_card_index += 1
-    end
-  end
-%>
-
-<%
   playing_players = ['playing_game_player_one', 'playing_game_player_two', 'playing_game_player_three', 'playing_game_player_four']
   playing_card_index = 0
   [0, 1, 2, 3].each do |suite|
@@ -65,25 +46,6 @@ playing_game_card_<%= playing_card_index %>:
 
 <%
       playing_card_index += 1
-    end
-  end
-%>
-
-<%
-  playing_move_dealer_players = ['playing_game_move_dealer_player_one', 'playing_game_move_dealer_player_two', 'playing_game_move_dealer_player_three', 'playing_game_move_dealer_player_four']
-  playing_move_dealer_card_index = 0
-  [0, 1, 2, 3].each do |suite|
-    [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
-      player = playing_move_dealer_players[playing_move_dealer_card_index % 4]
-%>
-playing_game_move_dealer_card_<%= playing_move_dealer_card_index %>:
-  game: playing_game_move_dealer
-  player: <%= player %>
-  suite: <%= suite %>
-  rank: <%= rank %>
-
-<%
-      playing_move_dealer_card_index += 1
     end
   end
 %>

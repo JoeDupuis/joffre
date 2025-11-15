@@ -2,42 +2,31 @@
 
 one:
   name: Game One
+  all_players_pass_strategy: 1
 
 two:
   name: Game Two
+  all_players_pass_strategy: 1
 
 full_game:
   name: Full Game
   game_code: FULL01
-
-full_game_move_dealer:
-  name: Full Game Move Dealer
-  game_code: FULL02
-  all_players_pass_strategy: 0
+  all_players_pass_strategy: 1
 
 started_game:
   name: Started Game
   status: 1
   game_code: START1
+  all_players_pass_strategy: 1
 
 bidding_game:
   name: Bidding Game
   status: 1
   game_code: BIDD01
-
-bidding_game_move_dealer:
-  name: Bidding Game Move Dealer
-  status: 1
-  game_code: BIDD02
-  all_players_pass_strategy: 0
+  all_players_pass_strategy: 1
 
 playing_game:
   name: Playing Game
   status: 2
   game_code: PLAY01
-
-playing_game_move_dealer:
-  name: Playing Game Move Dealer
-  status: 2
-  game_code: PLAY02
-  all_players_pass_strategy: 0
+  all_players_pass_strategy: 1

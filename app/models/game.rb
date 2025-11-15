@@ -62,10 +62,6 @@ class Game < ApplicationRecord
     bids.where.not(amount: nil).order(amount: :desc, created_at: :asc).first
   end
 
-  def bid_complete?
-    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
-  end
-
   def place_bid!(player:, amount:)
     bid = bids.build(player: player, amount: amount)
 
@@ -174,6 +170,10 @@ class Game < ApplicationRecord
 
   def all_players_passed?
     bids.count == 4 && bids.where(amount: nil).count == 4
+  end
+
+  def bid_complete?
+    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
 
   def starting?

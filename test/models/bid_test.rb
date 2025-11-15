@@ -95,7 +95,8 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "dealer can pass when move_dealer strategy is set" do
-    game = games(:bidding_game_move_dealer)
+    game = games(:bidding_game)
+    game.update!(all_players_pass_strategy: :move_dealer)
     order = game.bidding_order
     order[0..2].each do |player|
       game.bids.create!(player: player, amount: nil)
