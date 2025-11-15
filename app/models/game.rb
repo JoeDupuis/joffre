@@ -94,9 +94,9 @@ class Game < ApplicationRecord
 
   def play_order
     return [] unless players.count == 4
+    return [] unless playing?
 
     starting_player = if first_trick?
-                        then
                         highest_bid.player
     else
                         last_trick_winner

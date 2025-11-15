@@ -1,4 +1,4 @@
-<% if Rails.env.development? %>
+<% if Rails.env.development? || Rails.env.test? %>
   <div class="dev-user-switcher">
     <h3>Dev: Switch User</h3>
     <div class="current-user-display">
