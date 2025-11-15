@@ -13,6 +13,7 @@ class Bid < ApplicationRecord
     allow_nil: true
   validate :player_is_current_bidder, on: :create
   validate :game_is_in_bidding_phase, on: :create
+  validate :dealer_cannot_pass_if_required, on: :create
 
   private
 
@@ -35,5 +36,14 @@ class Bid < ApplicationRecord
     unless game.bidding?
       errors.add(:game, :invalid)
     end
+  end
+
+  def dealer_cannot_pass_if_required
+    return unless game&.dealer_must_bid?
+    return unless amount.nil?
+    return unless player == game.dealer
+    return if game.highest_bid.present?
+
+    errors.add(:amount, :dealer_must_bid)
   end
 end

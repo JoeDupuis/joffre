@@ -90,6 +90,7 @@ module Games
 
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
+
       # Establish the base player order from the dealer
       base_order = game.ordered_players(game.dealer)
       expected_second_dealer_id = base_order.rotate(1).first.id
