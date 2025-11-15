@@ -14,12 +14,13 @@
         </thead>
         <tbody>
           <% Current.player.cards.in_hand.order(:suite, :rank).each do |card| %>
-            <tr>
+            <% playable = card_playable?(@game, card) %>
+            <tr class="<%= 'unplayable' unless playable %>">
               <td><%= card.suite %></td>
               <td><%= card.rank %></td>
               <% if @game.playing? %>
                 <td>
-                  <% if Current.player.active? %>
+                  <% if playable %>
                     <%= button_to "Play", game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "button" %>
                   <% end %>
                 </td>

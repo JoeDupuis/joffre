@@ -15,6 +15,25 @@ class Trick < ApplicationRecord
     cards.count == 4
   end
 
+  def led_suit
+    cards.order(:created_at).first&.suite
+  end
+
+  def requires_following?(player)
+    return false if led_suit.nil?
+    player.cards.in_hand.exists?(suite: led_suit)
+  end
+
+  def playable_cards(player)
+    return player.cards.in_hand if led_suit.nil?
+
+    if requires_following?(player)
+      player.cards.in_hand.where(suite: led_suit)
+    else
+      player.cards.in_hand
+    end
+  end
+
   private
 
   def complete_trick!

@@ -87,4 +87,102 @@ class TrickTest < ActiveSupport::TestCase
     assert_not_nil trick.winner
     assert_equal games(:playing_game).highest_bid.player, trick.winner
   end
+
+  test "led_suit returns nil when no cards played" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 6)
+    assert_nil trick.led_suit
+  end
+
+  test "led_suit returns suit of first card" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 7)
+    first_card = cards(:playing_game_card_0)
+    trick.add_card(first_card)
+    assert_equal first_card.suite, trick.led_suit
+  end
+
+  test "led_suit returns first card suit even after multiple cards" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 8)
+    cards = [
+      cards(:playing_game_card_0),
+      cards(:playing_game_card_1),
+      cards(:playing_game_card_2)
+    ]
+    cards.each { |card| trick.cards << card }
+    assert_equal cards[0].suite, trick.led_suit
+  end
+
+  test "requires_following? returns false when no cards played" do
+    trick = Trick.create!(game: games(:bidding_game), sequence: 2)
+    player = players(:bidding_game_player_one)
+    assert_not trick.requires_following?(player)
+  end
+
+  test "requires_following? returns true when player has led suit" do
+    game = games(:bidding_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    first_card = cards(:bidding_game_card_0)
+    led_suit = first_card.suite
+    trick.add_card(first_card)
+
+    player_with_suit = game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).where.not(id: first_card.player_id).first
+
+    if player_with_suit
+      assert trick.requires_following?(player_with_suit)
+    end
+  end
+
+  test "requires_following? returns false when player doesn't have led suit" do
+    game = games(:bidding_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    first_card = cards(:bidding_game_card_0)
+    led_suit = first_card.suite
+    trick.add_card(first_card)
+
+    players_without_suit = game.players.where.not(id: game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).select(:id))
+
+    skip "No players without led suit in fixture" if players_without_suit.empty?
+    assert_not trick.requires_following?(players_without_suit.first)
+  end
+
+  test "playable_cards returns all cards when no led suit" do
+    trick = Trick.create!(game: games(:bidding_game), sequence: 2)
+    player = players(:bidding_game_player_one)
+    playable = trick.playable_cards(player)
+    assert_equal player.cards.in_hand.count, playable.count
+  end
+
+  test "playable_cards returns only matching suit when player has it" do
+    game = games(:bidding_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    first_card = cards(:bidding_game_card_0)
+    led_suit = first_card.suite
+    trick.add_card(first_card)
+
+    player_with_suit = game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).where.not(id: first_card.player_id).first
+
+    if player_with_suit
+      playable = trick.playable_cards(player_with_suit)
+      assert playable.all? { |card| card.suite == led_suit }
+      assert_equal player_with_suit.cards.in_hand.where(suite: led_suit).count, playable.count
+    end
+  end
+
+  test "playable_cards returns all cards when player doesn't have led suit" do
+    game = games(:bidding_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    first_card = cards(:bidding_game_card_0)
+    led_suit = first_card.suite
+    trick.add_card(first_card)
+
+    players_without_suit = game.players.where.not(id: game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).select(:id))
+
+    skip "No players without led suit in fixture" if players_without_suit.empty?
+    player = players_without_suit.first
+    playable = trick.playable_cards(player)
+    assert_equal player.cards.in_hand.count, playable.count
+  end
 end

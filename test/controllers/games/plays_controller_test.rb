@@ -40,7 +40,8 @@ module Games
         assert_equal player, game.active_player, "Player #{index + 1} should be active player"
 
         sign_in_as(player.user)
-        card = player.cards.in_hand.first
+        trick = game.current_trick
+        card = trick.playable_cards(player).first
         post game_plays_url(game), params: { play: { card_id: card.id } }
 
         game.reload
@@ -58,7 +59,8 @@ module Games
         break if active_player.nil? # Game has transitioned to bidding
 
         sign_in_as(active_player.user)
-        card = active_player.cards.in_hand.first
+        trick = game.current_trick
+        card = trick.playable_cards(active_player).first
         post game_plays_url(game), params: { play: { card_id: card.id } }
         cards_played += 1
       end
@@ -88,6 +90,121 @@ module Games
       assert_not_nil flash[:alert]
     end
 
+    test "should allow first player to play any card" do
+      game = games(:playing_game)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
+
+      card = active_player.cards.in_hand.first
+
+      post game_plays_url(game), params: { play: { card_id: card.id } }
+
+      assert_redirected_to game
+      card.reload
+      assert_not_nil card.trick_id
+      assert_nil flash[:alert]
+    end
+
+    test "should require player to follow suit if they have it" do
+      game = games(:playing_game)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
+
+      led_card = active_player.cards.in_hand.first
+      led_suit = led_card.suite
+
+      post game_plays_url(game), params: { play: { card_id: led_card.id } }
+
+      game.reload
+      second_player = game.active_player
+      sign_in_as(second_player.user)
+
+      matching_suit_card = second_player.cards.in_hand.find_by(suite: led_suit)
+      different_suit_card = second_player.cards.in_hand.where.not(suite: led_suit).first
+
+      if matching_suit_card.present? && different_suit_card.present?
+        post game_plays_url(game), params: { play: { card_id: different_suit_card.id } }
+
+        assert_redirected_to game
+        assert_not_nil flash[:alert]
+        assert_match(/must follow suit/i, flash[:alert])
+        different_suit_card.reload
+        assert_nil different_suit_card.trick_id
+      end
+    end
+
+    test "should allow player to play any card if they don't have the led suit" do
+      game = games(:playing_game)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
+
+      led_card = active_player.cards.in_hand.first
+      led_suit = led_card.suite
+
+      post game_plays_url(game), params: { play: { card_id: led_card.id } }
+
+      game.reload
+      second_player = game.active_player
+      sign_in_as(second_player.user)
+
+      has_led_suit = second_player.cards.in_hand.exists?(suite: led_suit)
+
+      skip "Second player has led suit in fixture" if has_led_suit
+
+      any_card = second_player.cards.in_hand.first
+
+      post game_plays_url(game), params: { play: { card_id: any_card.id } }
+
+      assert_redirected_to game
+      assert_nil flash[:alert]
+      any_card.reload
+      assert_not_nil any_card.trick_id
+    end
+
+    test "should enforce suit following throughout entire trick" do
+      game = games(:playing_game)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
+
+      led_card = active_player.cards.in_hand.first
+      led_suit = led_card.suite
+
+      post game_plays_url(game), params: { play: { card_id: led_card.id } }
+
+      trick = game.current_trick
+      3.times do |i|
+        game.reload
+        trick.reload
+        current_player = game.active_player
+        sign_in_as(current_player.user)
+
+        matching_suit_card = current_player.cards.in_hand.find_by(suite: led_suit)
+
+        if matching_suit_card.present?
+          different_suit_card = current_player.cards.in_hand.where.not(suite: led_suit).first
+
+          if different_suit_card.present?
+            post game_plays_url(game), params: { play: { card_id: different_suit_card.id } }
+
+            assert_redirected_to game
+            assert_not_nil flash[:alert], "Player #{i + 2} should not be able to play different suit when they have the led suit"
+            assert_match(/must follow suit/i, flash[:alert])
+          end
+
+          post game_plays_url(game), params: { play: { card_id: matching_suit_card.id } }
+          assert_redirected_to game
+        else
+          any_card = current_player.cards.in_hand.first
+          post game_plays_url(game), params: { play: { card_id: any_card.id } }
+          assert_redirected_to game
+        end
+      end
+
+      game.reload
+      trick.reload
+      assert_equal 4, trick.cards.count
+    end
+
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
       # Establish the base player order from the dealer
@@ -102,7 +219,8 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          card = active_player.cards.in_hand.first
+          trick = game.current_trick
+          card = trick.playable_cards(active_player).first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
@@ -140,7 +258,8 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          card = active_player.cards.in_hand.first
+          trick = game.current_trick
+          card = trick.playable_cards(active_player).first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
