@@ -78,4 +78,48 @@ class BidTest < ActiveSupport::TestCase
     assert_not bid.valid?
     assert_includes bid.errors[:player_id], "can't be blank"
   end
+
+  test "dealer cannot pass when dealer_must_bid strategy is set" do
+    game = games(:bidding_game)
+    game.update!(all_players_pass_strategy: :dealer_must_bid)
+
+    order = game.bidding_order
+    order[0..2].each do |player|
+      game.bids.create!(player: player, amount: nil)
+    end
+
+    dealer = game.dealer
+    assert_equal dealer, game.current_bidder
+
+    bid = Bid.new(game: game, player: dealer, amount: nil)
+    assert_not bid.valid?
+    assert_includes bid.errors[:amount], "Dealer must bid"
+  end
+
+  test "dealer can pass when move_dealer strategy is set" do
+    game = games(:bidding_game)
+    game.update!(all_players_pass_strategy: :move_dealer)
+
+    order = game.bidding_order
+    order[0..2].each do |player|
+      game.bids.create!(player: player, amount: nil)
+    end
+
+    dealer = game.dealer
+    assert_equal dealer, game.current_bidder
+
+    bid = Bid.new(game: game, player: dealer, amount: nil)
+    assert bid.valid?
+  end
+
+  test "non-dealer can pass when dealer_must_bid strategy is set" do
+    game = games(:bidding_game)
+    game.update!(all_players_pass_strategy: :dealer_must_bid)
+
+    player = game.current_bidder
+    assert_not_equal player, game.dealer
+
+    bid = Bid.new(game: game, player: player, amount: nil)
+    assert bid.valid?
+  end
 end

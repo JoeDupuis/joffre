@@ -48,7 +48,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:name, :password, :password_confirmation)
+    params.require(:game).permit(:name, :password, :password_confirmation, :all_players_pass_strategy)
   end
 
   def update_game_params

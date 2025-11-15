@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   enum :status, { pending: 0, bidding: 1, playing: 2, done: 3 }
+  enum :all_players_pass_strategy, { move_dealer: 0, dealer_must_bid: 1 }
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
@@ -74,14 +75,21 @@ class Game < ApplicationRecord
 
     if bid.save
       if all_players_passed?
-        bids.destroy_all
-        deal_cards!
+        handle_all_players_passed!
       elsif bid_complete?
         update!(status: :playing)
       end
     end
 
     bid
+  end
+
+  def handle_all_players_passed!
+    if move_dealer?
+      rotate_dealer!
+    end
+    bids.destroy_all
+    deal_cards!
   end
 
   def current_trick

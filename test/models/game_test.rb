@@ -123,7 +123,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "all_players_passed? should return true when all 4 players pass" do
     game = games(:full_game)
-    game.update!(status: :bidding)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
 
     order = game.bidding_order
 
@@ -136,7 +136,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "all_players_passed? should return false when at least one bid" do
     game = games(:full_game)
-    game.update!(status: :bidding)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
 
     order = game.bidding_order
 
@@ -150,7 +150,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "bid_complete? should return true after a bid and 3 passes" do
     game = games(:full_game)
-    game.update!(status: :bidding)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
 
     order = game.bidding_order
     game.bids.create!(player: order[0], amount: 7)
@@ -163,7 +163,7 @@ class GameTest < ActiveSupport::TestCase
 
   test "bid_complete? should return true after 4 bids with mixed bids and passes" do
     game = games(:full_game)
-    game.update!(status: :bidding)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
 
     order = game.bidding_order
     game.bids.create!(player: order[0], amount: 7)
@@ -240,5 +240,23 @@ class GameTest < ActiveSupport::TestCase
     # New order should start after new dealer
     assert_equal next_dealer, new_order.last
     assert_not_equal original_order, new_order
+  end
+
+  test "with move_dealer strategy, all players passing should rotate dealer and reshuffle" do
+    game = games(:full_game)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
+
+    original_dealer = game.dealer
+    order = game.bidding_order
+
+    order.each do |player|
+      game.place_bid!(player: player, amount: nil)
+    end
+
+    game.reload
+    assert_equal 0, game.bids.count
+    assert_not_equal original_dealer, game.dealer
+    assert_equal 32, game.cards.count
+    assert game.bidding?
   end
 end
