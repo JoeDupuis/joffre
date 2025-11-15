@@ -52,7 +52,6 @@ module Games
 
     test "should transition to playing when bidding complete" do
       game = games(:bidding_game)
-      game.update!(all_players_pass_strategy: :move_dealer)
       order = game.bidding_order
 
       # Place 3 bids
@@ -88,6 +87,24 @@ module Games
       assert game.bidding?
       assert_equal 0, game.bids.count
       assert_equal initial_card_count, game.cards.count
+    end
+
+    test "should not show alert when all players pass with move_dealer strategy" do
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :move_dealer)
+      order = game.bidding_order
+
+      # Place 3 passes
+      game.bids.create!(player: order[0], amount: nil)
+      game.bids.create!(player: order[1], amount: nil)
+      game.bids.create!(player: order[2], amount: nil)
+
+      # Fourth pass should trigger reshuffle without showing an error
+      sign_in_as(order[3].user)
+      post game_bids_url(game), params: { bid: { amount: "" } }
+
+      assert_nil flash[:alert]
+      assert_redirected_to game
     end
 
     test "should require authentication" do

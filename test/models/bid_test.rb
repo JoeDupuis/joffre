@@ -117,4 +117,22 @@ class BidTest < ActiveSupport::TestCase
     bid = Bid.new(game: game, player: player, amount: nil)
     assert bid.valid?
   end
+
+  test "dealer can pass when dealer_must_bid strategy is set if another player has bid" do
+    game = games(:bidding_game)
+    order = game.bidding_order
+
+    # First player bids
+    game.bids.create!(player: order[0], amount: 7)
+    # Second and third players pass
+    game.bids.create!(player: order[1], amount: nil)
+    game.bids.create!(player: order[2], amount: nil)
+
+    dealer = game.dealer
+    assert_equal dealer, game.current_bidder
+
+    # Dealer should be able to pass since someone has already bid
+    bid = Bid.new(game: game, player: dealer, amount: nil)
+    assert bid.valid?
+  end
 end
