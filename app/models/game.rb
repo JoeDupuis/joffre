@@ -173,7 +173,7 @@ class Game < ApplicationRecord
   end
 
   def just_started_bidding?
-    saved_change_to_status? && status == "bidding"
+    saved_change_to_status? && status == "bidding" && status_before_last_save == "pending"
   end
 
   def setup_bidding_phase!
