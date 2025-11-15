@@ -17,6 +17,11 @@ Rails.application.routes.draw do
   resources :friendships, only: [ :index, :new, :create, :update, :destroy ]
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
+
+  if Rails.env.development?
+    post "dev/switch_user" => "dev#switch_user", as: :dev_switch_user
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
