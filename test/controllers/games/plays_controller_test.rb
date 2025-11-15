@@ -109,8 +109,8 @@ module Games
     test "should require player to follow suit if they have it" do
       game = games(:playing_game)
       # Player 1 is first (highest bidder with 8)
-      # Player 1 has: blue (0) + green (1)
-      # Player 2 has: blue (0) + brown (2)
+      # Player 1 has: blue + green
+      # Player 2 has: blue + brown
       # When Player 1 leads blue, Player 2 must follow with blue
 
       player_one = game.active_player
@@ -152,10 +152,10 @@ module Games
     test "should allow player to play any card if they don't have the led suit" do
       game = games(:playing_game)
       # Player 1 is first (highest bidder with 8)
-      # Player 1 has: blue (0) + green (1)
-      # Player 2 has: blue (0) + brown (2)
-      # Player 3 has: green (1) + brown (2)
-      # Player 4 has: red (3) only
+      # Player 1 has: blue + green
+      # Player 2 has: blue + brown
+      # Player 3 has: green + brown
+      # Player 4 has: red only
       # When Player 1 leads blue, Player 3 doesn't have blue and can play anything
 
       player_one = game.active_player
@@ -192,10 +192,10 @@ module Games
 
     test "should enforce suit following throughout entire trick" do
       game = games(:playing_game)
-      # Player 1 has: blue (0) + green (1)
-      # Player 2 has: blue (0) + brown (2)
-      # Player 3 has: green (1) + brown (2)
-      # Player 4 has: red (3) only
+      # Player 1 has: blue + green
+      # Player 2 has: blue + brown
+      # Player 3 has: green + brown
+      # Player 4 has: red only
 
       player_one = game.active_player
       sign_in_as(player_one.user)
