@@ -32,20 +32,62 @@ bidding_game_card_<%= card_index %>:
 %>
 
 <%
-  playing_players = ['playing_game_player_one', 'playing_game_player_two', 'playing_game_player_three', 'playing_game_player_four']
-  playing_card_index = 0
-  [0, 1, 2, 3].each do |suite|
-    [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
-      player = playing_players[playing_card_index % 4]
+  # Custom distribution to ensure deterministic suit-following tests:
+  # Player 1: 4 blue (0) + 4 green (1) = 8 cards
+  # Player 2: 4 blue (0) + 4 brown (2) = 8 cards
+  # Player 3: 4 green (1) + 4 brown (2) = 8 cards
+  # Player 4: 8 red (3) = 8 cards
+
+  playing_card_distribution = [
+    # Suite 0 (blue): Player 1 gets ranks 0-3, Player 2 gets ranks 4-7
+    [0, 0, 'playing_game_player_one'],
+    [0, 1, 'playing_game_player_one'],
+    [0, 2, 'playing_game_player_one'],
+    [0, 3, 'playing_game_player_one'],
+    [0, 4, 'playing_game_player_two'],
+    [0, 5, 'playing_game_player_two'],
+    [0, 6, 'playing_game_player_two'],
+    [0, 7, 'playing_game_player_two'],
+
+    # Suite 1 (green): Player 1 gets ranks 0-3, Player 3 gets ranks 4-7
+    [1, 0, 'playing_game_player_one'],
+    [1, 1, 'playing_game_player_one'],
+    [1, 2, 'playing_game_player_one'],
+    [1, 3, 'playing_game_player_one'],
+    [1, 4, 'playing_game_player_three'],
+    [1, 5, 'playing_game_player_three'],
+    [1, 6, 'playing_game_player_three'],
+    [1, 7, 'playing_game_player_three'],
+
+    # Suite 2 (brown): Player 2 gets ranks 0-3, Player 3 gets ranks 4-7
+    [2, 0, 'playing_game_player_two'],
+    [2, 1, 'playing_game_player_two'],
+    [2, 2, 'playing_game_player_two'],
+    [2, 3, 'playing_game_player_two'],
+    [2, 4, 'playing_game_player_three'],
+    [2, 5, 'playing_game_player_three'],
+    [2, 6, 'playing_game_player_three'],
+    [2, 7, 'playing_game_player_three'],
+
+    # Suite 3 (red): Player 4 gets all cards
+    [3, 0, 'playing_game_player_four'],
+    [3, 1, 'playing_game_player_four'],
+    [3, 2, 'playing_game_player_four'],
+    [3, 3, 'playing_game_player_four'],
+    [3, 4, 'playing_game_player_four'],
+    [3, 5, 'playing_game_player_four'],
+    [3, 6, 'playing_game_player_four'],
+    [3, 7, 'playing_game_player_four']
+  ]
+
+  playing_card_distribution.each_with_index do |(suite, rank, player), index|
 %>
-playing_game_card_<%= playing_card_index %>:
+playing_game_card_<%= index %>:
   game: playing_game
   player: <%= player %>
   suite: <%= suite %>
   rank: <%= rank %>
 
 <%
-      playing_card_index += 1
-    end
   end
 %>
