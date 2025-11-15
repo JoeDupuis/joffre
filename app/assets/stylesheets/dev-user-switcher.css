@@ -22,6 +22,19 @@
   padding-bottom: 8px;
 }
 
+.current-user-display {
+  background-color: #e9ecef;
+  padding: 8px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: #495057;
+}
+
+.current-user-display strong {
+  color: #212529;
+}
+
 .dev-user-switcher-buttons {
   display: flex;
   flex-direction: column;
