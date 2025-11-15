@@ -12,7 +12,7 @@
           <% if player.dealer? %>
             <span class="dealer-badge">Dealer</span>
           <% end %>
-          <% if player.active? %>
+          <% if @game.playing? && player.active? %>
             <span class="active-badge">Active</span>
           <% end %>
           <% if player.user == Current.user %>
