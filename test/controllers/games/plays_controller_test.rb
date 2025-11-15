@@ -139,6 +139,14 @@ module Games
       assert_match(/must follow suit/i, flash[:alert])
       brown_card_p2.reload
       assert_nil brown_card_p2.trick_id
+
+      # Now play blue card successfully
+      game.reload
+      post game_plays_url(game), params: { play: { card_id: blue_card_p2.id } }
+
+      assert_redirected_to game
+      blue_card_p2.reload
+      assert_not_nil blue_card_p2.trick_id, "Blue card should be successfully played"
     end
 
     test "should allow player to play any card if they don't have the led suit" do

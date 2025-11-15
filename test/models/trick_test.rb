@@ -103,12 +103,12 @@ class TrickTest < ActiveSupport::TestCase
   test "led_suit returns first card suit even after multiple cards" do
     trick = Trick.create!(game: games(:playing_game), sequence: 8)
     cards = [
-      cards(:playing_game_card_0),
-      cards(:playing_game_card_1),
-      cards(:playing_game_card_2)
+      cards(:playing_game_card_0),  # blue
+      cards(:playing_game_card_8),  # green
+      cards(:playing_game_card_16)  # brown
     ]
     cards.each { |card| trick.add_card(card) }
-    assert_equal cards[0].suite, trick.led_suit
+    assert_equal "blue", trick.led_suit
   end
 
   test "requires_following? returns false when no cards played" do
@@ -118,32 +118,29 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "requires_following? returns true when player has led suit" do
-    game = games(:bidding_game)
+    game = games(:playing_game)
     trick = Trick.create!(game: game, sequence: 2)
 
-    first_card = cards(:bidding_game_card_0)
-    led_suit = first_card.suite
+    # Player 1 has blue cards, lead with blue
+    first_card = cards(:playing_game_card_0)  # blue
     trick.add_card(first_card)
 
-    player_with_suit = game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).where.not(id: first_card.player_id).first
-
-    if player_with_suit
-      assert trick.requires_following?(player_with_suit)
-    end
+    # Player 2 also has blue cards
+    player_two = players(:playing_game_player_two)
+    assert trick.requires_following?(player_two)
   end
 
   test "requires_following? returns false when player doesn't have led suit" do
-    game = games(:bidding_game)
+    game = games(:playing_game)
     trick = Trick.create!(game: game, sequence: 2)
 
-    first_card = cards(:bidding_game_card_0)
-    led_suit = first_card.suite
+    # Player 1 has blue cards, lead with blue
+    first_card = cards(:playing_game_card_0)  # blue
     trick.add_card(first_card)
 
-    players_without_suit = game.players.where.not(id: game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).select(:id))
-
-    skip "No players without led suit in fixture" if players_without_suit.empty?
-    assert_not trick.requires_following?(players_without_suit.first)
+    # Player 3 does NOT have blue cards (only green and brown)
+    player_three = players(:playing_game_player_three)
+    assert_not trick.requires_following?(player_three)
   end
 
   test "playable_cards returns all cards when no led suit" do
@@ -154,35 +151,36 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "playable_cards returns only matching suit when player has it" do
-    game = games(:bidding_game)
+    game = games(:playing_game)
     trick = Trick.create!(game: game, sequence: 2)
 
-    first_card = cards(:bidding_game_card_0)
-    led_suit = first_card.suite
+    # Player 1 has blue cards, lead with blue
+    first_card = cards(:playing_game_card_0)  # blue
     trick.add_card(first_card)
 
-    player_with_suit = game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).where.not(id: first_card.player_id).first
+    # Player 2 has both blue and brown cards
+    player_two = players(:playing_game_player_two)
+    playable = trick.playable_cards(player_two)
 
-    if player_with_suit
-      playable = trick.playable_cards(player_with_suit)
-      assert playable.all? { |card| card.suite == led_suit }
-      assert_equal player_with_suit.cards.in_hand.where(suite: led_suit).count, playable.count
-    end
+    # Should only return blue cards
+    assert playable.all? { |card| card.suite == "blue" }
+    assert_equal 4, playable.count
   end
 
   test "playable_cards returns all cards when player doesn't have led suit" do
-    game = games(:bidding_game)
+    game = games(:playing_game)
     trick = Trick.create!(game: game, sequence: 2)
 
-    first_card = cards(:bidding_game_card_0)
-    led_suit = first_card.suite
+    # Player 1 has blue cards, lead with blue
+    first_card = cards(:playing_game_card_0)  # blue
     trick.add_card(first_card)
 
-    players_without_suit = game.players.where.not(id: game.players.joins(:cards).where(cards: { suite: led_suit, trick_id: nil }).select(:id))
+    # Player 3 does NOT have blue cards (only green and brown)
+    player_three = players(:playing_game_player_three)
+    playable = trick.playable_cards(player_three)
 
-    skip "No players without led suit in fixture" if players_without_suit.empty?
-    player = players_without_suit.first
-    playable = trick.playable_cards(player)
-    assert_equal player.cards.in_hand.count, playable.count
+    # Should return all their cards since they don't have the led suit
+    assert_equal player_three.cards.in_hand.count, playable.count
+    assert_equal 8, playable.count
   end
 end
