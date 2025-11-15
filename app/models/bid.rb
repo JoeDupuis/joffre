@@ -39,12 +39,10 @@ class Bid < ApplicationRecord
   end
 
   def dealer_cannot_pass_if_required
-    return unless game
-    return unless game.dealer_must_bid?
+    return unless game&.dealer_must_bid?
     return unless amount.nil?
+    return unless  player == game.dealer
 
-    if player == game.dealer
-      errors.add(:amount, :dealer_must_bid)
-    end
+    errors.add(:amount, :dealer_must_bid)
   end
 end
