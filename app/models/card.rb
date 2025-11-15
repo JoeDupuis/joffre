@@ -12,6 +12,16 @@ class Card < ApplicationRecord
   scope :in_hand, -> { where(trick_id: nil) }
   scope :played, -> { where.not(trick_id: nil) }
 
+  def playable?
+    return false unless game.playing?
+    return false unless player.active?
+    return false unless trick_id.nil?
+
+    trick = game.current_trick
+    playable_card_ids = trick.playable_cards(player).pluck(:id)
+    playable_card_ids.include?(id)
+  end
+
   def self.deck
     cards = []
     suites.each_key do |suite_name|
