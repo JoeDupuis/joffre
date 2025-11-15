@@ -30,6 +30,11 @@
 en:
   hello: "Hello world"
   activerecord:
+    attributes:
+      game:
+        all_players_pass_strategies:
+          dealer_must_bid: "Dealer must bid (no passing)"
+          move_dealer: "Move dealer and reshuffle"
     errors:
       models:
         player:
@@ -42,6 +47,10 @@ en:
             status:
               teams_not_assigned: "cannot be started - all players must be assigned to a team"
               teams_not_balanced: "cannot be started - teams must be balanced (2 players each)"
+        bid:
+          attributes:
+            amount:
+              dealer_must_bid: "Dealer must bid"
   application:
     form_errors:
       title:

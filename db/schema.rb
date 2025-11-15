@@ -50,6 +50,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
   end
 
   create_table "games", force: :cascade do |t|
+    t.integer "all_players_pass_strategy", default: 1, null: false
     t.datetime "created_at", null: false
     t.string "game_code"
     t.integer "minimum_bid", default: 6, null: false

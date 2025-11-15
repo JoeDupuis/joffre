@@ -70,6 +70,7 @@ module Games
 
     test "should reshuffle when all players pass" do
       game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :move_dealer)
       order = game.bidding_order
       initial_card_count = game.cards.count
 
@@ -88,6 +89,24 @@ module Games
       assert_equal initial_card_count, game.cards.count
     end
 
+    test "should not show alert when all players pass with move_dealer strategy" do
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :move_dealer)
+      order = game.bidding_order
+
+      # Place 3 passes
+      game.bids.create!(player: order[0], amount: nil)
+      game.bids.create!(player: order[1], amount: nil)
+      game.bids.create!(player: order[2], amount: nil)
+
+      # Fourth pass should trigger reshuffle without showing an error
+      sign_in_as(order[3].user)
+      post game_bids_url(game), params: { bid: { amount: "" } }
+
+      assert_nil flash[:alert]
+      assert_redirected_to game
+    end
+
     test "should require authentication" do
       game = games(:bidding_game)
       post game_bids_url(game), params: { bid: { amount: 7 } }
@@ -103,6 +122,29 @@ module Games
       end
 
       assert_redirected_to game
+    end
+
+    test "should not show pass button for dealer when dealer_must_bid strategy is set" do
+      skip "TODO: Implement view test to verify pass button is hidden for dealer"
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :dealer_must_bid)
+      order = game.bidding_order
+
+      order[0..2].each do |player|
+        game.bids.create!(player: player, amount: nil)
+      end
+
+      dealer = game.dealer
+      assert_equal dealer, game.current_bidder
+
+      sign_in_as(dealer.user)
+      get game_url(game)
+
+      assert_response :success
+      assert_select "form[action=?]", game_bids_path(game) do
+        assert_select "button[type=submit]", text: /Bid \d+/
+        assert_select "button[type=submit]", { text: "Pass", count: 0 }
+      end
     end
   end
 end

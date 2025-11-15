@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   enum :status, { pending: 0, bidding: 1, playing: 2, done: 3 }
+  enum :all_players_pass_strategy, { move_dealer: 0, dealer_must_bid: 1 }
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
@@ -61,27 +62,26 @@ class Game < ApplicationRecord
     bids.where.not(amount: nil).order(amount: :desc, created_at: :asc).first
   end
 
-  def all_players_passed?
-    bids.count == 4 && bids.where(amount: nil).count == 4
-  end
-
-  def bid_complete?
-    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
-  end
-
   def place_bid!(player:, amount:)
     bid = bids.build(player: player, amount: amount)
 
     if bid.save
       if all_players_passed?
-        bids.destroy_all
-        deal_cards!
+        handle_all_players_passed!
       elsif bid_complete?
         update!(status: :playing)
       end
     end
 
     bid
+  end
+
+  def handle_all_players_passed!
+    if move_dealer?
+      rotate_dealer!
+    end
+    bids.destroy_all
+    deal_cards!
   end
 
   def current_trick
@@ -172,6 +172,14 @@ class Game < ApplicationRecord
   end
 
   private
+
+  def all_players_passed?
+    bids.count == 4 && bids.where(amount: nil).count == 4
+  end
+
+  def bid_complete?
+    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
+  end
 
   def starting?
     will_save_change_to_status? && status == "bidding" && status_was == "pending"
