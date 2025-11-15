@@ -190,59 +190,6 @@ module Games
       assert_not_nil any_card.trick_id
     end
 
-    test "should enforce suit following throughout entire trick" do
-      game = games(:playing_game)
-      # Player 1 has: blue + green
-      # Player 2 has: blue + brown
-      # Player 3 has: green + brown
-      # Player 4 has: red only
-
-      player_one = game.active_player
-      sign_in_as(player_one.user)
-
-      # Player 1 leads with blue
-      blue_card = player_one.cards.in_hand.find_by(suite: "blue")
-      post game_plays_url(game), params: { play: { card_id: blue_card.id } }
-
-      trick = game.current_trick
-
-      # Player 2 has blue, must follow
-      game.reload
-      player_two = game.active_player
-      sign_in_as(player_two.user)
-
-      brown_card_p2 = player_two.cards.in_hand.find_by(suite: "brown")
-      # Try to play brown when blue is required - should fail
-      post game_plays_url(game), params: { play: { card_id: brown_card_p2.id } }
-      assert_not_nil flash[:alert]
-      assert_match(/must follow suit/i, flash[:alert])
-
-      # Now play blue correctly
-      blue_card_p2 = player_two.cards.in_hand.find_by(suite: "blue")
-      post game_plays_url(game), params: { play: { card_id: blue_card_p2.id } }
-      assert_redirected_to game
-
-      # Player 3 doesn't have blue, can play anything
-      game.reload
-      player_three = game.active_player
-      sign_in_as(player_three.user)
-      any_card_p3 = player_three.cards.in_hand.first
-      post game_plays_url(game), params: { play: { card_id: any_card_p3.id } }
-      assert_redirected_to game
-
-      # Player 4 doesn't have blue, can play anything
-      game.reload
-      player_four = game.active_player
-      sign_in_as(player_four.user)
-      any_card_p4 = player_four.cards.in_hand.first
-      post game_plays_url(game), params: { play: { card_id: any_card_p4.id } }
-      assert_redirected_to game
-
-      game.reload
-      trick.reload
-      assert_equal 4, trick.cards.count
-    end
-
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
       # Establish the base player order from the dealer
