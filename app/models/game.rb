@@ -127,6 +127,11 @@ class Game < ApplicationRecord
     raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
     trick = current_trick
+
+    if trick.led_suit.present? && trick.requires_following?(card.player)
+      raise ArgumentError, "Must follow suit" unless card.suite == trick.led_suit
+    end
+
     trick.add_card(card)
 
     check_round_complete!

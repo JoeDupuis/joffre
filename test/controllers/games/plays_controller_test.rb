@@ -40,7 +40,7 @@ module Games
         assert_equal player, game.active_player, "Player #{index + 1} should be active player"
 
         sign_in_as(player.user)
-        card = player.cards.in_hand.first
+        card = player.playable_cards.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
 
         game.reload
@@ -58,7 +58,7 @@ module Games
         break if active_player.nil? # Game has transitioned to bidding
 
         sign_in_as(active_player.user)
-        card = active_player.cards.in_hand.first
+        card = active_player.playable_cards.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
         cards_played += 1
       end
@@ -88,6 +88,108 @@ module Games
       assert_not_nil flash[:alert]
     end
 
+    test "should allow first player to play any card" do
+      game = games(:playing_game)
+      active_player = game.active_player
+      sign_in_as(active_player.user)
+
+      # First player should be able to play all their cards
+      assert_equal active_player.cards.in_hand, active_player.playable_cards
+
+      card = active_player.cards.in_hand.first
+
+      post game_plays_url(game), params: { play: { card_id: card.id } }
+
+      assert_redirected_to game
+      card.reload
+      assert_not_nil card.trick_id
+      assert_nil flash[:alert]
+    end
+
+    test "should require player to follow suit if they have it" do
+      game = games(:playing_game)
+      # Player 1 is first (highest bidder with 8)
+      # Player 1 has: blue + green
+      # Player 2 has: blue + brown
+      # When Player 1 leads blue, Player 2 must follow with blue
+
+      player_one = game.active_player
+      sign_in_as(player_one.user)
+
+      # Player 1 leads with a blue card
+      blue_card = player_one.cards.in_hand.find_by(suite: "blue")
+      post game_plays_url(game), params: { play: { card_id: blue_card.id } }
+
+      game.reload
+      player_two = game.active_player
+      sign_in_as(player_two.user)
+
+      # Player 2 has blue and brown cards
+      blue_card_p2 = player_two.cards.in_hand.find_by(suite: "blue")
+      brown_card_p2 = player_two.cards.in_hand.find_by(suite: "brown")
+
+      assert_not_nil blue_card_p2, "Player 2 should have blue cards"
+      assert_not_nil brown_card_p2, "Player 2 should have brown cards"
+
+      # Try to play brown when blue is required
+      post game_plays_url(game), params: { play: { card_id: brown_card_p2.id } }
+
+      assert_redirected_to game
+      assert_not_nil flash[:alert]
+      assert_match(/must follow suit/i, flash[:alert])
+      brown_card_p2.reload
+      assert_nil brown_card_p2.trick_id
+
+      # Now play blue card successfully
+      game.reload
+      post game_plays_url(game), params: { play: { card_id: blue_card_p2.id } }
+
+      assert_redirected_to game
+      blue_card_p2.reload
+      assert_not_nil blue_card_p2.trick_id, "Blue card should be successfully played"
+    end
+
+    test "should allow player to play any card if they don't have the led suit" do
+      game = games(:playing_game)
+      # Player 1 is first (highest bidder with 8)
+      # Player 1 has: blue + green
+      # Player 2 has: blue + brown
+      # Player 3 has: green + brown
+      # Player 4 has: red only
+      # When Player 1 leads blue, Player 3 doesn't have blue and can play anything
+
+      player_one = game.active_player
+      sign_in_as(player_one.user)
+
+      # Player 1 leads with a blue card
+      blue_card = player_one.cards.in_hand.find_by(suite: "blue")
+      post game_plays_url(game), params: { play: { card_id: blue_card.id } }
+
+      # Player 2 must play blue (skip them by playing a blue card)
+      game.reload
+      player_two = game.active_player
+      sign_in_as(player_two.user)
+      blue_card_p2 = player_two.cards.in_hand.find_by(suite: "blue")
+      post game_plays_url(game), params: { play: { card_id: blue_card_p2.id } }
+
+      # Now it's Player 3's turn - they don't have blue
+      game.reload
+      player_three = game.active_player
+      sign_in_as(player_three.user)
+
+      assert_not player_three.cards.in_hand.exists?(suite: "blue"), "Player 3 should not have blue cards"
+
+      # Player 3 can play any card (green or brown)
+      any_card = player_three.cards.in_hand.first
+
+      post game_plays_url(game), params: { play: { card_id: any_card.id } }
+
+      assert_redirected_to game
+      assert_nil flash[:alert]
+      any_card.reload
+      assert_not_nil any_card.trick_id
+    end
+
     test "should keep consistent order across multiple rounds" do
       game = games(:playing_game)
 
@@ -103,7 +205,7 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          card = active_player.cards.in_hand.first
+          card = active_player.playable_cards.first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
@@ -141,7 +243,7 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          card = active_player.cards.in_hand.first
+          card = active_player.playable_cards.first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
