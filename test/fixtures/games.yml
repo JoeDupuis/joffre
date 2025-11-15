@@ -1,32 +1,35 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: Game One
+DEFAULTS: &DEFAULTS
   all_players_pass_strategy: 1
+
+one:
+  <<: *DEFAULTS
+  name: Game One
 
 two:
+  <<: *DEFAULTS
   name: Game Two
-  all_players_pass_strategy: 1
 
 full_game:
+  <<: *DEFAULTS
   name: Full Game
   game_code: FULL01
-  all_players_pass_strategy: 1
 
 started_game:
+  <<: *DEFAULTS
   name: Started Game
   status: 1
   game_code: START1
-  all_players_pass_strategy: 1
 
 bidding_game:
+  <<: *DEFAULTS
   name: Bidding Game
   status: 1
   game_code: BIDD01
-  all_players_pass_strategy: 1
 
 playing_game:
+  <<: *DEFAULTS
   name: Playing Game
   status: 2
   game_code: PLAY01
-  all_players_pass_strategy: 1
