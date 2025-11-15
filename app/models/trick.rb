@@ -7,7 +7,8 @@ class Trick < ApplicationRecord
   validates :sequence, uniqueness: { scope: :game_id }
 
   def add_card(card)
-    self.cards << card
+    next_sequence = cards.count + 1
+    card.update!(trick: self, trick_sequence: next_sequence)
     complete_trick! if cards.count == 4
   end
 
@@ -16,7 +17,7 @@ class Trick < ApplicationRecord
   end
 
   def led_suit
-    cards.order(:created_at).first&.suite
+    cards.order(:trick_sequence).first&.suite
   end
 
   def requires_following?(player)

@@ -42,14 +42,14 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "complete? returns true when 4 cards" do
-    trick = Trick.create!(game: games(:bidding_game), sequence: 2)
+    trick = Trick.create!(game: games(:playing_game), sequence: 2)
     cards = [
-      cards(:bidding_game_card_0),
-      cards(:bidding_game_card_1),
-      cards(:bidding_game_card_2),
-      cards(:bidding_game_card_3)
+      cards(:playing_game_card_0),
+      cards(:playing_game_card_1),
+      cards(:playing_game_card_2),
+      cards(:playing_game_card_3)
     ]
-    cards.each { |card| trick.cards << card }
+    cards.each { |card| trick.add_card(card) }
     assert trick.complete?
   end
 
@@ -107,7 +107,7 @@ class TrickTest < ActiveSupport::TestCase
       cards(:playing_game_card_1),
       cards(:playing_game_card_2)
     ]
-    cards.each { |card| trick.cards << card }
+    cards.each { |card| trick.add_card(card) }
     assert_equal cards[0].suite, trick.led_suit
   end
 

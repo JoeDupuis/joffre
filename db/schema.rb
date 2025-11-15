@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_045505) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -28,10 +28,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_045505) do
     t.integer "rank", null: false
     t.integer "suite", null: false
     t.integer "trick_id"
+    t.integer "trick_sequence"
     t.datetime "updated_at", null: false
     t.index ["game_id", "suite", "rank"], name: "index_cards_on_game_id_and_suite_and_rank", unique: true
     t.index ["game_id"], name: "index_cards_on_game_id"
     t.index ["player_id"], name: "index_cards_on_player_id"
+    t.index ["trick_id", "trick_sequence"], name: "index_cards_on_trick_id_and_trick_sequence", unique: true
     t.index ["trick_id"], name: "index_cards_on_trick_id"
   end
 

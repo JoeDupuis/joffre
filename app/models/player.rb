@@ -30,6 +30,13 @@ class Player < ApplicationRecord
     game.active_player == self
   end
 
+  def playable_cards
+    return cards.in_hand unless game.playing?
+    return cards.none unless active?
+
+    game.current_trick.playable_cards(self)
+  end
+
   private
 
   def assign_team

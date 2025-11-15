@@ -40,8 +40,7 @@ module Games
         assert_equal player, game.active_player, "Player #{index + 1} should be active player"
 
         sign_in_as(player.user)
-        trick = game.current_trick
-        card = trick.playable_cards(player).first
+        card = player.playable_cards.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
 
         game.reload
@@ -59,8 +58,7 @@ module Games
         break if active_player.nil? # Game has transitioned to bidding
 
         sign_in_as(active_player.user)
-        trick = game.current_trick
-        card = trick.playable_cards(active_player).first
+        card = active_player.playable_cards.first
         post game_plays_url(game), params: { play: { card_id: card.id } }
         cards_played += 1
       end
@@ -219,8 +217,7 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          trick = game.current_trick
-          card = trick.playable_cards(active_player).first
+          card = active_player.playable_cards.first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
@@ -258,8 +255,7 @@ module Games
           active_player = game.active_player
           trick_players << active_player
           sign_in_as(active_player.user)
-          trick = game.current_trick
-          card = trick.playable_cards(active_player).first
+          card = active_player.playable_cards.first
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 

@@ -8,18 +8,15 @@ class Card < ApplicationRecord
   validates :suite, presence: true
   validates :rank, presence: true, inclusion: { in: 0..7 }
   validates :suite, uniqueness: { scope: [ :game_id, :rank ] }
+  validates :trick_sequence, presence: true, if: :trick_id?
+  validates :trick_sequence, inclusion: { in: 1..4 }, allow_nil: true
+  validates :trick_sequence, uniqueness: { scope: :trick_id }, allow_nil: true
 
   scope :in_hand, -> { where(trick_id: nil) }
   scope :played, -> { where.not(trick_id: nil) }
 
   def playable?
-    return false unless game.playing?
-    return false unless player.active?
-    return false unless trick_id.nil?
-
-    trick = game.current_trick
-    playable_card_ids = trick.playable_cards(player).pluck(:id)
-    playable_card_ids.include?(id)
+    player.playable_cards.include?(self)
   end
 
   def self.deck
