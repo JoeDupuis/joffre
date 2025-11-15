@@ -30,6 +30,11 @@
 en:
   hello: "Hello world"
   activerecord:
+    attributes:
+      game:
+        all_players_pass_strategies:
+          dealer_must_bid: "Dealer must bid (no passing)"
+          move_dealer: "Move dealer and reshuffle"
     errors:
       models:
         player:
