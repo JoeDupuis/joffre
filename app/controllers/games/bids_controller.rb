@@ -11,7 +11,7 @@ module Games
         amount: bid_params[:amount].presence
       )
 
-      if @bid.persisted?
+      if @bid.errors.empty?
         flash[:notice] = success_message(@bid) if @game.reload.playing?
         redirect_to @game
       else
