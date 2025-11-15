@@ -15,6 +15,15 @@ class Card < ApplicationRecord
   scope :in_hand, -> { where(trick_id: nil) }
   scope :played, -> { where.not(trick_id: nil) }
 
+  def trick=(new_trick)
+    if new_trick.present?
+      self.trick_sequence = new_trick.cards.count + 1
+    else
+      self.trick_sequence = nil
+    end
+    super
+  end
+
   def playable?
     player.playable_cards.include?(self)
   end
