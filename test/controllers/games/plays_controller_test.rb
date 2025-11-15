@@ -95,8 +95,6 @@ module Games
       expected_second_dealer_id = base_order.rotate(1).first.id
 
       # Round 1: Play all 8 tricks (32 cards)
-      # Track each trick to verify order consistency
-      round_1_trick_starters = []
       8.times do |trick_num|
         trick_players = []
         4.times do
@@ -108,7 +106,6 @@ module Games
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
-        round_1_trick_starters << trick_players.first
         # Verify this trick followed the base order (starting from the first player of this trick)
         starting_player = trick_players.first
         expected_order_for_trick = base_order.rotate(base_order.index(starting_player))
@@ -136,8 +133,6 @@ module Games
       assert game.playing?, "Game should be playing after bidding"
 
       # Round 2: Play all 8 tricks (32 cards)
-      # Verify same base order is maintained in round 2
-      round_2_trick_starters = []
       8.times do |trick_num|
         trick_players = []
         4.times do
@@ -149,7 +144,6 @@ module Games
           post game_plays_url(game), params: { play: { card_id: card.id } }
         end
 
-        round_2_trick_starters << trick_players.first
         # Verify this trick followed the base order (starting from the first player of this trick)
         starting_player = trick_players.first
         expected_order_for_trick = base_order.rotate(base_order.index(starting_player))
