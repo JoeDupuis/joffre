@@ -85,7 +85,92 @@ class TrickTest < ActiveSupport::TestCase
     trick.reload
     assert trick.completed?
     assert_not_nil trick.winner
-    assert_equal games(:playing_game).highest_bid.player, trick.winner
+    assert_equal cards(:playing_game_card_3).player, trick.winner
+  end
+
+  test "winner is determined by highest rank in led suit" do
+    game = games(:playing_game)
+    trick = Trick.create!(game: game, sequence: 1)
+
+    cards_to_play = [
+      cards(:playing_game_card_0),
+      cards(:playing_game_card_4),
+      cards(:playing_game_card_5),
+      cards(:playing_game_card_7)
+    ]
+
+    cards_to_play.each { |card| trick.add_card(card) }
+    trick.reload
+
+    assert_equal "blue", trick.led_suit
+    assert_equal cards(:playing_game_card_7).player, trick.winner
+  end
+
+  test "trump suit beats led suit" do
+    game = games(:playing_game)
+    first_trick = Trick.create!(game: game, sequence: 1)
+
+    first_trick.add_card(cards(:playing_game_card_0))
+    first_trick.add_card(cards(:playing_game_card_4))
+    first_trick.add_card(cards(:playing_game_card_5))
+    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.reload
+
+    second_trick = Trick.create!(game: game, sequence: 2)
+
+    second_trick.add_card(cards(:playing_game_card_8))
+    second_trick.add_card(cards(:playing_game_card_1))
+    second_trick.add_card(cards(:playing_game_card_16))
+    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.reload
+
+    assert_equal "green", second_trick.led_suit
+    assert_equal "blue", game.tricks.find_by(sequence: 1).led_suit
+    assert_equal cards(:playing_game_card_1).player, second_trick.winner
+  end
+
+  test "higher rank trump beats lower rank trump" do
+    game = games(:playing_game)
+    first_trick = Trick.create!(game: game, sequence: 1)
+
+    first_trick.add_card(cards(:playing_game_card_0))
+    first_trick.add_card(cards(:playing_game_card_4))
+    first_trick.add_card(cards(:playing_game_card_5))
+    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.reload
+
+    second_trick = Trick.create!(game: game, sequence: 2)
+
+    second_trick.add_card(cards(:playing_game_card_8))
+    second_trick.add_card(cards(:playing_game_card_1))
+    second_trick.add_card(cards(:playing_game_card_3))
+    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.reload
+
+    assert_equal "green", second_trick.led_suit
+    assert_equal cards(:playing_game_card_3).player, second_trick.winner
+  end
+
+  test "led suit beats non-trump non-led suit" do
+    game = games(:playing_game)
+    first_trick = Trick.create!(game: game, sequence: 1)
+
+    first_trick.add_card(cards(:playing_game_card_0))
+    first_trick.add_card(cards(:playing_game_card_4))
+    first_trick.add_card(cards(:playing_game_card_5))
+    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.reload
+
+    second_trick = Trick.create!(game: game, sequence: 2)
+
+    second_trick.add_card(cards(:playing_game_card_8))
+    second_trick.add_card(cards(:playing_game_card_16))
+    second_trick.add_card(cards(:playing_game_card_11))
+    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.reload
+
+    assert_equal "green", second_trick.led_suit
+    assert_equal cards(:playing_game_card_11).player, second_trick.winner
   end
 
   test "led_suit returns nil when no cards played" do
