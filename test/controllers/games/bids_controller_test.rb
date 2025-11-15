@@ -52,7 +52,6 @@ module Games
 
     test "should transition to playing when bidding complete" do
       game = games(:bidding_game)
-      game.update!(all_players_pass_strategy: :move_dealer)
       order = game.bidding_order
 
       # Place 3 bids
