@@ -7,13 +7,23 @@
           <tr>
             <th>Suite</th>
             <th>Rank</th>
+            <% if @game.playing? %>
+              <th>Action</th>
+            <% end %>
           </tr>
         </thead>
         <tbody>
-          <% Current.player.cards.order(:suite, :rank).each do |card| %>
+          <% Current.player.cards.in_hand.order(:suite, :rank).each do |card| %>
             <tr>
               <td><%= card.suite %></td>
               <td><%= card.rank %></td>
+              <% if @game.playing? %>
+                <td>
+                  <% if Current.player.active? %>
+                    <%= button_to "Play", game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "button" %>
+                  <% end %>
+                </td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>

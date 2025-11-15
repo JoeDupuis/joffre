@@ -10,6 +10,7 @@ class Game < ApplicationRecord
   has_many :users, through: :players
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
+  has_many :tricks, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -45,11 +46,7 @@ class Game < ApplicationRecord
   def bidding_order
     return [] unless players.count == 4
 
-    ordered_players = players.order(:order).to_a
-    dealer_index = ordered_players.index(dealer)
-    return [] unless dealer_index
-
-    ordered_players.rotate(dealer_index + 1)
+    ordered_players(dealer).rotate(1)
   end
 
   def current_bidder
@@ -87,14 +84,96 @@ class Game < ApplicationRecord
     bid
   end
 
+  def current_trick
+    tricks.where(completed: false).first || tricks.create!(sequence: next_trick_sequence)
+  end
+
+  def next_trick_sequence
+    (tricks.maximum(:sequence) || 0) + 1
+  end
+
+  def play_order
+    return [] unless players.count == 4
+    return [] unless playing?
+
+    starting_player = if first_trick?
+                        highest_bid.player
+    else
+                        last_trick_winner
+    end
+    ordered_players(starting_player)
+  end
+
+  def first_trick?
+    tricks.where(completed: true).empty?
+  end
+
+  def last_trick_winner
+    tricks.where(completed: true).order(sequence: :desc).first.winner
+  end
+
+  def active_player
+    order = play_order
+    return nil if order.empty?
+
+    cards_played = current_trick.cards.count
+    return nil if cards_played >= 4
+
+    order[cards_played]
+  end
+
+  def play_card!(card)
+    raise ArgumentError, "Not this player's turn" unless active_player == card.player
+    raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
+
+    trick = current_trick
+    trick.add_card(card)
+
+    check_round_complete!
+
+    card
+  end
+
+  def all_cards_played?
+    cards.reload.in_hand.count == 0
+  end
+
+  def check_round_complete!
+    return unless all_cards_played?
+
+    rotate_dealer!
+    reset_for_bidding!
+  end
+
+  def rotate_dealer!
+    current_dealer = dealer
+    new_dealer = ordered_players(current_dealer)[1]
+
+    current_dealer.update!(dealer: false)
+    new_dealer.update!(dealer: true)
+  end
+
+  def reset_for_bidding!
+    tricks.destroy_all
+    bids.destroy_all
+    update!(status: :bidding)
+  end
+
+  def ordered_players(first_player = nil)
+    @ordered_players ||= players.order(:order).to_a
+    return @ordered_players unless first_player.present?
+    index = @ordered_players.index(first_player)
+    @ordered_players.rotate(index)
+  end
+
   private
 
   def starting?
-    will_save_change_to_status? && status == "bidding"
+    will_save_change_to_status? && status == "bidding" && status_was == "pending"
   end
 
   def just_started_bidding?
-    saved_change_to_status? && status == "bidding"
+    saved_change_to_status? && status == "bidding" && status_before_last_save == "pending"
   end
 
   def setup_bidding_phase!

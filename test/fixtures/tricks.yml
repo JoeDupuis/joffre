@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game: one
+  winner: one
+  completed: false
+  sequence: 1
+
+two:
+  game: two
+  winner: two
+  completed: false
+  sequence: 1

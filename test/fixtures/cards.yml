@@ -30,3 +30,22 @@ bidding_game_card_<%= card_index %>:
     end
   end
 %>
+
+<%
+  playing_players = ['playing_game_player_one', 'playing_game_player_two', 'playing_game_player_three', 'playing_game_player_four']
+  playing_card_index = 0
+  [0, 1, 2, 3].each do |suite|
+    [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
+      player = playing_players[playing_card_index % 4]
+%>
+playing_game_card_<%= playing_card_index %>:
+  game: playing_game
+  player: <%= player %>
+  suite: <%= suite %>
+  rank: <%= rank %>
+
+<%
+      playing_card_index += 1
+    end
+  end
+%>
