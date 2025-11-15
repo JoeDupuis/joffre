@@ -106,5 +106,28 @@ module Games
 
       assert_redirected_to game
     end
+
+    test "should not show pass button for dealer when dealer_must_bid strategy is set" do
+      skip "TODO: Implement view test to verify pass button is hidden for dealer"
+      game = games(:bidding_game)
+      game.update!(all_players_pass_strategy: :dealer_must_bid)
+      order = game.bidding_order
+
+      order[0..2].each do |player|
+        game.bids.create!(player: player, amount: nil)
+      end
+
+      dealer = game.dealer
+      assert_equal dealer, game.current_bidder
+
+      sign_in_as(dealer.user)
+      get game_url(game)
+
+      assert_response :success
+      assert_select "form[action=?]", game_bids_path(game) do
+        assert_select "button[type=submit]", text: /Bid \d+/
+        assert_select "button[type=submit]", { text: "Pass", count: 0 }
+      end
+    end
   end
 end
