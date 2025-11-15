@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   enum :status, { pending: 0, bidding: 1, playing: 2, done: 3 }
+  enum :trump_suit, { blue: 0, green: 1, brown: 2, red: 3 }, prefix: :trump
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 

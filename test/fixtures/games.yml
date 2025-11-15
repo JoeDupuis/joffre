@@ -24,3 +24,4 @@ playing_game:
   name: Playing Game
   status: 2
   game_code: PLAY01
+  trump_suit: 1

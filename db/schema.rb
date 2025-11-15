@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_045505) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_15_210636) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -54,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_045505) do
     t.string "name"
     t.string "password_digest"
     t.integer "status", default: 0, null: false
+    t.integer "trump_suit"
     t.datetime "updated_at", null: false
     t.index ["game_code"], name: "index_games_on_game_code", unique: true
   end

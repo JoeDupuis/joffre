@@ -85,6 +85,42 @@ class TrickTest < ActiveSupport::TestCase
     trick.reload
     assert trick.completed?
     assert_not_nil trick.winner
-    assert_equal games(:playing_game).highest_bid.player, trick.winner
+    assert_equal players(:playing_game_player_four), trick.winner
+  end
+
+  test "trick winner is determined by highest card of lead suit" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 6)
+    cards = [
+      cards(:playing_game_card_0),
+      cards(:playing_game_card_1),
+      cards(:playing_game_card_2),
+      cards(:playing_game_card_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+    assert_equal players(:playing_game_player_four), trick.winner
+  end
+
+  test "trick winner is determined by trump card" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 7)
+    cards = [
+      cards(:playing_game_card_0),
+      cards(:playing_game_card_9),
+      cards(:playing_game_card_2),
+      cards(:playing_game_card_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+    assert_equal players(:playing_game_player_two), trick.winner
+  end
+
+  test "trick winner is highest trump when multiple trumps played" do
+    trick = Trick.create!(game: games(:playing_game), sequence: 8)
+    cards = [
+      cards(:playing_game_card_8),
+      cards(:playing_game_card_10),
+      cards(:playing_game_card_2),
+      cards(:playing_game_card_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+    assert_equal players(:playing_game_player_three), trick.winner
   end
 end
