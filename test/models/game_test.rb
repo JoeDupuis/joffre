@@ -121,36 +121,9 @@ class GameTest < ActiveSupport::TestCase
     assert_equal order[2], game.current_bidder
   end
 
-  test "all_players_passed? should return true when all 4 players pass" do
-    game = games(:full_game)
-    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
-
-    order = game.bidding_order
-
-    order.each do |player|
-      Bid.create!(player: player, game: game, amount: nil)
-    end
-
-    assert game.all_players_passed?
-  end
-
-  test "all_players_passed? should return false when at least one bid" do
-    game = games(:full_game)
-    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
-
-    order = game.bidding_order
-
-    Bid.create!(player: order[0], game: game, amount: 7)
-    order[1..3].each do |player|
-      Bid.create!(player: player, game: game, amount: nil)
-    end
-
-    assert_not game.all_players_passed?
-  end
-
   test "bid_complete? should return true after a bid and 3 passes" do
-    game = games(:full_game)
-    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
+    game = games(:full_game_move_dealer)
+    game.update!(status: :bidding)
 
     order = game.bidding_order
     game.bids.create!(player: order[0], amount: 7)
@@ -162,8 +135,8 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "bid_complete? should return true after 4 bids with mixed bids and passes" do
-    game = games(:full_game)
-    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
+    game = games(:full_game_move_dealer)
+    game.update!(status: :bidding)
 
     order = game.bidding_order
     game.bids.create!(player: order[0], amount: 7)
@@ -243,8 +216,8 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test "with move_dealer strategy, all players passing should rotate dealer and reshuffle" do
-    game = games(:full_game)
-    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
+    game = games(:full_game_move_dealer)
+    game.update!(status: :bidding)
 
     original_dealer = game.dealer
     order = game.bidding_order

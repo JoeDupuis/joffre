@@ -81,8 +81,6 @@ class BidTest < ActiveSupport::TestCase
 
   test "dealer cannot pass when dealer_must_bid strategy is set" do
     game = games(:bidding_game)
-    game.update!(all_players_pass_strategy: :dealer_must_bid)
-
     order = game.bidding_order
     order[0..2].each do |player|
       game.bids.create!(player: player, amount: nil)
@@ -97,9 +95,7 @@ class BidTest < ActiveSupport::TestCase
   end
 
   test "dealer can pass when move_dealer strategy is set" do
-    game = games(:bidding_game)
-    game.update!(all_players_pass_strategy: :move_dealer)
-
+    game = games(:bidding_game_move_dealer)
     order = game.bidding_order
     order[0..2].each do |player|
       game.bids.create!(player: player, amount: nil)
@@ -114,8 +110,6 @@ class BidTest < ActiveSupport::TestCase
 
   test "non-dealer can pass when dealer_must_bid strategy is set" do
     game = games(:bidding_game)
-    game.update!(all_players_pass_strategy: :dealer_must_bid)
-
     player = game.current_bidder
     assert_not_equal player, game.dealer
 

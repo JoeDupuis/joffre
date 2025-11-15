@@ -62,10 +62,6 @@ class Game < ApplicationRecord
     bids.where.not(amount: nil).order(amount: :desc, created_at: :asc).first
   end
 
-  def all_players_passed?
-    bids.count == 4 && bids.where(amount: nil).count == 4
-  end
-
   def bid_complete?
     (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
   end
@@ -175,6 +171,10 @@ class Game < ApplicationRecord
   end
 
   private
+
+  def all_players_passed?
+    bids.count == 4 && bids.where(amount: nil).count == 4
+  end
 
   def starting?
     will_save_change_to_status? && status == "bidding" && status_was == "pending"
