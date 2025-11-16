@@ -165,12 +165,10 @@ class Game < ApplicationRecord
     team_two_tricks_points = 0
 
     tricks.completed.each do |trick|
-      trick_value = calculate_trick_value(trick)
-
       if trick.winner.team == 1
-        team_one_tricks_points += trick_value
+        team_one_tricks_points += trick.value
       else
-        team_two_tricks_points += trick_value
+        team_two_tricks_points += trick.value
       end
     end
 
@@ -194,20 +192,6 @@ class Game < ApplicationRecord
         increment!(:team_two_points, -bid_amount)
       end
     end
-  end
-
-  def calculate_trick_value(trick)
-    value = 1
-
-    trick.cards.each do |card|
-      if card.red? && card.rank == 0
-        value += 5
-      elsif card.brown? && card.rank == 0
-        value -= 3
-      end
-    end
-
-    value
   end
 
   def game_won?

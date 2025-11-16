@@ -183,7 +183,7 @@ class GameTest < ActiveSupport::TestCase
     assert game.bidding?
   end
 
-  test "calculate_trick_value returns 1 for basic trick" do
+  test "trick value returns 1 for basic trick" do
     game = games(:playing_game)
     trick = game.tricks.create!(sequence: 1)
 
@@ -195,10 +195,10 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 1, game.calculate_trick_value(trick)
+    assert_equal 1, trick.value
   end
 
-  test "calculate_trick_value adds 5 for red 0" do
+  test "trick value adds 5 for red 0" do
     game = games(:playing_game)
     trick = game.tricks.create!(sequence: 1)
 
@@ -210,10 +210,10 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 6, game.calculate_trick_value(trick)
+    assert_equal 6, trick.value
   end
 
-  test "calculate_trick_value subtracts 3 for brown 0" do
+  test "trick value subtracts 3 for brown 0" do
     game = games(:playing_game)
     trick = game.tricks.create!(sequence: 1)
 
@@ -225,10 +225,10 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal(-2, game.calculate_trick_value(trick))
+    assert_equal(-2, trick.value)
   end
 
-  test "calculate_trick_value handles both red 0 and brown 0" do
+  test "trick value handles both red 0 and brown 0" do
     game = games(:playing_game)
     trick = game.tricks.create!(sequence: 1)
 
@@ -240,7 +240,7 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 3, game.calculate_trick_value(trick)
+    assert_equal 3, trick.value
   end
 
   test "game_won? returns false when neither team reaches max_points" do

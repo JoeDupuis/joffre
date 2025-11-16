@@ -36,6 +36,20 @@ class Trick < ApplicationRecord
     end
   end
 
+  def value
+    points = 1
+
+    cards.each do |card|
+      if card.red? && card.rank == 0
+        points += 5
+      elsif card.brown? && card.rank == 0
+        points -= 3
+      end
+    end
+
+    points
+  end
+
   private
 
   def complete_trick!
