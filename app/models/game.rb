@@ -7,11 +7,12 @@ class Game < ApplicationRecord
   validate :startable, if: :starting?
   after_update :setup_bidding_phase!, if: :just_started_bidding?
 
+  has_many :rounds, dependent: :destroy
+  has_many :tricks, dependent: :destroy
+  has_many :bids, dependent: :destroy
+  has_many :cards, dependent: :destroy
   has_many :players, dependent: :destroy
   has_many :users, through: :players
-  has_many :cards, dependent: :destroy
-  has_many :bids, dependent: :destroy
-  has_many :tricks, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -69,11 +70,25 @@ class Game < ApplicationRecord
       if all_players_passed?
         handle_all_players_passed!
       elsif bid_complete?
-        update!(status: :playing)
+        start_round!
       end
     end
 
     bid
+  end
+
+  def start_round!
+    round = rounds.create!(sequence: next_round_sequence, dealer: dealer)
+    update!(status: :playing)
+    round
+  end
+
+  def next_round_sequence
+    (rounds.maximum(:sequence) || 0) + 1
+  end
+
+  def current_round
+    rounds.order(sequence: :desc).first
   end
 
   def handle_all_players_passed!
@@ -85,11 +100,14 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).first || tricks.create!(sequence: next_trick_sequence)
+    return nil unless current_round
+
+    current_round.tricks.where(completed: false).first || current_round.tricks.create!(game: self, sequence: next_trick_sequence)
   end
 
   def next_trick_sequence
-    (tricks.maximum(:sequence) || 0) + 1
+    return 1 unless current_round
+    (current_round.tricks.maximum(:sequence) || 0) + 1
   end
 
   def play_order
@@ -150,7 +168,8 @@ class Game < ApplicationRecord
   def check_round_complete!
     return unless all_cards_played?
 
-    calculate_and_apply_points!
+    current_round.calculate_points!
+    update_game_points!
 
     if game_won?
       update!(status: :done)
@@ -160,38 +179,11 @@ class Game < ApplicationRecord
     end
   end
 
-  def calculate_and_apply_points!
-    team_one_tricks_points = 0
-    team_two_tricks_points = 0
+  def update_game_points!
+    team_one_total = rounds.sum(:team_one_points)
+    team_two_total = rounds.sum(:team_two_points)
 
-    tricks.completed.each do |trick|
-      if trick.winner.team == 1
-        team_one_tricks_points += trick.value
-      else
-        team_two_tricks_points += trick.value
-      end
-    end
-
-    bidding_team = highest_bid.player.team
-    bid_amount = highest_bid.amount
-
-    if bidding_team == 1
-      if team_one_tricks_points >= bid_amount
-        increment!(:team_one_points, team_one_tricks_points)
-        increment!(:team_two_points, team_two_tricks_points)
-      else
-        increment!(:team_one_points, -bid_amount)
-        increment!(:team_two_points, team_two_tricks_points)
-      end
-    else
-      if team_two_tricks_points >= bid_amount
-        increment!(:team_one_points, team_one_tricks_points)
-        increment!(:team_two_points, team_two_tricks_points)
-      else
-        increment!(:team_one_points, team_one_tricks_points)
-        increment!(:team_two_points, -bid_amount)
-      end
-    end
+    update!(team_one_points: team_one_total, team_two_points: team_two_total)
   end
 
   def game_won?
@@ -214,8 +206,8 @@ class Game < ApplicationRecord
   end
 
   def reset_for_bidding!
-    tricks.destroy_all
     bids.destroy_all
+    deal_cards!
     update!(status: :bidding)
   end
 

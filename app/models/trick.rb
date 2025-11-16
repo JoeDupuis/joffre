@@ -1,12 +1,13 @@
 class Trick < ApplicationRecord
   belongs_to :game
+  belongs_to :round, optional: true
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
   scope :completed, -> { where(completed: true) }
 
   validates :sequence, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 8 }
-  validates :sequence, uniqueness: { scope: :game_id }
+  validates :sequence, uniqueness: { scope: :round_id }
 
   def add_card(card)
     card.update!(trick: self)
@@ -36,17 +37,9 @@ class Trick < ApplicationRecord
     end
   end
 
-  def value
+  def calculate_value
     points = 1
-
-    cards.each do |card|
-      if card.red? && card.rank == 0
-        points += 5
-      elsif card.brown? && card.rank == 0
-        points -= 3
-      end
-    end
-
+    cards.each { |card| points += card.score_modifier }
     points
   end
 
@@ -56,8 +49,9 @@ class Trick < ApplicationRecord
     return if completed?
 
     winner = calculate_winner
+    trick_value = calculate_value
 
-    update!(winner:, completed: true)
+    update!(winner:, completed: true, value: trick_value)
   end
 
   def calculate_winner

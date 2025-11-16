@@ -66,7 +66,7 @@ module Games
       game.reload
       assert_equal 32, cards_played, "Should have played all 32 cards"
       assert game.bidding?, "Game should return to bidding phase after all tricks are complete (status: #{game.status}, cards in hand: #{game.cards.in_hand.count})"
-      assert_equal 0, game.tricks.count, "Tricks should be cleared"
+      assert_equal 8, game.tricks.count, "Tricks should persist in rounds"
       assert_equal 0, game.bids.count, "Bids should be cleared"
     end
 
@@ -217,7 +217,7 @@ module Games
 
       game.reload
       assert game.bidding?, "Game should be in bidding phase after round 1"
-      assert_equal 0, game.tricks.count, "Tricks should be cleared after round 1"
+      assert_equal 8, game.tricks.count, "Tricks should persist in rounds after round 1"
       assert_equal 0, game.bids.count, "Bids should be cleared after round 1"
 
       # Verify dealer rotated to next player
@@ -255,7 +255,7 @@ module Games
 
       game.reload
       assert game.bidding?, "Game should be in bidding phase after round 2"
-      assert_equal 0, game.tricks.count, "Tricks should be cleared after round 2"
+      assert_equal 16, game.tricks.count, "Tricks should persist in rounds after round 2"
       assert_equal 0, game.bids.count, "Bids should be cleared after round 2"
 
       # Verify dealer rotated again to third dealer

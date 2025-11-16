@@ -26,6 +26,7 @@ bidding_game_<%= suite_name %>_<%= rank %>:
   player: <%= player %>
   suite: <%= suite %>
   rank: <%= rank %>
+  score_modifier: <%= (rank == 0 && suite == 3) ? 5 : (rank == 0 && suite == 2) ? -3 : 0 %>
 
 <%
       card_index += 1
@@ -91,6 +92,7 @@ playing_game_<%= suite_name %>_<%= rank %>:
   player: <%= player %>
   suite: <%= suite %>
   rank: <%= rank %>
+  score_modifier: <%= (rank == 0 && suite == 3) ? 5 : (rank == 0 && suite == 2) ? -3 : 0 %>
 
 <%
   end

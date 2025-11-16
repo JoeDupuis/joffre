@@ -32,7 +32,12 @@ class Card < ApplicationRecord
     cards = []
     suites.each_key do |suite_name|
       (0..7).each do |rank|
-        cards << { suite: suite_name, rank: rank }
+        score_modifier = 0
+        if rank == 0
+          score_modifier = 5 if suite_name == "red"
+          score_modifier = -3 if suite_name == "brown"
+        end
+        cards << { suite: suite_name, rank: rank, score_modifier: score_modifier }
       end
     end
     cards.shuffle

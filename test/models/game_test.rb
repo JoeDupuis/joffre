@@ -185,7 +185,9 @@ class GameTest < ActiveSupport::TestCase
 
   test "trick value returns 1 for basic trick" do
     game = games(:playing_game)
-    trick = game.tricks.create!(sequence: 1)
+    game.rounds.destroy_all
+    round = game.rounds.create!(sequence: 1, dealer: game.players.first)
+    trick = round.tricks.create!(game: game, sequence: 1)
 
     cards = [
       cards(:playing_game_blue_0),
@@ -195,12 +197,14 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 1, trick.value
+    assert_equal 1, trick.calculate_value
   end
 
   test "trick value adds 5 for red 0" do
     game = games(:playing_game)
-    trick = game.tricks.create!(sequence: 1)
+    game.rounds.destroy_all
+    round = game.rounds.create!(sequence: 1, dealer: game.players.first)
+    trick = round.tricks.create!(game: game, sequence: 1)
 
     cards = [
       cards(:playing_game_blue_0),
@@ -210,12 +214,14 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 6, trick.value
+    assert_equal 6, trick.calculate_value
   end
 
   test "trick value subtracts 3 for brown 0" do
     game = games(:playing_game)
-    trick = game.tricks.create!(sequence: 1)
+    game.rounds.destroy_all
+    round = game.rounds.create!(sequence: 1, dealer: game.players.first)
+    trick = round.tricks.create!(game: game, sequence: 1)
 
     cards = [
       cards(:playing_game_blue_0),
@@ -225,12 +231,14 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal(-2, trick.value)
+    assert_equal(-2, trick.calculate_value)
   end
 
   test "trick value handles both red 0 and brown 0" do
     game = games(:playing_game)
-    trick = game.tricks.create!(sequence: 1)
+    game.rounds.destroy_all
+    round = game.rounds.create!(sequence: 1, dealer: game.players.first)
+    trick = round.tricks.create!(game: game, sequence: 1)
 
     cards = [
       cards(:playing_game_blue_0),
@@ -240,7 +248,7 @@ class GameTest < ActiveSupport::TestCase
     ]
     cards.each { |card| trick.add_card(card) }
 
-    assert_equal 3, trick.value
+    assert_equal 3, trick.calculate_value
   end
 
   test "game_won? returns false when neither team reaches max_points" do
@@ -285,11 +293,12 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 2, game.winning_team
   end
 
-  test "calculate_and_apply_points awards points to winning teams" do
+  test "round calculate_points awards points to winning teams" do
     game = games(:playing_game)
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
+    game.rounds.destroy_all
     game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
@@ -298,19 +307,22 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: player_one, amount: 6, game: game)
     bid.save(validate: false)
 
+    round = game.rounds.create!(sequence: 1, dealer: player_one)
+
     6.times do |i|
-      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
-      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick)
+      trick = round.tricks.create!(game: game, sequence: i + 1, winner: player_one, completed: true, value: 1)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, score_modifier: 0)
       card.save(validate: false)
     end
 
     2.times do |i|
-      trick = game.tricks.create!(sequence: i + 7, winner: player_two, completed: true)
-      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick)
+      trick = round.tricks.create!(game: game, sequence: i + 7, winner: player_two, completed: true, value: 1)
+      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick, score_modifier: 0)
       card.save(validate: false)
     end
 
-    game.calculate_and_apply_points!
+    round.calculate_points!
+    game.update_game_points!
     game.reload
 
     assert_equal 6, game.team_one_points
@@ -322,6 +334,7 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
+    game.rounds.destroy_all
     game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
@@ -330,17 +343,20 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: player_one, amount: 8, game: game)
     bid.save(validate: false)
 
-    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
-    card = Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1)
+    round = game.rounds.create!(sequence: 1, dealer: player_one)
+
+    trick1 = round.tricks.create!(game: game, sequence: 1, winner: player_one, completed: true, value: 1)
+    card = Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, score_modifier: 0)
     card.save(validate: false)
 
     6.times do |i|
-      trick = game.tricks.create!(sequence: i + 2, winner: player_two, completed: true)
-      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick)
+      trick = round.tricks.create!(game: game, sequence: i + 2, winner: player_two, completed: true, value: 1)
+      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick, score_modifier: 0)
       card.save(validate: false)
     end
 
-    game.calculate_and_apply_points!
+    round.calculate_points!
+    game.update_game_points!
     game.reload
 
     assert_equal(-8, game.team_one_points)
@@ -352,6 +368,7 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
+    game.rounds.destroy_all
     game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
@@ -359,16 +376,19 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: player_one, amount: 6, game: game)
     bid.save(validate: false)
 
-    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
-    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1).save(validate: false)
-    Card.new(game: game, player: player_one, suite: 3, rank: 0, trick: trick1, trick_sequence: 2).save(validate: false)
+    round = game.rounds.create!(sequence: 1, dealer: player_one)
+
+    trick1 = round.tricks.create!(game: game, sequence: 1, winner: player_one, completed: true, value: 6)
+    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1, score_modifier: 0).save(validate: false)
+    Card.new(game: game, player: player_one, suite: 3, rank: 0, trick: trick1, trick_sequence: 2, score_modifier: 5).save(validate: false)
 
     5.times do |i|
-      trick = game.tricks.create!(sequence: i + 2, winner: player_one, completed: true)
-      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round.tricks.create!(game: game, sequence: i + 2, winner: player_one, completed: true, value: 1)
+      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
-    game.calculate_and_apply_points!
+    round.calculate_points!
+    game.update_game_points!
     game.reload
 
     assert_equal 11, game.team_one_points
@@ -379,6 +399,7 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
+    game.rounds.destroy_all
     game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
@@ -386,16 +407,19 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: player_one, amount: 5, game: game)
     bid.save(validate: false)
 
-    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
-    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1).save(validate: false)
-    Card.new(game: game, player: player_one, suite: 2, rank: 0, trick: trick1, trick_sequence: 2).save(validate: false)
+    round = game.rounds.create!(sequence: 1, dealer: player_one)
+
+    trick1 = round.tricks.create!(game: game, sequence: 1, winner: player_one, completed: true, value: -2)
+    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1, score_modifier: 0).save(validate: false)
+    Card.new(game: game, player: player_one, suite: 2, rank: 0, trick: trick1, trick_sequence: 2, score_modifier: -3).save(validate: false)
 
     7.times do |i|
-      trick = game.tricks.create!(sequence: i + 2, winner: player_one, completed: true)
-      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round.tricks.create!(game: game, sequence: i + 2, winner: player_one, completed: true, value: 1)
+      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
-    game.calculate_and_apply_points!
+    round.calculate_points!
+    game.update_game_points!
     game.reload
 
     assert_equal 5, game.team_one_points
@@ -406,15 +430,24 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
-    game.update!(team_one_points: 38, team_two_points: 30, max_points: 41)
+    game.rounds.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0, max_points: 41)
 
     player_one = players(:playing_game_player_one)
+
+    # Create previous rounds to get team_one to 38 points
+    previous_round = game.rounds.create!(sequence: 1, dealer: player_one, team_one_points: 38, team_two_points: 30)
+    game.update_game_points!
+    game.reload
+
     bid = Bid.new(player: player_one, amount: 6, game: game)
     bid.save(validate: false)
 
+    round = game.rounds.create!(sequence: 2, dealer: player_one)
+
     6.times do |i|
-      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
-      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1)
+      trick = round.tricks.create!(game: game, sequence: i + 1, winner: player_one, completed: true, value: 1)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0)
       card.save(validate: false)
     end
 
@@ -432,15 +465,24 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
-    game.update!(team_one_points: 30, team_two_points: 25, max_points: 41)
+    game.rounds.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0, max_points: 41)
 
     player_one = players(:playing_game_player_one)
+
+    # Create previous rounds to get to starting points
+    previous_round = game.rounds.create!(sequence: 1, dealer: player_one, team_one_points: 30, team_two_points: 25)
+    game.update_game_points!
+    game.reload
+
     bid = Bid.new(player: player_one, amount: 6, game: game)
     bid.save(validate: false)
 
+    round = game.rounds.create!(sequence: 2, dealer: player_one)
+
     6.times do |i|
-      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
-      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1)
+      trick = round.tricks.create!(game: game, sequence: i + 1, winner: player_one, completed: true, value: 1)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0)
       card.save(validate: false)
     end
 
@@ -458,6 +500,7 @@ class GameTest < ActiveSupport::TestCase
     game.cards.destroy_all
     game.tricks.destroy_all
     game.bids.destroy_all
+    game.rounds.destroy_all
     game.update!(team_one_points: 0, team_two_points: 0, max_points: 20)
 
     player_one = players(:playing_game_player_one)
@@ -470,14 +513,16 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: player_one, amount: 6, game: game)
     bid.save(validate: false)
 
+    round1 = game.rounds.create!(sequence: 1, dealer: player_one)
+
     6.times do |i|
-      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
-      Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round1.tricks.create!(game: game, sequence: i + 1, winner: player_one, completed: true, value: 1)
+      Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
     2.times do |i|
-      trick = game.tricks.create!(sequence: i + 7, winner: player_two, completed: true)
-      Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round1.tricks.create!(game: game, sequence: i + 7, winner: player_two, completed: true, value: 1)
+      Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
     game.reload
@@ -488,7 +533,8 @@ class GameTest < ActiveSupport::TestCase
     assert game.bidding?, "Game should be in bidding phase after round 1"
     assert_equal 6, game.team_one_points, "Team 1 should have 6 points after round 1"
     assert_equal 2, game.team_two_points, "Team 2 should have 2 points after round 1"
-    assert_equal 0, game.tricks.count, "Tricks should be destroyed after round 1"
+    assert_equal 8, game.tricks.count, "Tricks from round 1 should persist"
+    assert_equal 8, round1.tricks.count, "Round 1 should have 8 tricks"
     assert_equal 0, game.bids.count, "Bids should be destroyed after round 1"
     assert_not_equal original_dealer, game.dealer, "Dealer should rotate after round 1"
 
@@ -503,26 +549,28 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: team_two_player, amount: 6, game: game)
     bid.save(validate: false)
 
+    round2 = game.rounds.create!(sequence: 2, dealer: new_dealer)
+
     7.times do |i|
-      trick = game.tricks.create!(sequence: i + 1, winner: team_two_player, completed: true)
+      trick = round2.tricks.create!(game: game, sequence: i + 1, winner: team_two_player, completed: true, value: 1)
       # Avoid brown 0 (suite 2, rank 0) which gives -3 penalty
-      Card.new(game: game, player: team_two_player, suite: 2, rank: i + 1, trick: trick, trick_sequence: 1).save(validate: false)
+      Card.new(game: game, player: team_two_player, suite: 2, rank: i + 1, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
     1.times do |i|
-      trick = game.tricks.create!(sequence: i + 8, winner: team_one_player, completed: true)
-      Card.new(game: game, player: team_one_player, suite: 1, rank: 0, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round2.tricks.create!(game: game, sequence: i + 8, winner: team_one_player, completed: true, value: 1)
+      Card.new(game: game, player: team_one_player, suite: 1, rank: 0, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
     # Mark all cards as played by assigning them to tricks
     # This ensures all_cards_played? returns true
     assert_equal 0, game.cards.in_hand.count, "All cards should be assigned to tricks before completing round"
-    assert_equal 8, game.tricks.count, "Should have 8 tricks before completing round 2"
-    assert_equal 8, game.tricks.completed.count, "All 8 tricks should be completed before round 2 ends"
+    assert_equal 8, round2.tricks.count, "Should have 8 tricks in round 2"
+    assert_equal 8, round2.tricks.completed.count, "All 8 tricks should be completed before round 2 ends"
 
     # Debug: check trick winners
-    team_two_won_tricks = game.tricks.completed.select { |t| t.winner.team == 2 }.count
-    team_one_won_tricks = game.tricks.completed.select { |t| t.winner.team == 1 }.count
+    team_two_won_tricks = round2.tricks.completed.select { |t| t.winner.team == 2 }.count
+    team_one_won_tricks = round2.tricks.completed.select { |t| t.winner.team == 1 }.count
     assert_equal 7, team_two_won_tricks, "Team 2 should have won 7 tricks in round 2"
     assert_equal 1, team_one_won_tricks, "Team 1 should have won 1 trick in round 2"
 
@@ -534,7 +582,8 @@ class GameTest < ActiveSupport::TestCase
     assert game.bidding?, "Game should be in bidding phase after round 2"
     assert_equal 7, game.team_one_points, "Team 1 should have 7 total points (6+1), got #{game.team_one_points}. Bidder team: #{team_two_player.team}"
     assert_equal 9, game.team_two_points, "Team 2 should have 9 total points (2+7), got #{game.team_two_points}. Bidder team: #{team_two_player.team}"
-    assert_equal 0, game.tricks.count, "Tricks should be destroyed after round 2"
+    assert_equal 16, game.tricks.count, "Tricks from rounds 1 and 2 should persist (8+8)"
+    assert_equal 8, round2.tricks.count, "Round 2 should have 8 tricks"
     assert_equal 0, game.bids.count, "Bids should be destroyed after round 2"
     assert_not_equal new_dealer, game.dealer, "Dealer should rotate after round 2"
 
@@ -544,15 +593,17 @@ class GameTest < ActiveSupport::TestCase
     bid = Bid.new(player: team_two_player, amount: 6, game: game)
     bid.save(validate: false)
 
+    round3 = game.rounds.create!(sequence: 3, dealer: game.dealer)
+
     # First trick with red 0 bonus (+5)
-    trick1 = game.tricks.create!(sequence: 1, winner: team_two_player, completed: true)
-    Card.new(game: game, player: team_two_player, suite: 3, rank: 1, trick: trick1, trick_sequence: 1).save(validate: false)
-    Card.new(game: game, player: team_two_player, suite: 3, rank: 0, trick: trick1, trick_sequence: 2).save(validate: false)
+    trick1 = round3.tricks.create!(game: game, sequence: 1, winner: team_two_player, completed: true, value: 6)
+    Card.new(game: game, player: team_two_player, suite: 3, rank: 1, trick: trick1, trick_sequence: 1, score_modifier: 0).save(validate: false)
+    Card.new(game: game, player: team_two_player, suite: 3, rank: 0, trick: trick1, trick_sequence: 2, score_modifier: 5).save(validate: false)
 
     # Remaining 7 tricks
     7.times do |i|
-      trick = game.tricks.create!(sequence: i + 2, winner: team_two_player, completed: true)
-      Card.new(game: game, player: team_two_player, suite: 3, rank: i + 2, trick: trick, trick_sequence: 1).save(validate: false)
+      trick = round3.tricks.create!(game: game, sequence: i + 2, winner: team_two_player, completed: true, value: 1)
+      Card.new(game: game, player: team_two_player, suite: 3, rank: i + 2, trick: trick, trick_sequence: 1, score_modifier: 0).save(validate: false)
     end
 
     game.reload

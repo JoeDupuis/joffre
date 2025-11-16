@@ -28,11 +28,16 @@ class TrickTest < ActiveSupport::TestCase
     assert_includes trick.errors[:sequence], "has already been taken"
   end
 
-  test "sequence can be duplicated across different games" do
-    trick = Trick.create!(game: games(:one), sequence: 2)
+  test "sequence can be duplicated across different rounds" do
+    game = games(:one)
+    game.rounds.destroy_all
+
+    round1 = Round.create!(game: game, sequence: 1, dealer: players(:one))
+    trick = Trick.create!(game: game, round: round1, sequence: 2)
     assert trick.persisted?
 
-    trick2 = Trick.create!(game: games(:two), sequence: 2)
+    round2 = Round.create!(game: game, sequence: 2, dealer: players(:one))
+    trick2 = Trick.create!(game: game, round: round2, sequence: 2)
     assert trick2.persisted?
   end
 
@@ -90,7 +95,8 @@ class TrickTest < ActiveSupport::TestCase
 
   test "winner is determined by highest rank in led suit" do
     game = games(:playing_game)
-    trick = Trick.create!(game: game, sequence: 1)
+    round = rounds(:playing_game_round)
+    trick = round.tricks.create!(game: game, sequence: 2)
 
     cards_to_play = [
       cards(:playing_game_blue_0),
@@ -108,15 +114,17 @@ class TrickTest < ActiveSupport::TestCase
 
   test "trump suit beats led suit" do
     game = games(:playing_game)
-    first_trick = Trick.create!(game: game, sequence: 1)
+    game.rounds.destroy_all
+    round = game.rounds.create!(sequence: 1, dealer: game.players.first)
 
+    first_trick = round.tricks.create!(game: game, sequence: 1)
     first_trick.add_card(cards(:playing_game_blue_0))
     first_trick.add_card(cards(:playing_game_blue_4))
     first_trick.add_card(cards(:playing_game_blue_5))
     first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
-    second_trick = Trick.create!(game: game, sequence: 2)
+    second_trick = round.tricks.create!(game: game, sequence: 2)
 
     second_trick.add_card(cards(:playing_game_green_7))
     second_trick.add_card(cards(:playing_game_blue_1))
@@ -131,7 +139,8 @@ class TrickTest < ActiveSupport::TestCase
 
   test "higher rank trump beats lower rank trump" do
     game = games(:playing_game)
-    first_trick = Trick.create!(game: game, sequence: 1)
+    round = rounds(:playing_game_round)
+    first_trick = round.tricks.create!(game: game, sequence: 5)
 
     first_trick.add_card(cards(:playing_game_blue_0))
     first_trick.add_card(cards(:playing_game_blue_4))
@@ -139,7 +148,7 @@ class TrickTest < ActiveSupport::TestCase
     first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
-    second_trick = Trick.create!(game: game, sequence: 2)
+    second_trick = round.tricks.create!(game: game, sequence: 6)
 
     second_trick.add_card(cards(:playing_game_green_0))
     second_trick.add_card(cards(:playing_game_blue_1))
