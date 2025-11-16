@@ -12,6 +12,7 @@ class Game < ApplicationRecord
   has_many :cards, dependent: :destroy
   has_many :players, dependent: :destroy
   has_many :users, through: :players
+  has_many :round_scores, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -181,13 +182,7 @@ class Game < ApplicationRecord
   end
 
   def team_points(team)
-    trick_points = rounds.joins(tricks: :winner)
-                         .where(players: { team: team })
-                         .sum("tricks.value")
-    penalty_column = team == 1 ? "team_one_penalty" : "team_two_penalty"
-    penalties = rounds.sum(penalty_column)
-
-    trick_points + penalties
+    round_scores.where(team: team).sum(:score)
   end
 
   def team_one_points

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_16_095619) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -77,14 +77,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
     t.index ["user_id"], name: "index_players_on_user_id"
   end
 
+  create_table "round_scores", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "number", null: false
+    t.integer "score", null: false
+    t.integer "team", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "number", "team"], name: "index_round_scores_on_game_id_and_number_and_team", unique: true
+    t.index ["game_id"], name: "index_round_scores_on_game_id"
+  end
+
   create_table "rounds", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "dealer_id", null: false
     t.integer "game_id", null: false
     t.integer "sequence", null: false
     t.integer "status", default: 0, null: false
-    t.integer "team_one_penalty", default: 0, null: false
-    t.integer "team_two_penalty", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["dealer_id"], name: "index_rounds_on_dealer_id"
     t.index ["game_id", "sequence"], name: "index_rounds_on_game_id_and_sequence", unique: true
@@ -133,6 +142,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
+  add_foreign_key "round_scores", "games"
   add_foreign_key "rounds", "games"
   add_foreign_key "rounds", "players", column: "dealer_id"
   add_foreign_key "sessions", "users"

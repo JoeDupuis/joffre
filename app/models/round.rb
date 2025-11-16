@@ -20,26 +20,24 @@ class Round < ApplicationRecord
     team_one_tricks = tricks.joins(:winner).where(players: { team: 1 }).sum(:value)
     team_two_tricks = tricks.joins(:winner).where(players: { team: 2 }).sum(:value)
 
+    team_one_score = team_one_tricks
+    team_two_score = team_two_tricks
+
     if bidding_team == 1
-      if team_one_tricks >= bid_amount
-        update!(team_one_penalty: 0, team_two_penalty: 0)
-      else
-        update!(team_one_penalty: -bid_amount - team_one_tricks, team_two_penalty: 0)
-      end
+      team_one_score = -bid_amount if team_one_tricks < bid_amount
     else
-      if team_two_tricks >= bid_amount
-        update!(team_one_penalty: 0, team_two_penalty: 0)
-      else
-        update!(team_one_penalty: 0, team_two_penalty: -bid_amount - team_two_tricks)
-      end
+      team_two_score = -bid_amount if team_two_tricks < bid_amount
     end
+
+    game.round_scores.create!(number: sequence, team: 1, score: team_one_score)
+    game.round_scores.create!(number: sequence, team: 2, score: team_two_score)
   end
 
   def team_one_points
-    tricks.joins(:winner).where(players: { team: 1 }).sum(:value) + team_one_penalty
+    game.round_scores.find_by(number: sequence, team: 1)&.score || 0
   end
 
   def team_two_points
-    tricks.joins(:winner).where(players: { team: 2 }).sum(:value) + team_two_penalty
+    game.round_scores.find_by(number: sequence, team: 2)&.score || 0
   end
 end
