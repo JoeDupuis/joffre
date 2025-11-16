@@ -254,42 +254,109 @@ class GameTest < ActiveSupport::TestCase
 
   test "game_won? returns false when neither team reaches max_points" do
     game = games(:playing_game)
-    game.update!(team_one_points: 30, team_two_points: 25, max_points: 41)
+    game.update!(max_points: 41)
 
     assert_not game.game_won?
   end
 
   test "game_won? returns true when team one reaches max_points" do
     game = games(:playing_game)
-    game.update!(team_one_points: 41, team_two_points: 25, max_points: 41)
+    game.update!(max_points: 41)
+    game.cards.destroy_all
+    game.rounds.destroy_all
+
+    player_one = players(:playing_game_player_one)
+
+    # Create multiple rounds to accumulate 41 points for team one
+    6.times do |round_num|
+      round = game.rounds.create!(sequence: round_num + 1, dealer: player_one)
+      bid = Bid.new(player: player_one, amount: 6, round: round)
+      bid.save(validate: false)
+
+      # Create 7 tricks per round (7 x 6 = 42 points)
+      7.times do |trick_num|
+        round.tricks.create!(sequence: trick_num + 1, winner: player_one, completed: true, value: 1)
+      end
+      round.calculate_points!
+    end
 
     assert game.game_won?
+    assert game.team_one_points >= 41
   end
 
   test "game_won? returns true when team two reaches max_points" do
     game = games(:playing_game)
-    game.update!(team_one_points: 30, team_two_points: 41, max_points: 41)
+    game.update!(max_points: 41)
+    game.cards.destroy_all
+    game.rounds.destroy_all
+
+    player_two = players(:playing_game_player_two)
+
+    # Create multiple rounds to accumulate 41 points for team two
+    6.times do |round_num|
+      round = game.rounds.create!(sequence: round_num + 1, dealer: player_two)
+      bid = Bid.new(player: player_two, amount: 6, round: round)
+      bid.save(validate: false)
+
+      # Create 7 tricks per round (7 x 6 = 42 points)
+      7.times do |trick_num|
+        round.tricks.create!(sequence: trick_num + 1, winner: player_two, completed: true, value: 1)
+      end
+      round.calculate_points!
+    end
 
     assert game.game_won?
+    assert game.team_two_points >= 41
   end
 
   test "winning_team returns nil when game is not done" do
     game = games(:playing_game)
-    game.update!(team_one_points: 41, team_two_points: 25)
 
     assert_nil game.winning_team
   end
 
   test "winning_team returns 1 when team one wins" do
     game = games(:playing_game)
-    game.update!(team_one_points: 41, team_two_points: 25, status: :done)
+    game.update!(max_points: 41, status: :done)
+    game.cards.destroy_all
+    game.rounds.destroy_all
+
+    player_one = players(:playing_game_player_one)
+
+    # Create multiple rounds for team one to win
+    6.times do |round_num|
+      round = game.rounds.create!(sequence: round_num + 1, dealer: player_one)
+      bid = Bid.new(player: player_one, amount: 6, round: round)
+      bid.save(validate: false)
+
+      7.times do |trick_num|
+        round.tricks.create!(sequence: trick_num + 1, winner: player_one, completed: true, value: 1)
+      end
+      round.calculate_points!
+    end
 
     assert_equal 1, game.winning_team
   end
 
   test "winning_team returns 2 when team two wins" do
     game = games(:playing_game)
-    game.update!(team_one_points: 25, team_two_points: 41, status: :done)
+    game.update!(max_points: 41, status: :done)
+    game.cards.destroy_all
+    game.rounds.destroy_all
+
+    player_two = players(:playing_game_player_two)
+
+    # Create multiple rounds for team two to win
+    6.times do |round_num|
+      round = game.rounds.create!(sequence: round_num + 1, dealer: player_two)
+      bid = Bid.new(player: player_two, amount: 6, round: round)
+      bid.save(validate: false)
+
+      7.times do |trick_num|
+        round.tricks.create!(sequence: trick_num + 1, winner: player_two, completed: true, value: 1)
+      end
+      round.calculate_points!
+    end
 
     assert_equal 2, game.winning_team
   end
@@ -298,7 +365,6 @@ class GameTest < ActiveSupport::TestCase
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
     player_two = players(:playing_game_player_two)
@@ -321,8 +387,6 @@ class GameTest < ActiveSupport::TestCase
     end
 
     round.calculate_points!
-    game.update_game_points!
-    game.reload
 
     assert_equal 6, game.team_one_points
     assert_equal 2, game.team_two_points
@@ -332,7 +396,6 @@ class GameTest < ActiveSupport::TestCase
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
     player_two = players(:playing_game_player_two)
@@ -353,8 +416,6 @@ class GameTest < ActiveSupport::TestCase
     end
 
     round.calculate_points!
-    game.update_game_points!
-    game.reload
 
     assert_equal(-8, game.team_one_points)
     assert_equal 6, game.team_two_points
@@ -364,7 +425,6 @@ class GameTest < ActiveSupport::TestCase
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
 
@@ -383,8 +443,6 @@ class GameTest < ActiveSupport::TestCase
     end
 
     round.calculate_points!
-    game.update_game_points!
-    game.reload
 
     assert_equal 11, game.team_one_points
   end
@@ -393,7 +451,6 @@ class GameTest < ActiveSupport::TestCase
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0)
 
     player_one = players(:playing_game_player_one)
 
@@ -412,8 +469,6 @@ class GameTest < ActiveSupport::TestCase
     end
 
     round.calculate_points!
-    game.update_game_points!
-    game.reload
 
     assert_equal 5, game.team_one_points
   end
@@ -422,16 +477,22 @@ class GameTest < ActiveSupport::TestCase
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0, max_points: 41)
+    game.update!(max_points: 41)
 
     player_one = players(:playing_game_player_one)
 
-    # Create previous rounds to get team_one to 38 points
-    previous_round = game.rounds.create!(sequence: 1, dealer: player_one, team_one_points: 38, team_two_points: 30)
-    game.update_game_points!
-    game.reload
+    # Create previous rounds to get team_one to 38 points (need 5 rounds with ~8 points each)
+    5.times do |round_num|
+      prev_round = game.rounds.create!(sequence: round_num + 1, dealer: player_one)
+      prev_bid = Bid.new(player: player_one, amount: 6, round: prev_round)
+      prev_bid.save(validate: false)
+      8.times do |trick_num|
+        prev_round.tricks.create!(sequence: trick_num + 1, winner: player_one, completed: true, value: 1)
+      end
+      prev_round.calculate_points!
+    end
 
-    round = game.rounds.create!(sequence: 2, dealer: player_one)
+    round = game.rounds.create!(sequence: 6, dealer: player_one)
 
     bid = Bid.new(player: player_one, amount: 6, round: round)
     bid.save(validate: false)
@@ -448,23 +509,51 @@ class GameTest < ActiveSupport::TestCase
     game.reload
 
     assert game.done?
-    assert_equal 44, game.team_one_points
+    assert_equal 46, game.team_one_points
   end
 
   test "check_round_complete continues game when no team reaches max_points" do
     game = games(:playing_game)
     game.cards.destroy_all
     game.rounds.destroy_all
-    game.update!(team_one_points: 0, team_two_points: 0, max_points: 41)
+    game.update!(max_points: 41)
 
     player_one = players(:playing_game_player_one)
+    player_two = players(:playing_game_player_two)
 
-    # Create previous rounds to get to starting points
-    previous_round = game.rounds.create!(sequence: 1, dealer: player_one, team_one_points: 30, team_two_points: 25)
-    game.update_game_points!
-    game.reload
+    # Create previous rounds to accumulate points
+    # We'll create 4 rounds to get team_one to ~31 points, team_two to ~25
+    # Round 1: team one 8, team two 0
+    4.times do |round_num|
+      prev_round = game.rounds.create!(sequence: round_num + 1, dealer: player_one)
+      prev_bid = Bid.new(player: player_one, amount: 6, round: prev_round)
+      prev_bid.save(validate: false)
+      8.times { |i| prev_round.tricks.create!(sequence: i + 1, winner: player_one, completed: true, value: 1) }
+      prev_round.calculate_points!
+    end
 
-    round = game.rounds.create!(sequence: 2, dealer: player_one)
+    # Round 5: team two gets 8 points
+    prev_round5 = game.rounds.create!(sequence: 5, dealer: player_two)
+    prev_bid5 = Bid.new(player: player_two, amount: 6, round: prev_round5)
+    prev_bid5.save(validate: false)
+    8.times { |i| prev_round5.tricks.create!(sequence: i + 1, winner: player_two, completed: true, value: 1) }
+    prev_round5.calculate_points!
+
+    # Round 6: team two gets 8 points, team one gets 0
+    prev_round6 = game.rounds.create!(sequence: 6, dealer: player_two)
+    prev_bid6 = Bid.new(player: player_two, amount: 6, round: prev_round6)
+    prev_bid6.save(validate: false)
+    8.times { |i| prev_round6.tricks.create!(sequence: i + 1, winner: player_two, completed: true, value: 1) }
+    prev_round6.calculate_points!
+
+    # Round 7: team two gets 8 points
+    prev_round7 = game.rounds.create!(sequence: 7, dealer: player_two)
+    prev_bid7 = Bid.new(player: player_two, amount: 6, round: prev_round7)
+    prev_bid7.save(validate: false)
+    8.times { |i| prev_round7.tricks.create!(sequence: i + 1, winner: player_two, completed: true, value: 1) }
+    prev_round7.calculate_points!
+
+    round = game.rounds.create!(sequence: 8, dealer: player_one)
 
     bid = Bid.new(player: player_one, amount: 6, round: round)
     bid.save(validate: false)
@@ -475,13 +564,11 @@ class GameTest < ActiveSupport::TestCase
       card.save(validate: false)
     end
 
-    game.reload
-
     game.check_round_complete!
-    game.reload
 
     assert game.current_round.bidding?
-    assert_equal 36, game.team_one_points
+    # Team one: 4×8 + 6 = 38, Team two: 3×8 = 24
+    assert_equal 38, game.team_one_points
   end
 
   test "multiple rounds accumulate points until a team wins" do
@@ -493,7 +580,7 @@ class GameTest < ActiveSupport::TestCase
     Bid.joins(:round).where(rounds: { game_id: game.id }).destroy_all
     Round.where(game: game).destroy_all
     game.reload
-    game.update!(team_one_points: 0, team_two_points: 0, max_points: 20)
+    game.update!(max_points: 20)
 
     player_one = players(:playing_game_player_one)
     player_two = players(:playing_game_player_two)

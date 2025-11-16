@@ -59,8 +59,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
     t.string "name"
     t.string "password_digest"
     t.integer "status", default: 0, null: false
-    t.integer "team_one_points", default: 0, null: false
-    t.integer "team_two_points", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["game_code"], name: "index_games_on_game_code", unique: true
   end
@@ -85,8 +83,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
     t.integer "game_id", null: false
     t.integer "sequence", null: false
     t.integer "status", default: 0, null: false
-    t.integer "team_one_points", default: 0, null: false
-    t.integer "team_two_points", default: 0, null: false
+    t.integer "team_one_penalty", default: 0, null: false
+    t.integer "team_two_penalty", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["dealer_id"], name: "index_rounds_on_dealer_id"
     t.index ["game_id", "sequence"], name: "index_rounds_on_game_id_and_sequence", unique: true

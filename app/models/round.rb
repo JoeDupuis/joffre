@@ -14,34 +14,32 @@ class Round < ApplicationRecord
   end
 
   def calculate_points!
-    team_one = 0
-    team_two = 0
-
-    tricks.each do |trick|
-      next unless trick.value
-
-      if trick.winner.team == 1
-        team_one += trick.value
-      else
-        team_two += trick.value
-      end
-    end
-
     bidding_team = highest_bid.player.team
     bid_amount = highest_bid.amount
 
+    team_one_tricks = tricks.joins(:winner).where(players: { team: 1 }).sum(:value)
+    team_two_tricks = tricks.joins(:winner).where(players: { team: 2 }).sum(:value)
+
     if bidding_team == 1
-      if team_one >= bid_amount
-        update!(team_one_points: team_one, team_two_points: team_two)
+      if team_one_tricks >= bid_amount
+        update!(team_one_penalty: 0, team_two_penalty: 0)
       else
-        update!(team_one_points: -bid_amount, team_two_points: team_two)
+        update!(team_one_penalty: -bid_amount - team_one_tricks, team_two_penalty: 0)
       end
     else
-      if team_two >= bid_amount
-        update!(team_one_points: team_one, team_two_points: team_two)
+      if team_two_tricks >= bid_amount
+        update!(team_one_penalty: 0, team_two_penalty: 0)
       else
-        update!(team_one_points: team_one, team_two_points: -bid_amount)
+        update!(team_one_penalty: 0, team_two_penalty: -bid_amount - team_two_tricks)
       end
     end
+  end
+
+  def team_one_points
+    tricks.joins(:winner).where(players: { team: 1 }).sum(:value) + team_one_penalty
+  end
+
+  def team_two_points
+    tricks.joins(:winner).where(players: { team: 2 }).sum(:value) + team_two_penalty
   end
 end

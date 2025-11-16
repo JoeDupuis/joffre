@@ -4,8 +4,6 @@ class CreateRounds < ActiveRecord::Migration[8.1]
       t.references :game, null: false, foreign_key: true
       t.integer :sequence, null: false
       t.references :dealer, null: false, foreign_key: { to_table: :players }
-      t.integer :team_one_points, null: false, default: 0
-      t.integer :team_two_points, null: false, default: 0
 
       t.timestamps
     end

@@ -8,6 +8,7 @@ class Game < ApplicationRecord
   after_update :setup_first_round!, if: :just_started?
 
   has_many :rounds, dependent: :destroy
+  has_many :tricks, through: :rounds
   has_many :cards, dependent: :destroy
   has_many :players, dependent: :destroy
   has_many :users, through: :players
@@ -170,7 +171,6 @@ class Game < ApplicationRecord
     return unless all_cards_played?
 
     current_round.calculate_points!
-    update_game_points!
 
     if game_won?
       update!(status: :done)
@@ -180,11 +180,22 @@ class Game < ApplicationRecord
     end
   end
 
-  def update_game_points!
-    team_one_total = rounds.sum(:team_one_points)
-    team_two_total = rounds.sum(:team_two_points)
+  def team_points(team)
+    trick_points = rounds.joins(tricks: :winner)
+                         .where(players: { team: team })
+                         .sum("tricks.value")
+    penalty_column = team == 1 ? "team_one_penalty" : "team_two_penalty"
+    penalties = rounds.sum(penalty_column)
 
-    update!(team_one_points: team_one_total, team_two_points: team_two_total)
+    trick_points + penalties
+  end
+
+  def team_one_points
+    team_points(1)
+  end
+
+  def team_two_points
+    team_points(2)
   end
 
   def game_won?
