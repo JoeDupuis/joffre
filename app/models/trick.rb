@@ -42,17 +42,24 @@ class Trick < ApplicationRecord
     return if completed?
 
     winner = calculate_winner
+
     update!(winner:, completed: true)
   end
 
   def calculate_winner
-    return nil if cards.count < 4
+    trick_cards = cards.to_a
+    return nil if trick_cards.empty?
 
-    led_suit_value = led_suit
-    winning_card = cards
-      .where(suite: led_suit_value)
-      .order(rank: :desc)
-      .first
+    trump_suit = game.trump_suit
+    current_led_suit = led_suit
+
+    trump_cards = trick_cards.select { |card| card.suite == trump_suit }
+
+    winning_card = if trump_cards.any?
+      trump_cards.max_by(&:rank)
+    else
+      trick_cards.select { |card| card.suite == current_led_suit }.max_by(&:rank)
+    end
 
     winning_card.player
   end
