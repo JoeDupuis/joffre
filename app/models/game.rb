@@ -94,11 +94,10 @@ class Game < ApplicationRecord
   end
 
   def handle_all_players_passed!
-    if move_dealer?
-      rotate_dealer!
-      current_round.update!(dealer: dealer)
-    end
-    current_round.bids.destroy_all
+    sequence = current_round.sequence
+    current_round.destroy!
+    rotate_dealer! if move_dealer?
+    rounds.create!(sequence: sequence, dealer: dealer, status: :bidding)
     deal_cards!
   end
 
