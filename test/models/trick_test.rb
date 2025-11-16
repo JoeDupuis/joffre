@@ -95,15 +95,15 @@ class TrickTest < ActiveSupport::TestCase
     cards_to_play = [
       cards(:playing_game_blue_0),
       cards(:playing_game_blue_4),
-      cards(:playing_game_blue_5),
-      cards(:playing_game_blue_7)
+      cards(:playing_game_green_7),
+      cards(:playing_game_brown_6)
     ]
 
     cards_to_play.each { |card| trick.add_card(card) }
     trick.reload
 
     assert_equal "blue", trick.led_suit
-    assert_equal cards(:playing_game_blue_7).player, trick.winner
+    assert_equal cards(:playing_game_blue_4).player, trick.winner
   end
 
   test "trump suit beats led suit" do
