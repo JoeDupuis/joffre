@@ -39,10 +39,26 @@ class Trick < ApplicationRecord
   def complete_trick!
     return if completed?
 
-    # TODO actually calculate the winner
-    # temp hardcode the highest bid
-    winner = game.highest_bid.player
+    winner = calculate_winner
 
     update!(winner:, completed: true)
+  end
+
+  def calculate_winner
+    trick_cards = cards.to_a
+    return nil if trick_cards.empty?
+
+    trump_suit = game.trump_suit
+    current_led_suit = led_suit
+
+    trump_cards = trick_cards.select { |card| card.suite == trump_suit }
+
+    winning_card = if trump_cards.any?
+      trump_cards.max_by(&:rank)
+    else
+      trick_cards.select { |card| card.suite == current_led_suit }.max_by(&:rank)
+    end
+
+    winning_card.player
   end
 end
