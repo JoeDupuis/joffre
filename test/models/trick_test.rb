@@ -44,10 +44,10 @@ class TrickTest < ActiveSupport::TestCase
   test "complete? returns true when 4 cards" do
     trick = Trick.create!(game: games(:playing_game), sequence: 2)
     cards = [
-      cards(:playing_game_card_0),
-      cards(:playing_game_card_1),
-      cards(:playing_game_card_2),
-      cards(:playing_game_card_3)
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_2),
+      cards(:playing_game_blue_3)
     ]
     cards.each { |card| trick.add_card(card) }
     assert trick.complete?
@@ -55,7 +55,7 @@ class TrickTest < ActiveSupport::TestCase
 
   test "add_card adds card to trick" do
     trick = Trick.create!(game: games(:bidding_game), sequence: 3)
-    card = cards(:bidding_game_card_0)
+    card = cards(:bidding_game_blue_0)
     trick.add_card(card)
     assert_includes trick.cards, card
   end
@@ -63,9 +63,9 @@ class TrickTest < ActiveSupport::TestCase
   test "add_card does not complete trick with fewer than 4 cards" do
     trick = Trick.create!(game: games(:bidding_game), sequence: 4)
     cards = [
-      cards(:bidding_game_card_0),
-      cards(:bidding_game_card_1),
-      cards(:bidding_game_card_2)
+      cards(:bidding_game_blue_0),
+      cards(:bidding_game_blue_1),
+      cards(:bidding_game_blue_2)
     ]
     cards.each { |card| trick.add_card(card) }
     trick.reload
@@ -76,16 +76,16 @@ class TrickTest < ActiveSupport::TestCase
   test "add_card completes trick on 4th card" do
     trick = Trick.create!(game: games(:playing_game), sequence: 5)
     cards = [
-      cards(:playing_game_card_0),
-      cards(:playing_game_card_1),
-      cards(:playing_game_card_2),
-      cards(:playing_game_card_3)
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_2),
+      cards(:playing_game_blue_3)
     ]
     cards.each { |card| trick.add_card(card) }
     trick.reload
     assert trick.completed?
     assert_not_nil trick.winner
-    assert_equal cards(:playing_game_card_3).player, trick.winner
+    assert_equal cards(:playing_game_blue_3).player, trick.winner
   end
 
   test "winner is determined by highest rank in led suit" do
@@ -93,84 +93,84 @@ class TrickTest < ActiveSupport::TestCase
     trick = Trick.create!(game: game, sequence: 1)
 
     cards_to_play = [
-      cards(:playing_game_card_0),
-      cards(:playing_game_card_4),
-      cards(:playing_game_card_5),
-      cards(:playing_game_card_7)
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_4),
+      cards(:playing_game_blue_5),
+      cards(:playing_game_blue_7)
     ]
 
     cards_to_play.each { |card| trick.add_card(card) }
     trick.reload
 
     assert_equal "blue", trick.led_suit
-    assert_equal cards(:playing_game_card_7).player, trick.winner
+    assert_equal cards(:playing_game_blue_7).player, trick.winner
   end
 
   test "trump suit beats led suit" do
     game = games(:playing_game)
     first_trick = Trick.create!(game: game, sequence: 1)
 
-    first_trick.add_card(cards(:playing_game_card_0))
-    first_trick.add_card(cards(:playing_game_card_4))
-    first_trick.add_card(cards(:playing_game_card_5))
-    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.add_card(cards(:playing_game_blue_0))
+    first_trick.add_card(cards(:playing_game_blue_4))
+    first_trick.add_card(cards(:playing_game_blue_5))
+    first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
     second_trick = Trick.create!(game: game, sequence: 2)
 
-    second_trick.add_card(cards(:playing_game_card_8))
-    second_trick.add_card(cards(:playing_game_card_1))
-    second_trick.add_card(cards(:playing_game_card_16))
-    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.add_card(cards(:playing_game_green_0))
+    second_trick.add_card(cards(:playing_game_blue_1))
+    second_trick.add_card(cards(:playing_game_brown_0))
+    second_trick.add_card(cards(:playing_game_red_0))
     second_trick.reload
 
     assert_equal "green", second_trick.led_suit
     assert_equal "blue", game.tricks.find_by(sequence: 1).led_suit
-    assert_equal cards(:playing_game_card_1).player, second_trick.winner
+    assert_equal cards(:playing_game_blue_1).player, second_trick.winner
   end
 
   test "higher rank trump beats lower rank trump" do
     game = games(:playing_game)
     first_trick = Trick.create!(game: game, sequence: 1)
 
-    first_trick.add_card(cards(:playing_game_card_0))
-    first_trick.add_card(cards(:playing_game_card_4))
-    first_trick.add_card(cards(:playing_game_card_5))
-    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.add_card(cards(:playing_game_blue_0))
+    first_trick.add_card(cards(:playing_game_blue_4))
+    first_trick.add_card(cards(:playing_game_blue_5))
+    first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
     second_trick = Trick.create!(game: game, sequence: 2)
 
-    second_trick.add_card(cards(:playing_game_card_8))
-    second_trick.add_card(cards(:playing_game_card_1))
-    second_trick.add_card(cards(:playing_game_card_3))
-    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.add_card(cards(:playing_game_green_0))
+    second_trick.add_card(cards(:playing_game_blue_1))
+    second_trick.add_card(cards(:playing_game_blue_3))
+    second_trick.add_card(cards(:playing_game_red_0))
     second_trick.reload
 
     assert_equal "green", second_trick.led_suit
-    assert_equal cards(:playing_game_card_3).player, second_trick.winner
+    assert_equal cards(:playing_game_blue_3).player, second_trick.winner
   end
 
   test "led suit beats non-trump non-led suit" do
     game = games(:playing_game)
     first_trick = Trick.create!(game: game, sequence: 1)
 
-    first_trick.add_card(cards(:playing_game_card_0))
-    first_trick.add_card(cards(:playing_game_card_4))
-    first_trick.add_card(cards(:playing_game_card_5))
-    first_trick.add_card(cards(:playing_game_card_7))
+    first_trick.add_card(cards(:playing_game_blue_0))
+    first_trick.add_card(cards(:playing_game_blue_4))
+    first_trick.add_card(cards(:playing_game_blue_5))
+    first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
     second_trick = Trick.create!(game: game, sequence: 2)
 
-    second_trick.add_card(cards(:playing_game_card_8))
-    second_trick.add_card(cards(:playing_game_card_16))
-    second_trick.add_card(cards(:playing_game_card_11))
-    second_trick.add_card(cards(:playing_game_card_24))
+    second_trick.add_card(cards(:playing_game_green_0))
+    second_trick.add_card(cards(:playing_game_brown_0))
+    second_trick.add_card(cards(:playing_game_green_3))
+    second_trick.add_card(cards(:playing_game_red_0))
     second_trick.reload
 
     assert_equal "green", second_trick.led_suit
-    assert_equal cards(:playing_game_card_11).player, second_trick.winner
+    assert_equal cards(:playing_game_green_3).player, second_trick.winner
   end
 
   test "led_suit returns nil when no cards played" do
@@ -180,7 +180,7 @@ class TrickTest < ActiveSupport::TestCase
 
   test "led_suit returns suit of first card" do
     trick = Trick.create!(game: games(:playing_game), sequence: 7)
-    first_card = cards(:playing_game_card_0)
+    first_card = cards(:playing_game_blue_0)
     trick.add_card(first_card)
     assert_equal first_card.suite, trick.led_suit
   end
@@ -188,9 +188,9 @@ class TrickTest < ActiveSupport::TestCase
   test "led_suit returns first card suit even after multiple cards" do
     trick = Trick.create!(game: games(:playing_game), sequence: 8)
     cards = [
-      cards(:playing_game_card_0),  # blue
-      cards(:playing_game_card_8),  # green
-      cards(:playing_game_card_16)  # brown
+      cards(:playing_game_blue_0),  # blue
+      cards(:playing_game_green_0),  # green
+      cards(:playing_game_brown_0)  # brown
     ]
     cards.each { |card| trick.add_card(card) }
     assert_equal "blue", trick.led_suit
@@ -207,7 +207,7 @@ class TrickTest < ActiveSupport::TestCase
     trick = Trick.create!(game: game, sequence: 2)
 
     # Player 1 has blue cards, lead with blue
-    first_card = cards(:playing_game_card_0)  # blue
+    first_card = cards(:playing_game_blue_0)  # blue
     trick.add_card(first_card)
 
     # Player 2 also has blue cards
@@ -220,7 +220,7 @@ class TrickTest < ActiveSupport::TestCase
     trick = Trick.create!(game: game, sequence: 2)
 
     # Player 1 has blue cards, lead with blue
-    first_card = cards(:playing_game_card_0)  # blue
+    first_card = cards(:playing_game_blue_0)  # blue
     trick.add_card(first_card)
 
     # Player 3 does NOT have blue cards (only green and brown)
@@ -240,7 +240,7 @@ class TrickTest < ActiveSupport::TestCase
     trick = Trick.create!(game: game, sequence: 2)
 
     # Player 1 has blue cards, lead with blue
-    first_card = cards(:playing_game_card_0)  # blue
+    first_card = cards(:playing_game_blue_0)  # blue
     trick.add_card(first_card)
 
     # Player 2 has both blue and brown cards
@@ -257,7 +257,7 @@ class TrickTest < ActiveSupport::TestCase
     trick = Trick.create!(game: game, sequence: 2)
 
     # Player 1 has blue cards, lead with blue
-    first_card = cards(:playing_game_card_0)  # blue
+    first_card = cards(:playing_game_blue_0)  # blue
     trick.add_card(first_card)
 
     # Player 3 does NOT have blue cards (only green and brown)

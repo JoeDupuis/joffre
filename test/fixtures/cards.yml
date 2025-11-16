@@ -15,11 +15,13 @@ two:
 <%
   players = ['bidding_game_player_one', 'bidding_game_player_two', 'bidding_game_player_three', 'bidding_game_player_four']
   card_index = 0
-  [1, 2, 3, 4].each do |suite|
+  suite_names = ['blue', 'green', 'brown', 'red']
+  [0, 1, 2, 3].each do |suite|
     [0, 1, 2, 3, 4, 5, 6, 7].each do |rank|
       player = players[card_index % 4]
+      suite_name = suite_names[suite]
 %>
-bidding_game_card_<%= card_index %>:
+bidding_game_<%= suite_name %>_<%= rank %>:
   game: bidding_game
   player: <%= player %>
   suite: <%= suite %>
@@ -38,6 +40,7 @@ bidding_game_card_<%= card_index %>:
   # Player 3: 4 green + 4 brown = 8 cards
   # Player 4: 8 red = 8 cards
 
+  suite_names = ['blue', 'green', 'brown', 'red']
   playing_card_distribution = [
     # Suite blue: Player 1 gets ranks 0-3, Player 2 gets ranks 4-7
     [0, 0, 'playing_game_player_one'],
@@ -80,9 +83,10 @@ bidding_game_card_<%= card_index %>:
     [3, 7, 'playing_game_player_four']
   ]
 
-  playing_card_distribution.each_with_index do |(suite, rank, player), index|
+  playing_card_distribution.each do |(suite, rank, player)|
+    suite_name = suite_names[suite]
 %>
-playing_game_card_<%= index %>:
+playing_game_<%= suite_name %>_<%= rank %>:
   game: playing_game
   player: <%= player %>
   suite: <%= suite %>
