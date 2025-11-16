@@ -88,25 +88,35 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     game = games(:full_game)
     sign_in_as(game.owner)
 
+    # Change to move_dealer to trigger the callback
+    assert_equal "dealer_must_bid", game.all_players_pass_strategy
+
     assert_difference("Card.count", 32) do
-      patch game_url(game), params: { game: { status: :bidding } }
+      # Trigger the setup_first_round! callback by updating the game
+      # The callback runs when the game is pending with 4 players
+      patch game_url(game), params: { game: { all_players_pass_strategy: :move_dealer } }
     end
 
     assert_redirected_to game_url(game)
     game.reload
-    assert game.bidding?
+    assert game.current_round.bidding?
     assert_equal 32, game.cards.count
     assert_equal 8, game.players.first.cards.count
   end
 
   test "cannot start non full game" do
     game = games(:one)
+    sign_in_as(game.owner)
 
-    patch game_url(game), params: { game: { status: :bidding } }
+    # Try to update strategy, but game doesn't start because it doesn't have 4 players
+    patch game_url(game), params: { game: { all_players_pass_strategy: :move_dealer } }
 
-    assert_response :unprocessable_entity
+    # Game doesn't start because it doesn't have 4 players
+    # Update succeeds but callback doesn't trigger
+    assert_redirected_to game_url(game)
     game.reload
-    assert game.pending?
+    assert_nil game.current_round
+    assert_equal "move_dealer", game.all_players_pass_strategy
   end
 
   test "cannot delete started game" do

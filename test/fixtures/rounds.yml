@@ -1,25 +1,12 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  game: one
-  sequence: 1
-  dealer: one
-  team_one_points: 1
-  team_two_points: 1
-
-two:
-  game: two
-  sequence: 1
-  dealer: two
-  team_one_points: 1
-  team_two_points: 1
-
 playing_game_round:
   game: playing_game
   sequence: 1
   dealer: playing_game_player_one
   team_one_points: 0
   team_two_points: 0
+  status: 1
 
 bidding_game_round:
   game: bidding_game
@@ -27,3 +14,12 @@ bidding_game_round:
   dealer: bidding_game_player_one
   team_one_points: 0
   team_two_points: 0
+  status: 0
+
+started_game_round:
+  game: started_game
+  sequence: 1
+  dealer: started_game_owner
+  team_one_points: 0
+  team_two_points: 0
+  status: 1

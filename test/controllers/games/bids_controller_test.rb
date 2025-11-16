@@ -55,16 +55,16 @@ module Games
       order = game.bidding_order
 
       # Place 3 bids
-      game.bids.create!(player: order[0], amount: 7)
-      game.bids.create!(player: order[1], amount: nil)
-      game.bids.create!(player: order[2], amount: 8)
+      game.current_round.bids.create!(player: order[0], amount: 7)
+      game.current_round.bids.create!(player: order[1], amount: nil)
+      game.current_round.bids.create!(player: order[2], amount: 8)
 
       # Fourth bid should complete bidding
       sign_in_as(order[3].user)
       post game_bids_url(game), params: { bid: { amount: "" } }
 
       game.reload
-      assert game.playing?
+      assert game.current_round.playing?
       assert_not_nil flash[:notice]
     end
 
@@ -75,17 +75,17 @@ module Games
       initial_card_count = game.cards.count
 
       # Place 3 passes
-      game.bids.create!(player: order[0], amount: nil)
-      game.bids.create!(player: order[1], amount: nil)
-      game.bids.create!(player: order[2], amount: nil)
+      game.current_round.bids.create!(player: order[0], amount: nil)
+      game.current_round.bids.create!(player: order[1], amount: nil)
+      game.current_round.bids.create!(player: order[2], amount: nil)
 
       # Fourth pass should trigger reshuffle
       sign_in_as(order[3].user)
       post game_bids_url(game), params: { bid: { amount: "" } }
 
       game.reload
-      assert game.bidding?
-      assert_equal 0, game.bids.count
+      assert game.current_round.bidding?
+      assert_equal 0, game.current_round.bids.count
       assert_equal initial_card_count, game.cards.count
     end
 
@@ -95,9 +95,9 @@ module Games
       order = game.bidding_order
 
       # Place 3 passes
-      game.bids.create!(player: order[0], amount: nil)
-      game.bids.create!(player: order[1], amount: nil)
-      game.bids.create!(player: order[2], amount: nil)
+      game.current_round.bids.create!(player: order[0], amount: nil)
+      game.current_round.bids.create!(player: order[1], amount: nil)
+      game.current_round.bids.create!(player: order[2], amount: nil)
 
       # Fourth pass should trigger reshuffle without showing an error
       sign_in_as(order[3].user)
@@ -131,7 +131,7 @@ module Games
       order = game.bidding_order
 
       order[0..2].each do |player|
-        game.bids.create!(player: player, amount: nil)
+        game.current_round.bids.create!(player: player, amount: nil)
       end
 
       dealer = game.dealer

@@ -65,9 +65,10 @@ module Games
 
       game.reload
       assert_equal 32, cards_played, "Should have played all 32 cards"
-      assert game.bidding?, "Game should return to bidding phase after all tricks are complete (status: #{game.status}, cards in hand: #{game.cards.in_hand.count})"
-      assert_equal 8, game.tricks.count, "Tricks should persist in rounds"
-      assert_equal 0, game.bids.count, "Bids should be cleared"
+      assert game.current_round.bidding?, "Game should return to bidding phase after all tricks are complete (status: #{game.status}, cards in hand: #{game.cards.in_hand.count})"
+      assert_equal 8, game.rounds.sum { |r| r.tricks.count }, "Tricks should persist in rounds"
+      # Bids belong to previous rounds, so just checking for new round
+      assert_not_nil game.current_round, "Should have current round"
     end
 
     test "should require authentication" do
@@ -216,9 +217,10 @@ module Games
       end
 
       game.reload
-      assert game.bidding?, "Game should be in bidding phase after round 1"
-      assert_equal 8, game.tricks.count, "Tricks should persist in rounds after round 1"
-      assert_equal 0, game.bids.count, "Bids should be cleared after round 1"
+      assert game.current_round.bidding?, "Game should be in bidding phase after round 1"
+      assert_equal 8, game.rounds.sum { |r| r.tricks.count }, "Tricks should persist in rounds after round 1"
+      # New round should have been started
+      assert_not_nil game.current_round, "Should have current round after round 1"
 
       # Verify dealer rotated to next player
       second_dealer_id = game.dealer.id
@@ -233,7 +235,7 @@ module Games
       end
 
       game.reload
-      assert game.playing?, "Game should be playing after bidding"
+      assert game.current_round.playing?, "Game should be playing after bidding"
 
       # Round 2: Play all 8 tricks (32 cards)
       8.times do |trick_num|
@@ -254,9 +256,10 @@ module Games
       end
 
       game.reload
-      assert game.bidding?, "Game should be in bidding phase after round 2"
-      assert_equal 16, game.tricks.count, "Tricks should persist in rounds after round 2"
-      assert_equal 0, game.bids.count, "Bids should be cleared after round 2"
+      assert game.current_round.bidding?, "Game should be in bidding phase after round 2"
+      assert_equal 16, game.rounds.sum { |r| r.tricks.count }, "Tricks should persist in rounds after round 2"
+      # New round should have been started
+      assert_not_nil game.current_round, "Should have current round after round 2"
 
       # Verify dealer rotated again to third dealer
       expected_third_dealer_id = base_order.rotate(2).first.id

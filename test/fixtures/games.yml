@@ -6,10 +6,12 @@ DEFAULTS: &DEFAULTS
 one:
   <<: *DEFAULTS
   name: Game One
+  game_code: GAME01
 
 two:
   <<: *DEFAULTS
   name: Game Two
+  game_code: GAME02
 
 full_game:
   <<: *DEFAULTS
@@ -19,17 +21,17 @@ full_game:
 started_game:
   <<: *DEFAULTS
   name: Started Game
-  status: 1
+  status: 0
   game_code: START1
 
 bidding_game:
   <<: *DEFAULTS
   name: Bidding Game
-  status: 1
+  status: 0
   game_code: BIDD01
 
 playing_game:
   <<: *DEFAULTS
   name: Playing Game
-  status: 2
+  status: 0
   game_code: PLAY01

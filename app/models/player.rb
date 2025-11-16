@@ -62,6 +62,6 @@ class Player < ApplicationRecord
   def game_not_started
     return unless game
 
-    errors.add(:game, :started) unless game.pending?
+    errors.add(:game, :started) if game.started?
   end
 end

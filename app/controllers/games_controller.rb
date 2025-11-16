@@ -36,7 +36,7 @@ class GamesController < ApplicationController
 
   def destroy
     return head :not_found unless @game.players.exists?(user: Current.user, owner: true)
-    return head :unprocessable_entity unless @game.pending?
+    return head :unprocessable_entity if @game.started?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end
@@ -52,6 +52,6 @@ class GamesController < ApplicationController
   end
 
   def update_game_params
-    params.require(:game).permit(:status)
+    params.require(:game).permit(:status, :all_players_pass_strategy)
   end
 end

@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_16_023224) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_16_075027) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
-    t.integer "game_id", null: false
     t.integer "player_id", null: false
+    t.integer "round_id"
     t.datetime "updated_at", null: false
-    t.index ["game_id"], name: "index_bids_on_game_id"
     t.index ["player_id"], name: "index_bids_on_player_id"
+    t.index ["round_id"], name: "index_bids_on_round_id"
   end
 
   create_table "cards", force: :cascade do |t|
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_023224) do
     t.integer "dealer_id", null: false
     t.integer "game_id", null: false
     t.integer "sequence", null: false
+    t.integer "status", default: 0, null: false
     t.integer "team_one_points", default: 0, null: false
     t.integer "team_two_points", default: 0, null: false
     t.datetime "updated_at", null: false
@@ -104,13 +105,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_023224) do
   create_table "tricks", force: :cascade do |t|
     t.boolean "completed", default: false, null: false
     t.datetime "created_at", null: false
-    t.integer "game_id", null: false
     t.integer "round_id"
     t.integer "sequence", null: false
     t.datetime "updated_at", null: false
     t.integer "value"
     t.integer "winner_id"
-    t.index ["game_id"], name: "index_tricks_on_game_id"
     t.index ["round_id", "sequence"], name: "index_tricks_on_round_id_and_sequence", unique: true
     t.index ["round_id"], name: "index_tricks_on_round_id"
     t.index ["winner_id"], name: "index_tricks_on_winner_id"
@@ -127,8 +126,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_023224) do
     t.index ["user_code"], name: "index_users_on_user_code", unique: true
   end
 
-  add_foreign_key "bids", "games"
   add_foreign_key "bids", "players"
+  add_foreign_key "bids", "rounds"
   add_foreign_key "cards", "games"
   add_foreign_key "cards", "players"
   add_foreign_key "cards", "tricks"
@@ -139,7 +138,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_023224) do
   add_foreign_key "rounds", "games"
   add_foreign_key "rounds", "players", column: "dealer_id"
   add_foreign_key "sessions", "users"
-  add_foreign_key "tricks", "games"
   add_foreign_key "tricks", "players", column: "winner_id"
   add_foreign_key "tricks", "rounds"
 end

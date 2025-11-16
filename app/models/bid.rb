@@ -1,9 +1,11 @@
 class Bid < ApplicationRecord
-  belongs_to :game
+  belongs_to :round
   belongs_to :player
 
+  delegate :game, to: :round
+
   validates :player_id, presence: true
-  validates :game_id, presence: true
+  validates :round_id, presence: true
   validates :amount,
     numericality: {
       only_integer: true,
@@ -12,14 +14,14 @@ class Bid < ApplicationRecord
     },
     allow_nil: true
   validate :player_is_current_bidder, on: :create
-  validate :game_is_in_bidding_phase, on: :create
+  validate :round_is_in_bidding_phase, on: :create
   validate :dealer_cannot_pass_if_required, on: :create
 
   private
 
   def minimum_valid_amount
-    return 0 unless game
-    game.highest_bid&.amount&.+(1) || game.minimum_bid
+    return 0 unless round
+    round.highest_bid&.amount&.+(1) || game.minimum_bid
   end
 
   def player_is_current_bidder
@@ -30,11 +32,11 @@ class Bid < ApplicationRecord
     end
   end
 
-  def game_is_in_bidding_phase
-    return unless game
+  def round_is_in_bidding_phase
+    return unless round
 
-    unless game.bidding?
-      errors.add(:game, :invalid)
+    unless round.bidding?
+      errors.add(:round, :invalid)
     end
   end
 
@@ -42,7 +44,7 @@ class Bid < ApplicationRecord
     return unless game&.dealer_must_bid?
     return unless amount.nil?
     return unless player == game.dealer
-    return if game.highest_bid.present?
+    return if round.highest_bid.present?
 
     errors.add(:amount, :dealer_must_bid)
   end

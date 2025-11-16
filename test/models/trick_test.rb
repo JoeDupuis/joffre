@@ -2,13 +2,13 @@ require "test_helper"
 
 class TrickTest < ActiveSupport::TestCase
   test "sequence must be present" do
-    trick = Trick.new(game: games(:one))
+    trick = Trick.new(round: rounds(:playing_game_round))
     assert_not trick.valid?
     assert_includes trick.errors[:sequence], "can't be blank"
   end
 
   test "sequence must be >= 1" do
-    trick = Trick.new(game: games(:one), sequence: 0)
+    trick = Trick.new(round: rounds(:playing_game_round), sequence: 0)
     assert_not trick.valid?
     assert_includes trick.errors[:sequence], "must be greater than or equal to 1"
 
@@ -17,13 +17,13 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "sequence must be <= 8" do
-    trick = Trick.new(game: games(:one), sequence: 9)
+    trick = Trick.new(round: rounds(:playing_game_round), sequence: 9)
     assert_not trick.valid?
     assert_includes trick.errors[:sequence], "must be less than or equal to 8"
   end
 
   test "sequence must be unique per game" do
-    trick = Trick.new(game: games(:one), sequence: 1)
+    trick = Trick.new(round: rounds(:playing_game_round), sequence: 1)
     assert_not trick.valid?
     assert_includes trick.errors[:sequence], "has already been taken"
   end
@@ -33,11 +33,11 @@ class TrickTest < ActiveSupport::TestCase
     game.rounds.destroy_all
 
     round1 = Round.create!(game: game, sequence: 1, dealer: players(:one))
-    trick = Trick.create!(game: game, round: round1, sequence: 2)
+    trick = Trick.create!(round: round1, sequence: 2)
     assert trick.persisted?
 
     round2 = Round.create!(game: game, sequence: 2, dealer: players(:one))
-    trick2 = Trick.create!(game: game, round: round2, sequence: 2)
+    trick2 = Trick.create!(round: round2, sequence: 2)
     assert trick2.persisted?
   end
 
@@ -47,7 +47,7 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "complete? returns true when 4 cards" do
-    trick = Trick.create!(game: games(:playing_game), sequence: 2)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 2)
     cards = [
       cards(:playing_game_blue_0),
       cards(:playing_game_blue_1),
@@ -59,14 +59,14 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "add_card adds card to trick" do
-    trick = Trick.create!(game: games(:bidding_game), sequence: 3)
+    trick = Trick.create!(round: rounds(:bidding_game_round), sequence: 3)
     card = cards(:bidding_game_blue_0)
     trick.add_card(card)
     assert_includes trick.cards, card
   end
 
   test "add_card does not complete trick with fewer than 4 cards" do
-    trick = Trick.create!(game: games(:bidding_game), sequence: 4)
+    trick = Trick.create!(round: rounds(:bidding_game_round), sequence: 4)
     cards = [
       cards(:bidding_game_blue_0),
       cards(:bidding_game_blue_1),
@@ -79,7 +79,7 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "add_card completes trick on 4th card" do
-    trick = Trick.create!(game: games(:playing_game), sequence: 5)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 5)
     cards = [
       cards(:playing_game_blue_0),
       cards(:playing_game_blue_1),
@@ -96,7 +96,7 @@ class TrickTest < ActiveSupport::TestCase
   test "winner is determined by highest rank in led suit" do
     game = games(:playing_game)
     round = rounds(:playing_game_round)
-    trick = round.tricks.create!(game: game, sequence: 2)
+    trick = round.tricks.create!(sequence: 2)
 
     cards_to_play = [
       cards(:playing_game_blue_0),
@@ -117,14 +117,14 @@ class TrickTest < ActiveSupport::TestCase
     game.rounds.destroy_all
     round = game.rounds.create!(sequence: 1, dealer: game.players.first)
 
-    first_trick = round.tricks.create!(game: game, sequence: 1)
+    first_trick = round.tricks.create!(sequence: 1)
     first_trick.add_card(cards(:playing_game_blue_0))
     first_trick.add_card(cards(:playing_game_blue_4))
     first_trick.add_card(cards(:playing_game_blue_5))
     first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
-    second_trick = round.tricks.create!(game: game, sequence: 2)
+    second_trick = round.tricks.create!(sequence: 2)
 
     second_trick.add_card(cards(:playing_game_green_7))
     second_trick.add_card(cards(:playing_game_blue_1))
@@ -140,7 +140,7 @@ class TrickTest < ActiveSupport::TestCase
   test "higher rank trump beats lower rank trump" do
     game = games(:playing_game)
     round = rounds(:playing_game_round)
-    first_trick = round.tricks.create!(game: game, sequence: 5)
+    first_trick = round.tricks.create!(sequence: 5)
 
     first_trick.add_card(cards(:playing_game_blue_0))
     first_trick.add_card(cards(:playing_game_blue_4))
@@ -148,7 +148,7 @@ class TrickTest < ActiveSupport::TestCase
     first_trick.add_card(cards(:playing_game_blue_7))
     first_trick.reload
 
-    second_trick = round.tricks.create!(game: game, sequence: 6)
+    second_trick = round.tricks.create!(sequence: 6)
 
     second_trick.add_card(cards(:playing_game_green_0))
     second_trick.add_card(cards(:playing_game_blue_1))
@@ -161,19 +161,19 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "led_suit returns nil when no cards played" do
-    trick = Trick.create!(game: games(:playing_game), sequence: 6)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 6)
     assert_nil trick.led_suit
   end
 
   test "led_suit returns suit of first card" do
-    trick = Trick.create!(game: games(:playing_game), sequence: 7)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 7)
     first_card = cards(:playing_game_blue_0)
     trick.add_card(first_card)
     assert_equal first_card.suite, trick.led_suit
   end
 
   test "led_suit returns first card suit even after multiple cards" do
-    trick = Trick.create!(game: games(:playing_game), sequence: 8)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 8)
     cards = [
       cards(:playing_game_blue_0),  # blue
       cards(:playing_game_green_0),  # green
@@ -184,14 +184,14 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "requires_following? returns false when no cards played" do
-    trick = Trick.create!(game: games(:bidding_game), sequence: 2)
+    trick = Trick.create!(round: rounds(:bidding_game_round), sequence: 2)
     player = players(:bidding_game_player_one)
     assert_not trick.requires_following?(player)
   end
 
   test "requires_following? returns true when player has led suit" do
     game = games(:playing_game)
-    trick = Trick.create!(game: game, sequence: 2)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 2)
 
     # Player 1 has blue cards, lead with blue
     first_card = cards(:playing_game_blue_0)  # blue
@@ -204,7 +204,7 @@ class TrickTest < ActiveSupport::TestCase
 
   test "requires_following? returns false when player doesn't have led suit" do
     game = games(:playing_game)
-    trick = Trick.create!(game: game, sequence: 2)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 2)
 
     # Player 1 has blue cards, lead with blue
     first_card = cards(:playing_game_blue_0)  # blue
@@ -216,7 +216,7 @@ class TrickTest < ActiveSupport::TestCase
   end
 
   test "playable_cards returns all cards when no led suit" do
-    trick = Trick.create!(game: games(:bidding_game), sequence: 2)
+    trick = Trick.create!(round: rounds(:bidding_game_round), sequence: 2)
     player = players(:bidding_game_player_one)
     playable = trick.playable_cards(player)
     assert_equal player.cards.in_hand.count, playable.count
@@ -224,7 +224,7 @@ class TrickTest < ActiveSupport::TestCase
 
   test "playable_cards returns only matching suit when player has it" do
     game = games(:playing_game)
-    trick = Trick.create!(game: game, sequence: 2)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 2)
 
     # Player 1 has blue cards, lead with blue
     first_card = cards(:playing_game_blue_0)  # blue
@@ -241,7 +241,7 @@ class TrickTest < ActiveSupport::TestCase
 
   test "playable_cards returns all cards when player doesn't have led suit" do
     game = games(:playing_game)
-    trick = Trick.create!(game: game, sequence: 2)
+    trick = Trick.create!(round: rounds(:playing_game_round), sequence: 2)
 
     # Player 1 has blue cards, lead with blue
     first_card = cards(:playing_game_blue_0)  # blue

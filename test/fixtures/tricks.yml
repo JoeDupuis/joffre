@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  game: one
-  winner: one
+  round: playing_game_round
+  winner: playing_game_player_one
   completed: false
   sequence: 1
 
 two:
-  game: two
-  winner: two
+  round: started_game_round
+  winner: started_game_owner
   completed: false
   sequence: 1

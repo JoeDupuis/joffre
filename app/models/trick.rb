@@ -1,6 +1,5 @@
 class Trick < ApplicationRecord
-  belongs_to :game
-  belongs_to :round, optional: true
+  belongs_to :round
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
@@ -8,6 +7,8 @@ class Trick < ApplicationRecord
 
   validates :sequence, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 8 }
   validates :sequence, uniqueness: { scope: :round_id }
+
+  delegate :game, to: :round
 
   def add_card(card)
     card.update!(trick: self)
