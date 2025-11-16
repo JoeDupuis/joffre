@@ -164,13 +164,13 @@ class TrickTest < ActiveSupport::TestCase
     second_trick = Trick.create!(game: game, sequence: 2)
 
     second_trick.add_card(cards(:playing_game_green_0))
-    second_trick.add_card(cards(:playing_game_brown_0))
-    second_trick.add_card(cards(:playing_game_green_3))
-    second_trick.add_card(cards(:playing_game_red_0))
+    second_trick.add_card(cards(:playing_game_brown_7))
+    second_trick.add_card(cards(:playing_game_green_1))
+    second_trick.add_card(cards(:playing_game_red_6))
     second_trick.reload
 
     assert_equal "green", second_trick.led_suit
-    assert_equal cards(:playing_game_green_3).player, second_trick.winner
+    assert_equal cards(:playing_game_green_1).player, second_trick.winner
   end
 
   test "led_suit returns nil when no cards played" do
