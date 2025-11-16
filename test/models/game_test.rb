@@ -182,4 +182,274 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 32, game.cards.count
     assert game.bidding?
   end
+
+  test "calculate_trick_value returns 1 for basic trick" do
+    game = games(:playing_game)
+    trick = game.tricks.create!(sequence: 1)
+
+    cards = [
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_2),
+      cards(:playing_game_blue_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+
+    assert_equal 1, game.calculate_trick_value(trick)
+  end
+
+  test "calculate_trick_value adds 5 for red 0" do
+    game = games(:playing_game)
+    trick = game.tricks.create!(sequence: 1)
+
+    cards = [
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_1),
+      cards(:playing_game_red_0),
+      cards(:playing_game_blue_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+
+    assert_equal 6, game.calculate_trick_value(trick)
+  end
+
+  test "calculate_trick_value subtracts 3 for brown 0" do
+    game = games(:playing_game)
+    trick = game.tricks.create!(sequence: 1)
+
+    cards = [
+      cards(:playing_game_blue_0),
+      cards(:playing_game_blue_1),
+      cards(:playing_game_brown_0),
+      cards(:playing_game_blue_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+
+    assert_equal(-2, game.calculate_trick_value(trick))
+  end
+
+  test "calculate_trick_value handles both red 0 and brown 0" do
+    game = games(:playing_game)
+    trick = game.tricks.create!(sequence: 1)
+
+    cards = [
+      cards(:playing_game_blue_0),
+      cards(:playing_game_red_0),
+      cards(:playing_game_brown_0),
+      cards(:playing_game_blue_3)
+    ]
+    cards.each { |card| trick.add_card(card) }
+
+    assert_equal 3, game.calculate_trick_value(trick)
+  end
+
+  test "game_won? returns false when neither team reaches max_points" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 30, team_two_points: 25, max_points: 41)
+
+    assert_not game.game_won?
+  end
+
+  test "game_won? returns true when team one reaches max_points" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 41, team_two_points: 25, max_points: 41)
+
+    assert game.game_won?
+  end
+
+  test "game_won? returns true when team two reaches max_points" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 30, team_two_points: 41, max_points: 41)
+
+    assert game.game_won?
+  end
+
+  test "winning_team returns nil when game is not done" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 41, team_two_points: 25)
+
+    assert_nil game.winning_team
+  end
+
+  test "winning_team returns 1 when team one wins" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 41, team_two_points: 25, status: :done)
+
+    assert_equal 1, game.winning_team
+  end
+
+  test "winning_team returns 2 when team two wins" do
+    game = games(:playing_game)
+    game.update!(team_one_points: 25, team_two_points: 41, status: :done)
+
+    assert_equal 2, game.winning_team
+  end
+
+  test "calculate_and_apply_points awards points to winning teams" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0)
+
+    player_one = players(:playing_game_player_one)
+    player_two = players(:playing_game_player_two)
+
+    bid = Bid.new(player: player_one, amount: 6, game: game)
+    bid.save(validate: false)
+
+    6.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick)
+      card.save(validate: false)
+    end
+
+    2.times do |i|
+      trick = game.tricks.create!(sequence: i + 7, winner: player_two, completed: true)
+      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick)
+      card.save(validate: false)
+    end
+
+    game.calculate_and_apply_points!
+    game.reload
+
+    assert_equal 6, game.team_one_points
+    assert_equal 2, game.team_two_points
+  end
+
+  test "calculate_and_apply_points penalizes bidding team when they fail to make bid" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0)
+
+    player_one = players(:playing_game_player_one)
+    player_two = players(:playing_game_player_two)
+
+    bid = Bid.new(player: player_one, amount: 8, game: game)
+    bid.save(validate: false)
+
+    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
+    card = Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1)
+    card.save(validate: false)
+
+    6.times do |i|
+      trick = game.tricks.create!(sequence: i + 2, winner: player_two, completed: true)
+      card = Card.new(game: game, player: player_two, suite: 1, rank: i, trick: trick)
+      card.save(validate: false)
+    end
+
+    game.calculate_and_apply_points!
+    game.reload
+
+    assert_equal(-8, game.team_one_points)
+    assert_equal 6, game.team_two_points
+  end
+
+  test "calculate_and_apply_points includes red 0 bonus" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0)
+
+    player_one = players(:playing_game_player_one)
+
+    bid = Bid.new(player: player_one, amount: 6, game: game)
+    bid.save(validate: false)
+
+    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
+    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1).save(validate: false)
+    Card.new(game: game, player: player_one, suite: 3, rank: 0, trick: trick1, trick_sequence: 2).save(validate: false)
+
+    5.times do |i|
+      trick = game.tricks.create!(sequence: i + 2, winner: player_one, completed: true)
+      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+    end
+
+    game.calculate_and_apply_points!
+    game.reload
+
+    assert_equal 11, game.team_one_points
+  end
+
+  test "calculate_and_apply_points includes brown 0 penalty" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 0, team_two_points: 0)
+
+    player_one = players(:playing_game_player_one)
+
+    bid = Bid.new(player: player_one, amount: 5, game: game)
+    bid.save(validate: false)
+
+    trick1 = game.tricks.create!(sequence: 1, winner: player_one, completed: true)
+    Card.new(game: game, player: player_one, suite: 0, rank: 1, trick: trick1, trick_sequence: 1).save(validate: false)
+    Card.new(game: game, player: player_one, suite: 2, rank: 0, trick: trick1, trick_sequence: 2).save(validate: false)
+
+    7.times do |i|
+      trick = game.tricks.create!(sequence: i + 2, winner: player_one, completed: true)
+      Card.new(game: game, player: player_one, suite: 1, rank: i, trick: trick, trick_sequence: 1).save(validate: false)
+    end
+
+    game.calculate_and_apply_points!
+    game.reload
+
+    assert_equal 5, game.team_one_points
+  end
+
+  test "check_round_complete sets game to done when team reaches max_points" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 38, team_two_points: 30, max_points: 41)
+
+    player_one = players(:playing_game_player_one)
+    bid = Bid.new(player: player_one, amount: 6, game: game)
+    bid.save(validate: false)
+
+    6.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1)
+      card.save(validate: false)
+    end
+
+    game.reload
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 44, game.team_one_points
+  end
+
+  test "check_round_complete continues game when no team reaches max_points" do
+    game = games(:playing_game)
+    game.cards.destroy_all
+    game.tricks.destroy_all
+    game.bids.destroy_all
+    game.update!(team_one_points: 30, team_two_points: 25, max_points: 41)
+
+    player_one = players(:playing_game_player_one)
+    bid = Bid.new(player: player_one, amount: 6, game: game)
+    bid.save(validate: false)
+
+    6.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, winner: player_one, completed: true)
+      card = Card.new(game: game, player: player_one, suite: 0, rank: i, trick: trick, trick_sequence: 1)
+      card.save(validate: false)
+    end
+
+    game.reload
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.bidding?
+    assert_equal 36, game.team_one_points
+  end
 end
