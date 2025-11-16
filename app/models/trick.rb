@@ -3,6 +3,8 @@ class Trick < ApplicationRecord
   belongs_to :winner, class_name: "Player", optional: true
   has_many :cards, dependent: :nullify
 
+  scope :completed, -> { where(completed: true) }
+
   validates :sequence, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 8 }
   validates :sequence, uniqueness: { scope: :game_id }
 
@@ -39,10 +41,19 @@ class Trick < ApplicationRecord
   def complete_trick!
     return if completed?
 
-    # TODO actually calculate the winner
-    # temp hardcode the highest bid
-    winner = game.highest_bid.player
-
+    winner = calculate_winner
     update!(winner:, completed: true)
+  end
+
+  def calculate_winner
+    return nil if cards.count < 4
+
+    led_suit_value = led_suit
+    winning_card = cards
+      .where(suite: led_suit_value)
+      .order(rank: :desc)
+      .first
+
+    winning_card.player
   end
 end

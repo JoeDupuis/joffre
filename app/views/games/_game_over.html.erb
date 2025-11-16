@@ -1,0 +1,60 @@
+<div class="container">
+  <h1><%= @game.name %> - Game Over!</h1>
+
+  <div class="winner-announcement">
+    <h2>Team <%= @game.winning_team %> Wins!</h2>
+    <p>Congratulations to:</p>
+    <ul>
+      <% @game.players.where(team: @game.winning_team).each do |player| %>
+        <li><%= player.user.name %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="final-scores">
+    <h2>Final Scores</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="<%= 'winner' if @game.winning_team == 1 %>">
+          <td>Team 1</td>
+          <td><%= @game.team_one_points %></td>
+        </tr>
+        <tr class="<%= 'winner' if @game.winning_team == 2 %>">
+          <td>Team 2</td>
+          <td><%= @game.team_two_points %></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Target: <%= @game.max_points %> points</p>
+  </div>
+
+  <div class="game-stats">
+    <h2>Game Statistics</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th>Tricks Won</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @game.players.order(:team, :order).each do |player| %>
+          <tr>
+            <td><%= player.user.name %></td>
+            <td><%= player.team %></td>
+            <td><%= player.tricks_won.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <%= link_to "Return to Games", games_path, class: "button" %>
+</div>

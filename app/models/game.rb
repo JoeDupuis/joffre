@@ -146,8 +146,75 @@ class Game < ApplicationRecord
   def check_round_complete!
     return unless all_cards_played?
 
-    rotate_dealer!
-    reset_for_bidding!
+    calculate_and_apply_points!
+
+    if game_won?
+      update!(status: :done)
+    else
+      rotate_dealer!
+      reset_for_bidding!
+    end
+  end
+
+  def calculate_and_apply_points!
+    team_one_tricks_points = 0
+    team_two_tricks_points = 0
+
+    tricks.completed.each do |trick|
+      trick_value = calculate_trick_value(trick)
+
+      if trick.winner.team == 1
+        team_one_tricks_points += trick_value
+      else
+        team_two_tricks_points += trick_value
+      end
+    end
+
+    bidding_team = highest_bid.player.team
+    bid_amount = highest_bid.amount
+
+    if bidding_team == 1
+      if team_one_tricks_points >= bid_amount
+        increment!(:team_one_points, team_one_tricks_points)
+        increment!(:team_two_points, team_two_tricks_points)
+      else
+        increment!(:team_one_points, -bid_amount)
+        increment!(:team_two_points, team_two_tricks_points)
+      end
+    else
+      if team_two_tricks_points >= bid_amount
+        increment!(:team_one_points, team_one_tricks_points)
+        increment!(:team_two_points, team_two_tricks_points)
+      else
+        increment!(:team_one_points, team_one_tricks_points)
+        increment!(:team_two_points, -bid_amount)
+      end
+    end
+  end
+
+  def calculate_trick_value(trick)
+    value = 1
+
+    trick.cards.each do |card|
+      if card.red? && card.rank == 0
+        value += 5
+      elsif card.brown? && card.rank == 0
+        value -= 3
+      end
+    end
+
+    value
+  end
+
+  def game_won?
+    team_one_points >= max_points || team_two_points >= max_points
+  end
+
+  def winning_team
+    return nil unless done?
+    return 1 if team_one_points >= max_points
+    return 2 if team_two_points >= max_points
+    nil
   end
 
   def rotate_dealer!

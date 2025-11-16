@@ -8,4 +8,6 @@
 <% elsif @game.playing? %>
   <%= render 'play' %>
   <%= render 'cards' %>
+<% elsif @game.done? %>
+  <%= render 'game_over' %>
 <% end %>

@@ -1,16 +1,40 @@
 <div class="container">
   <h1><%= @game.name %> - Play Area</h1>
 
-  <% if @game.highest_bid %>
-    <div class="winning-bid">
-      <h2>Winning Bid</h2>
-      <p>
-        <strong><%= @game.highest_bid.player.user.name %></strong>
-        (Team <%= @game.highest_bid.player.team %>)
-        won the bid with <strong><%= @game.highest_bid.amount %></strong>
-      </p>
+  <div class="game-info">
+    <% if @game.highest_bid %>
+      <div class="winning-bid">
+        <h2>Winning Bid</h2>
+        <p>
+          <strong><%= @game.highest_bid.player.user.name %></strong>
+          (Team <%= @game.highest_bid.player.team %>)
+          won the bid with <strong><%= @game.highest_bid.amount %></strong>
+        </p>
+      </div>
+    <% end %>
+
+    <div class="points">
+      <h2>Current Points (First to <%= @game.max_points %>)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Team 1</td>
+            <td><%= @game.team_one_points %></td>
+          </tr>
+          <tr>
+            <td>Team 2</td>
+            <td><%= @game.team_two_points %></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  <% end %>
+  </div>
 
   <div class="tricks-won">
     <h2>Tricks Won</h2>

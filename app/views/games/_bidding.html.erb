@@ -1,6 +1,28 @@
 <div class="container">
   <h1><%= @game.name %> - Bidding Phase</h1>
 
+  <div class="points">
+    <h2>Current Points (First to <%= @game.max_points %>)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Team 1</td>
+          <td><%= @game.team_one_points %></td>
+        </tr>
+        <tr>
+          <td>Team 2</td>
+          <td><%= @game.team_two_points %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div class="bidding-status">
     <h2>Bidding Status</h2>
     <% if @game.highest_bid %>
