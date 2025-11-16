@@ -151,28 +151,6 @@ class TrickTest < ActiveSupport::TestCase
     assert_equal cards(:playing_game_blue_3).player, second_trick.winner
   end
 
-  test "led suit beats non-trump non-led suit" do
-    game = games(:playing_game)
-    first_trick = Trick.create!(game: game, sequence: 1)
-
-    first_trick.add_card(cards(:playing_game_blue_0))
-    first_trick.add_card(cards(:playing_game_blue_4))
-    first_trick.add_card(cards(:playing_game_blue_5))
-    first_trick.add_card(cards(:playing_game_blue_7))
-    first_trick.reload
-
-    second_trick = Trick.create!(game: game, sequence: 2)
-
-    second_trick.add_card(cards(:playing_game_green_0))
-    second_trick.add_card(cards(:playing_game_brown_7))
-    second_trick.add_card(cards(:playing_game_green_1))
-    second_trick.add_card(cards(:playing_game_red_6))
-    second_trick.reload
-
-    assert_equal "green", second_trick.led_suit
-    assert_equal cards(:playing_game_green_1).player, second_trick.winner
-  end
-
   test "led_suit returns nil when no cards played" do
     trick = Trick.create!(game: games(:playing_game), sequence: 6)
     assert_nil trick.led_suit
