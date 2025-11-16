@@ -40,8 +40,9 @@ class Trick < ApplicationRecord
     return if completed?
 
     winner = calculate_winner
+    trick_value = calculate_value
 
-    update!(winner:, completed: true)
+    update!(winner:, completed: true, value: trick_value)
   end
 
   def calculate_winner
@@ -60,5 +61,9 @@ class Trick < ApplicationRecord
     end
 
     winning_card.player
+  end
+
+  def calculate_value
+    1 + cards.sum(:score_modifier)
   end
 end

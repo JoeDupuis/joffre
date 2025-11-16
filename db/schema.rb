@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_16_231001) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -26,6 +26,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
     t.integer "game_id", null: false
     t.integer "player_id", null: false
     t.integer "rank", null: false
+    t.integer "score_modifier", default: 0, null: false
     t.integer "suite", null: false
     t.integer "trick_id"
     t.integer "trick_sequence"
@@ -53,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
     t.integer "all_players_pass_strategy", default: 1, null: false
     t.datetime "created_at", null: false
     t.string "game_code"
+    t.integer "max_score", default: 41, null: false
     t.integer "minimum_bid", default: 6, null: false
     t.string "name"
     t.string "password_digest"
@@ -75,6 +77,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
     t.index ["user_id"], name: "index_players_on_user_id"
   end
 
+  create_table "round_scores", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "game_id", null: false
+    t.integer "number", null: false
+    t.integer "score", null: false
+    t.integer "team", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_id", "number", "team"], name: "index_round_scores_on_game_id_and_number_and_team", unique: true
+    t.index ["game_id"], name: "index_round_scores_on_game_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -90,6 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
     t.integer "game_id", null: false
     t.integer "sequence", null: false
     t.datetime "updated_at", null: false
+    t.integer "value"
     t.integer "winner_id"
     t.index ["game_id", "sequence"], name: "index_tricks_on_game_id_and_sequence", unique: true
     t.index ["game_id"], name: "index_tricks_on_game_id"
@@ -116,6 +130,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_15_220838) do
   add_foreign_key "friendships", "users", column: "friend_id"
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
+  add_foreign_key "round_scores", "games"
   add_foreign_key "sessions", "users"
   add_foreign_key "tricks", "games"
   add_foreign_key "tricks", "players", column: "winner_id"

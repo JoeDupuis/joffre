@@ -12,6 +12,7 @@ class Game < ApplicationRecord
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
   has_many :tricks, dependent: :destroy
+  has_many :round_scores, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -150,8 +151,14 @@ class Game < ApplicationRecord
   def check_round_complete!
     return unless all_cards_played?
 
+    calculate_and_save_round_scores!
     rotate_dealer!
-    reset_for_bidding!
+
+    if game_complete?
+      update!(status: :done)
+    else
+      reset_for_bidding!
+    end
   end
 
   def rotate_dealer!
@@ -173,6 +180,18 @@ class Game < ApplicationRecord
     return @ordered_players unless first_player.present?
     index = @ordered_players.index(first_player)
     @ordered_players.rotate(index)
+  end
+
+  def current_round_number
+    (round_scores.maximum(:number) || 0) + 1
+  end
+
+  def team_total_score(team)
+    round_scores.where(team: team).sum(:score)
+  end
+
+  def game_complete?
+    team_total_score(1) >= max_score || team_total_score(2) >= max_score
   end
 
   private
@@ -231,6 +250,25 @@ class Game < ApplicationRecord
     self.game_code = loop do
       code = SecureRandom.alphanumeric(6).upcase
       break code unless Game.exists?(game_code: code)
+    end
+  end
+
+  def calculate_and_save_round_scores!
+    round_number = current_round_number
+    bidding_team = highest_bid.player.team
+    bid_amount = highest_bid.amount
+
+    [ 1, 2 ].each do |team|
+      team_tricks = tricks.where(completed: true, winner: players.where(team: team))
+      team_tricks_value = team_tricks.sum(:value)
+
+      score = if team == bidding_team && team_tricks_value < bid_amount
+        -bid_amount
+      else
+        team_tricks_value
+      end
+
+      round_scores.create!(number: round_number, team: team, score: score)
     end
   end
 end
