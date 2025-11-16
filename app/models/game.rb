@@ -112,6 +112,10 @@ class Game < ApplicationRecord
     tricks.where(completed: true).order(sequence: :desc).first.winner
   end
 
+  def trump_suit
+    tricks.find_by(sequence: 1)&.led_suit
+  end
+
   def active_player
     order = play_order
     return nil if order.empty?
