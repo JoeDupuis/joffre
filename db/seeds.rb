@@ -174,4 +174,106 @@ if Rails.env.development?
       rank: last_card_data[:rank]
     )
   end
+
+  # Game 4 - Near Win: Team 1 is at 38 points, about to win with the last card
+  near_win_game = Game.find_or_create_by!(name: "Near Win Game") do |g|
+    g.status = :pending
+  end
+
+  if near_win_game.players.empty?
+    alice_nw = Player.create!(user: alice, game: near_win_game, owner: true, dealer: true, team: 1, order: 1)
+    bob_nw = Player.create!(user: bob, game: near_win_game, team: 2, order: 2)
+    carol_nw = Player.create!(user: carol, game: near_win_game, team: 1, order: 3)
+    david_nw = Player.create!(user: david, game: near_win_game, team: 2, order: 4)
+  else
+    alice_nw = near_win_game.players.find_by!(user: alice)
+    bob_nw = near_win_game.players.find_by!(user: bob)
+    carol_nw = near_win_game.players.find_by!(user: carol)
+    david_nw = near_win_game.players.find_by!(user: david)
+  end
+
+  if near_win_game.round_scores.empty?
+    # Create previous round scores: Team 1 at 38 points, Team 2 at 25
+    RoundScore.create!(game: near_win_game, number: 1, team: 1, score: 20)
+    RoundScore.create!(game: near_win_game, number: 1, team: 2, score: 12)
+    RoundScore.create!(game: near_win_game, number: 2, team: 1, score: 18)
+    RoundScore.create!(game: near_win_game, number: 2, team: 2, score: 13)
+
+    # Update to bidding to allow creating bids
+    near_win_game.update_column(:status, Game.statuses[:bidding])
+
+    # Team 1 (Alice) bids 8 and will make it
+    Bid.create!(game: near_win_game, player: bob_nw, amount: nil)
+    Bid.create!(game: near_win_game, player: carol_nw, amount: 7)
+    Bid.create!(game: near_win_game, player: david_nw, amount: nil)
+    Bid.create!(game: near_win_game, player: alice_nw, amount: 8)
+
+    # Now update to playing
+    near_win_game.update_column(:status, Game.statuses[:playing])
+
+    players_nw = [ alice_nw, bob_nw, carol_nw, david_nw ]
+
+    # Create a specific card setup to ensure Team 1 gets 8 points (with Red Ace)
+    all_cards_nw = []
+    Card.suites.each_key do |suite_name|
+      (0..7).each do |rank|
+        all_cards_nw << { suite: suite_name, rank: rank }
+      end
+    end
+
+    # Shuffle but ensure the Red Ace (red, rank 0) is in a completed trick won by Team 1
+    all_cards_nw.shuffle!
+
+    # Find and place the Red Ace in first trick to guarantee +5 bonus
+    red_ace_index = all_cards_nw.index { |c| c[:suite] == "red" && c[:rank] == 0 }
+    if red_ace_index && red_ace_index > 3
+      all_cards_nw[0], all_cards_nw[red_ace_index] = all_cards_nw[red_ace_index], all_cards_nw[0]
+    end
+
+    cards_with_players_nw = all_cards_nw.map.with_index do |card_data, index|
+      { **card_data, player: players_nw[index % 4] }
+    end
+
+    # Create 7 completed tricks, all won by Team 1 (alternating Alice and Carol)
+    7.times do |trick_num|
+      winner = trick_num.even? ? alice_nw : carol_nw
+      trick = Trick.create!(game: near_win_game, winner: winner, completed: true, sequence: trick_num + 1)
+      4.times do |card_in_trick|
+        card_index = trick_num * 4 + card_in_trick
+        card_data = cards_with_players_nw[card_index]
+        Card.create!(
+          game: near_win_game,
+          player: card_data[:player],
+          suite: card_data[:suite],
+          rank: card_data[:rank],
+          trick: trick,
+          trick_sequence: card_in_trick + 1
+        )
+      end
+    end
+
+    # Create 8th trick with 3 cards played (Alice's turn next)
+    last_trick = Trick.create!(game: near_win_game, winner: nil, completed: false, sequence: 8)
+    3.times do |card_in_trick|
+      card_index = 28 + card_in_trick
+      card_data = cards_with_players_nw[card_index]
+      Card.create!(
+        game: near_win_game,
+        player: card_data[:player],
+        suite: card_data[:suite],
+        rank: card_data[:rank],
+        trick: last_trick,
+        trick_sequence: card_in_trick + 1
+      )
+    end
+
+    # Last card (card 32) in Alice's hand - when she plays it, Team 1 wins the game
+    last_card_data = cards_with_players_nw[31]
+    Card.create!(
+      game: near_win_game,
+      player: last_card_data[:player],
+      suite: last_card_data[:suite],
+      rank: last_card_data[:rank]
+    )
+  end
 end
