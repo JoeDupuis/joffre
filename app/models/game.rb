@@ -190,11 +190,11 @@ class Game < ApplicationRecord
     round_scores.where(team: team).sum(:score)
   end
 
+  private
+
   def game_complete?
     team_total_score(1) >= max_score || team_total_score(2) >= max_score
   end
-
-  private
 
   def all_players_passed?
     bids.count == 4 && bids.where(amount: nil).count == 4

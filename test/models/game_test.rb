@@ -214,30 +214,66 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 5, game.team_total_score(2)
   end
 
-  test "game_complete? returns false when no team reached max_score" do
-    game = games(:full_game)
-    game.update!(max_score: 41)
-    game.round_scores.create!(number: 1, team: 1, score: 20)
-    game.round_scores.create!(number: 1, team: 2, score: 15)
+  test "game continues to bidding when no team reached max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
 
-    assert_not game.game_complete?
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 2, winner: team_1_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.bidding?
+    assert_equal 16, game.team_total_score(1)
   end
 
-  test "game_complete? returns true when team 1 reaches max_score" do
-    game = games(:full_game)
-    game.update!(max_score: 41)
-    game.round_scores.create!(number: 1, team: 1, score: 41)
-    game.round_scores.create!(number: 1, team: 2, score: 15)
+  test "game status changes to done when team 1 reaches max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
 
-    assert game.game_complete?
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 48, game.team_total_score(1)
   end
 
-  test "game_complete? returns true when team 2 reaches max_score" do
-    game = games(:full_game)
-    game.update!(max_score: 41)
-    game.round_scores.create!(number: 1, team: 1, score: 20)
-    game.round_scores.create!(number: 1, team: 2, score: 41)
+  test "game status changes to done when team 2 reaches max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
 
-    assert game.game_complete?
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_2_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 48, game.team_total_score(2)
   end
 end
