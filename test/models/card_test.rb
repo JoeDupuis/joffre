@@ -69,4 +69,31 @@ class CardTest < ActiveSupport::TestCase
 
     assert_not_equal deck1, deck2, "Deck should be shuffled randomly"
   end
+
+  test "red 0 card should have score_modifier of 5" do
+    card = Card.create!(game: games(:one), player: players(:one), suite: :red, rank: 0)
+    assert_equal 5, card.score_modifier
+  end
+
+  test "brown 0 card should have score_modifier of -3" do
+    card = Card.create!(game: games(:one), player: players(:one), suite: :brown, rank: 0)
+    assert_equal(-3, card.score_modifier)
+  end
+
+  test "non-zero red card should have score_modifier of 0" do
+    card = Card.create!(game: games(:one), player: players(:one), suite: :red, rank: 5)
+    assert_equal 0, card.score_modifier
+  end
+
+  test "non-zero brown card should have score_modifier of 0" do
+    card = Card.create!(game: games(:one), player: players(:one), suite: :brown, rank: 5)
+    assert_equal 0, card.score_modifier
+  end
+
+  test "blue and green cards should have score_modifier of 0" do
+    blue_card = Card.create!(game: games(:one), player: players(:one), suite: :blue, rank: 0)
+    green_card = Card.create!(game: games(:one), player: players(:one), suite: :green, rank: 0)
+    assert_equal 0, blue_card.score_modifier
+    assert_equal 0, green_card.score_modifier
+  end
 end

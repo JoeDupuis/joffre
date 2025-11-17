@@ -182,4 +182,62 @@ class GameTest < ActiveSupport::TestCase
     assert_equal 32, game.cards.count
     assert game.bidding?
   end
+
+  test "max_score defaults to 41" do
+    game = Game.create!(name: "Test Game")
+    game.players.build(user: users(:one), owner: true, dealer: true)
+    game.save!
+
+    assert_equal 41, game.max_score
+  end
+
+  test "current_round_number starts at 1" do
+    game = games(:full_game)
+    assert_equal 1, game.current_round_number
+  end
+
+  test "current_round_number increments after round scores" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 1, team: 2, score: 5)
+
+    assert_equal 2, game.current_round_number
+  end
+
+  test "team_total_score sums all round scores for a team" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 2, team: 1, score: 15)
+    game.round_scores.create!(number: 1, team: 2, score: 5)
+
+    assert_equal 25, game.team_total_score(1)
+    assert_equal 5, game.team_total_score(2)
+  end
+
+  test "game_complete? returns false when no team reached max_score" do
+    game = games(:full_game)
+    game.update!(max_score: 41)
+    game.round_scores.create!(number: 1, team: 1, score: 20)
+    game.round_scores.create!(number: 1, team: 2, score: 15)
+
+    assert_not game.game_complete?
+  end
+
+  test "game_complete? returns true when team 1 reaches max_score" do
+    game = games(:full_game)
+    game.update!(max_score: 41)
+    game.round_scores.create!(number: 1, team: 1, score: 41)
+    game.round_scores.create!(number: 1, team: 2, score: 15)
+
+    assert game.game_complete?
+  end
+
+  test "game_complete? returns true when team 2 reaches max_score" do
+    game = games(:full_game)
+    game.update!(max_score: 41)
+    game.round_scores.create!(number: 1, team: 1, score: 20)
+    game.round_scores.create!(number: 1, team: 2, score: 41)
+
+    assert game.game_complete?
+  end
 end
