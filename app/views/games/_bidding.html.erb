@@ -49,7 +49,7 @@
       <% (minimum..12).each do |amount| %>
         <%= button_to "Bid #{amount}", game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "button" %>
       <% end %>
-      <% unless @game.dealer_must_bid? && Current.player == @game.dealer %>
+      <% unless @game.dealer_must_bid? && Current.player == @game.dealer && @game.highest_bid.nil? %>
         <%= button_to "Pass", game_bids_path(@game), method: :post, params: { bid: { amount: '' } }, class: "button secondary" %>
       <% end %>
     </div>

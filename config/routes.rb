@@ -18,7 +18,7 @@ Rails.application.routes.draw do
 
   mount LetterOpenerWeb::Engine, at: "/letter_opener" if Rails.env.development?
 
-  if Rails.env.development?
+  if Rails.env.development? || Rails.env.test?
     post "dev/switch_user" => "dev#switch_user", as: :dev_switch_user
   end
 
