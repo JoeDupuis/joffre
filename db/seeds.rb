@@ -97,10 +97,16 @@ if Rails.env.development?
   end
 
   if almost_done_game.players.empty?
-    alice_p = Player.create!(user: alice, game: almost_done_game, owner: true, dealer: true, team: 1, order: 1)
-    bob_p = Player.create!(user: bob, game: almost_done_game, team: 2, order: 2)
-    carol_p = Player.create!(user: carol, game: almost_done_game, team: 1, order: 3)
-    david_p = Player.create!(user: david, game: almost_done_game, team: 2, order: 4)
+    alice_p = Player.create!(user: alice, game: almost_done_game, owner: true, dealer: true, order: 1)
+    bob_p = Player.create!(user: bob, game: almost_done_game, order: 2)
+    carol_p = Player.create!(user: carol, game: almost_done_game, order: 3)
+    david_p = Player.create!(user: david, game: almost_done_game, order: 4)
+
+    # Set teams after creation to override the before_create callback
+    alice_p.update!(team: 1)
+    bob_p.update!(team: 2)
+    carol_p.update!(team: 1)
+    david_p.update!(team: 2)
   else
     alice_p = almost_done_game.players.find_by!(user: alice)
     bob_p = almost_done_game.players.find_by!(user: bob)
@@ -138,17 +144,20 @@ if Rails.env.development?
     # Create 7 completed tricks (28 cards)
     7.times do |trick_num|
       trick = Trick.create!(game: almost_done_game, winner: alice_p, completed: true, sequence: trick_num + 1)
+      trick_cards = []
       4.times do |card_in_trick|
         card_index = trick_num * 4 + card_in_trick
         card_data = cards_with_players[card_index]
-        Card.create!(
+        card = Card.create!(
           game: almost_done_game,
           player: card_data[:player],
           suite: card_data[:suite],
           rank: card_data[:rank],
           trick: trick
         )
+        trick_cards << card
       end
+      trick.update!(value: 1 + trick_cards.sum(&:score_modifier))
     end
 
     # Create 8th trick with 3 cards
@@ -181,10 +190,16 @@ if Rails.env.development?
   end
 
   if near_win_game.players.empty?
-    alice_nw = Player.create!(user: alice, game: near_win_game, owner: true, dealer: true, team: 1, order: 1)
-    bob_nw = Player.create!(user: bob, game: near_win_game, team: 2, order: 2)
-    carol_nw = Player.create!(user: carol, game: near_win_game, team: 1, order: 3)
-    david_nw = Player.create!(user: david, game: near_win_game, team: 2, order: 4)
+    alice_nw = Player.create!(user: alice, game: near_win_game, owner: true, dealer: true, order: 1)
+    bob_nw = Player.create!(user: bob, game: near_win_game, order: 2)
+    carol_nw = Player.create!(user: carol, game: near_win_game, order: 3)
+    david_nw = Player.create!(user: david, game: near_win_game, order: 4)
+
+    # Set teams after creation to override the before_create callback
+    alice_nw.update!(team: 1)
+    bob_nw.update!(team: 2)
+    carol_nw.update!(team: 1)
+    david_nw.update!(team: 2)
   else
     alice_nw = near_win_game.players.find_by!(user: alice)
     bob_nw = near_win_game.players.find_by!(user: bob)
@@ -238,10 +253,11 @@ if Rails.env.development?
     7.times do |trick_num|
       winner = trick_num.even? ? alice_nw : carol_nw
       trick = Trick.create!(game: near_win_game, winner: winner, completed: true, sequence: trick_num + 1)
+      trick_cards = []
       4.times do |card_in_trick|
         card_index = trick_num * 4 + card_in_trick
         card_data = cards_with_players_nw[card_index]
-        Card.create!(
+        card = Card.create!(
           game: near_win_game,
           player: card_data[:player],
           suite: card_data[:suite],
@@ -249,7 +265,9 @@ if Rails.env.development?
           trick: trick,
           trick_sequence: card_in_trick + 1
         )
+        trick_cards << card
       end
+      trick.update!(value: 1 + trick_cards.sum(&:score_modifier))
     end
 
     # Create 8th trick with 3 cards played (Alice's turn next)
