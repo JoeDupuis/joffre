@@ -246,4 +246,79 @@ class TrickTest < ActiveSupport::TestCase
     assert_equal player_three.cards.in_hand.count, playable.count
     assert_equal 8, playable.count
   end
+
+  test "trick value is 1 when no special cards" do
+    game = games(:playing_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    cards_to_play = [
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_4),
+      cards(:playing_game_blue_5),
+      cards(:playing_game_blue_7)
+    ]
+
+    cards_to_play.each { |card| trick.add_card(card) }
+    trick.reload
+
+    assert_equal 1, trick.value
+  end
+
+  test "trick value includes red 0 bonus" do
+    game = games(:playing_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    cards(:playing_game_red_0).update!(score_modifier: 5)
+
+    cards_to_play = [
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_4),
+      cards(:playing_game_blue_5),
+      cards(:playing_game_red_0)
+    ]
+
+    cards_to_play.each { |card| trick.add_card(card) }
+    trick.reload
+
+    assert_equal 6, trick.value
+  end
+
+  test "trick value includes brown 0 penalty" do
+    game = games(:playing_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    cards(:playing_game_brown_0).update!(score_modifier: -3)
+
+    cards_to_play = [
+      cards(:playing_game_blue_1),
+      cards(:playing_game_blue_4),
+      cards(:playing_game_blue_5),
+      cards(:playing_game_brown_0)
+    ]
+
+    cards_to_play.each { |card| trick.add_card(card) }
+    trick.reload
+
+    assert_equal(-2, trick.value)
+  end
+
+  test "trick value combines both special cards" do
+    game = games(:playing_game)
+    trick = Trick.create!(game: game, sequence: 2)
+
+    cards(:playing_game_red_0).update!(score_modifier: 5)
+    cards(:playing_game_brown_0).update!(score_modifier: -3)
+
+    cards_to_play = [
+      cards(:playing_game_blue_1),
+      cards(:playing_game_red_0),
+      cards(:playing_game_blue_5),
+      cards(:playing_game_brown_0)
+    ]
+
+    cards_to_play.each { |card| trick.add_card(card) }
+    trick.reload
+
+    assert_equal 3, trick.value
+  end
 end

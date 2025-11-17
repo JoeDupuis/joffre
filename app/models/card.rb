@@ -11,6 +11,9 @@ class Card < ApplicationRecord
   validates :trick_sequence, presence: true, if: :trick_id?
   validates :trick_sequence, inclusion: { in: 1..4 }, allow_nil: true
   validates :trick_sequence, uniqueness: { scope: :trick_id }, allow_nil: true
+  validates :score_modifier, presence: true
+
+  before_validation :set_score_modifier, on: :create
 
   scope :in_hand, -> { where(trick_id: nil) }
   scope :played, -> { where.not(trick_id: nil) }
@@ -36,5 +39,17 @@ class Card < ApplicationRecord
       end
     end
     cards.shuffle
+  end
+
+  private
+
+  def set_score_modifier
+    self.score_modifier = if red? && rank == 0
+      5
+    elsif brown? && rank == 0
+      -3
+    else
+      0
+    end
   end
 end
