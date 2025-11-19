@@ -1,5 +1,9 @@
 <%= render 'dev_user_switcher' %>
 
+<div class="navigation">
+  <%= link_to "← Back to Games", games_path, class: "button" %>
+</div>
+
 <% if @game.pending? %>
   <%= render 'lobby' %>
 <% elsif @game.bidding? %>
