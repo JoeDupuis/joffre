@@ -1,0 +1,73 @@
+<div class="container">
+  <h1><%= @game.name %> - Game Complete!</h1>
+
+  <% team_1_score = @game.team_total_score(1) %>
+  <% team_2_score = @game.team_total_score(2) %>
+  <% winning_team = team_1_score >= @game.max_score ? 1 : 2 %>
+  <% winning_score = winning_team == 1 ? team_1_score : team_2_score %>
+
+  <div class="game-winner">
+    <h2>🏆 Team <%= winning_team %> Wins!</h2>
+    <p class="winning-score">Final Score: <strong><%= winning_score %></strong> points</p>
+  </div>
+
+  <div class="final-scores">
+    <h3>Final Standings</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th>Players</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% [1, 2].each do |team| %>
+          <tr class="<%= 'winner' if team == winning_team %>">
+            <td><strong>Team <%= team %></strong></td>
+            <td>
+              <% @game.players.where(team: team).each do |player| %>
+                <%= player.user.name %><br>
+              <% end %>
+            </td>
+            <td><strong><%= @game.team_total_score(team) %></strong></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @game.round_scores.any? %>
+    <div class="round-history">
+      <h3>Round History</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Team 1</th>
+            <th>Team 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% round_numbers = @game.round_scores.select(:number).distinct.pluck(:number).sort %>
+          <% round_numbers.each do |round_num| %>
+            <tr>
+              <td><%= round_num %></td>
+              <td><%= @game.round_scores.find_by(number: round_num, team: 1)&.score || 0 %></td>
+              <td><%= @game.round_scores.find_by(number: round_num, team: 2)&.score || 0 %></td>
+            </tr>
+          <% end %>
+          <tr class="totals">
+            <td><strong>Total</strong></td>
+            <td><strong><%= team_1_score %></strong></td>
+            <td><strong><%= team_2_score %></strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= link_to "Back to Dashboard", root_path, class: "button" %>
+  </div>
+</div>
