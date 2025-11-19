@@ -19,6 +19,19 @@
   </div>
 
   <div>
+    <%= form.label :all_players_pass_strategy, "If all players pass" %>
+    <%= form.select :all_players_pass_strategy,
+                    options_for_select(
+                      Game.all_players_pass_strategies.keys.map { |key|
+                        [t("activerecord.attributes.game.all_players_pass_strategies.#{key}"), key]
+                      },
+                      @game.all_players_pass_strategy
+                    ),
+                    {},
+                    { required: true } %>
+  </div>
+
+  <div>
     <%= form.submit "Create Game" %>
   </div>
 <% end %>

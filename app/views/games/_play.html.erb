@@ -1,3 +1,74 @@
 <div class="container">
   <h1><%= @game.name %> - Play Area</h1>
+
+  <% if @game.highest_bid %>
+    <div class="winning-bid">
+      <h2>Winning Bid</h2>
+      <p>
+        <strong><%= @game.highest_bid.player.user.name %></strong>
+        (Team <%= @game.highest_bid.player.team %>)
+        won the bid with <strong><%= @game.highest_bid.amount %></strong>
+      </p>
+    </div>
+  <% end %>
+
+  <div class="tricks-won">
+    <h2>Tricks Won</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Team</th>
+          <th>Tricks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @game.play_order.each do |player| %>
+          <tr>
+            <td><%= player.user.name %></td>
+            <td><%= player.team %></td>
+            <td><%= player.tricks_won.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% current_trick = @game.current_trick %>
+  <div class="current-trick">
+    <h2>Current Trick</h2>
+    <% if current_trick.cards.any? %>
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Team</th>
+            <th>Suite</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% current_trick.cards.order(:created_at).each do |card| %>
+            <tr>
+              <td><%= card.player.user.name %></td>
+              <td><%= card.player.team %></td>
+              <td><%= card.suite %></td>
+              <td><%= card.rank %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p>No cards played yet in this trick</p>
+    <% end %>
+
+    <% if Current.player&.active? %>
+      <p class="highlight"><strong>Your turn to play!</strong></p>
+    <% else %>
+      <% active_player = @game.active_player %>
+      <% if active_player %>
+        <p>Waiting for <%= active_player.user.name %> to play...</p>
+      <% end %>
+    <% end %>
+  </div>
 </div>

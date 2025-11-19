@@ -24,3 +24,14 @@ This is a rails project using the default stack:
 
 # Comments
 - Do not put comments unless asked.
+
+# Flash Messages
+- Use `notice: success_message(...)` for success messages
+- Use `alert: failure_message(...)` for failure messages
+- See `app/controllers/games_controller.rb` or `app/controllers/games/players_controller.rb` for usage examples
+
+# Migrations
+- Always consolidate migrations inside a PR unless they represent distinct steps
+- Distinct steps are separate operations like creating two different tables
+- If iterating on the same table (e.g., create table then rename columns), edit the original migration instead of creating additional migrations
+- Example: Creating a table and then renaming a column should be a single migration with the final column names

@@ -9,19 +9,23 @@ class GameTest < ActiveSupport::TestCase
 
   test "should save game with name" do
     game = Game.new(name: "Test Game")
+    game.players.build(user: users(:one), owner: true, dealer: true)
     assert game.save
   end
 
   test "owner method returns the game owner" do
     user = users(:one)
-    game = Game.create!(name: "Test Game")
-    game.players.create!(user: user, owner: true)
+    game = Game.new(name: "Test Game")
+    game.players.build(user: user, owner: true, dealer: true)
+    game.save!
 
     assert_equal user, game.owner
   end
 
   test "owner method returns nil when no owner" do
-    game = Game.create!(name: "Test Game")
+    game = Game.new(name: "Test Game")
+    game.players.build(user: users(:one), owner: false, dealer: true)
+    game.save!
     assert_nil game.owner
   end
 
@@ -63,16 +67,213 @@ class GameTest < ActiveSupport::TestCase
     end
   end
 
-  test "starting game should automatically deal cards" do
+  test "starting bidding phase should automatically deal cards" do
     game = games(:full_game)
 
     assert_difference "Card.count", 32 do
-      game.update!(status: :started)
+      game.update!(status: :bidding)
     end
 
     assert_equal 32, game.cards.count
     game.players.each do |player|
       assert_equal 8, player.cards.count
     end
+  end
+
+  test "bidding_order should return players in correct order" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+    assert_equal 4, order.length
+
+    dealer = game.dealer
+    assert_equal dealer, order.last
+
+    ordered_players = game.players.order(:order).to_a
+    dealer_index = ordered_players.index(dealer)
+    expected_order = ordered_players.rotate(dealer_index + 1)
+    assert_equal expected_order, order
+  end
+
+  test "current_bidder should return first player when no bids" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    assert_equal game.bidding_order.first, game.current_bidder
+  end
+
+  test "current_bidder should cycle through players" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+
+    # After 0 bids, should be first player
+    assert_equal order[0], game.current_bidder
+
+    # After 1 bid, should be second player
+    game.bids.create!(player: order[0], amount: 7)
+    assert_equal order[1], game.current_bidder
+
+    # After 2 bids, should be third player
+    game.bids.create!(player: order[1], amount: nil)
+    assert_equal order[2], game.current_bidder
+  end
+
+  test "highest_bid should return the bid with highest amount" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+    game.bids.create!(player: order[0], amount: 7)
+    game.bids.create!(player: order[1], amount: 8)
+    highest = game.bids.create!(player: order[2], amount: 9)
+
+    assert_equal highest, game.highest_bid
+  end
+
+  test "highest_bid should ignore passes" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    order = game.bidding_order
+    highest = game.bids.create!(player: order[0], amount: 7)
+    game.bids.create!(player: order[1], amount: nil)
+    game.bids.create!(player: order[2], amount: nil)
+
+    assert_equal highest, game.highest_bid
+  end
+
+  test "bidding order changes when dealer changes" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    original_dealer = game.dealer
+    original_order = game.bidding_order
+
+    # Change dealer to next player in order
+    next_dealer = original_order[1]
+    original_dealer.update!(dealer: false)
+    next_dealer.update!(dealer: true)
+    game.reload
+
+    new_order = game.bidding_order
+
+    # New order should start after new dealer
+    assert_equal next_dealer, new_order.last
+    assert_not_equal original_order, new_order
+  end
+
+  test "with move_dealer strategy, all players passing should rotate dealer and reshuffle" do
+    game = games(:full_game)
+    game.update!(status: :bidding, all_players_pass_strategy: :move_dealer)
+
+    original_dealer = game.dealer
+    order = game.bidding_order
+
+    order.each do |player|
+      game.place_bid!(player: player, amount: nil)
+    end
+
+    game.reload
+    assert_equal 0, game.bids.count
+    assert_not_equal original_dealer, game.dealer
+    assert_equal 32, game.cards.count
+    assert game.bidding?
+  end
+
+  test "max_score defaults to 41" do
+    game = Game.create!(name: "Test Game")
+    game.players.build(user: users(:one), owner: true, dealer: true)
+    game.save!
+
+    assert_equal 41, game.max_score
+  end
+
+  test "current_round_number starts at 1" do
+    game = games(:full_game)
+    assert_equal 1, game.current_round_number
+  end
+
+  test "current_round_number increments after round scores" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 1, team: 2, score: 5)
+
+    assert_equal 2, game.current_round_number
+  end
+
+  test "team_total_score sums all round scores for a team" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 2, team: 1, score: 15)
+    game.round_scores.create!(number: 1, team: 2, score: 5)
+
+    assert_equal 25, game.team_total_score(1)
+    assert_equal 5, game.team_total_score(2)
+  end
+
+  test "game continues to bidding when no team reached max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
+
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 2, winner: team_1_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.bidding?
+    assert_equal 16, game.team_total_score(1)
+  end
+
+  test "game status changes to done when team 1 reaches max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
+
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 48, game.team_total_score(1)
+  end
+
+  test "game status changes to done when team 2 reaches max_score" do
+    game = games(:playing_game)
+    game.update!(max_score: 41, status: :playing)
+
+    players_list = game.players.order(:order).to_a
+    team_1_players = players_list.select { |p| p.team == 1 }
+    team_2_players = players_list.select { |p| p.team == 2 }
+
+    8.times do |i|
+      trick = game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_2_players[0])
+    end
+
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 48, game.team_total_score(2)
   end
 end

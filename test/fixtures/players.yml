@@ -4,12 +4,14 @@ one:
   user: one
   game: one
   owner: true
+  dealer: true
   team: 1
 
 two:
   user: two
   game: two
   owner: false
+  dealer: true
   team: 2
 
 game_one_player_two:
@@ -22,6 +24,7 @@ full_game_player_one:
   user: one
   game: full_game
   owner: true
+  dealer: true
   team: 1
 
 full_game_player_two:
@@ -46,10 +49,85 @@ started_game_owner:
   user: one
   game: started_game
   owner: true
+  dealer: true
   team: 1
+  order: 1
 
 started_game_player_two:
   user: two
   game: started_game
   owner: false
   team: 2
+  order: 2
+
+started_game_player_three:
+  user: no_friends
+  game: started_game
+  owner: false
+  team: 1
+  order: 3
+
+started_game_player_four:
+  user: stranger_one
+  game: started_game
+  owner: false
+  team: 2
+  order: 4
+
+bidding_game_player_one:
+  user: one
+  game: bidding_game
+  owner: true
+  dealer: true
+  team: 1
+  order: 1
+
+bidding_game_player_two:
+  user: two
+  game: bidding_game
+  owner: false
+  team: 1
+  order: 3
+
+bidding_game_player_three:
+  user: no_friends
+  game: bidding_game
+  owner: false
+  team: 2
+  order: 2
+
+bidding_game_player_four:
+  user: stranger_one
+  game: bidding_game
+  owner: false
+  team: 2
+  order: 4
+
+playing_game_player_one:
+  user: one
+  game: playing_game
+  owner: true
+  dealer: true
+  team: 1
+  order: 1
+
+playing_game_player_two:
+  user: two
+  game: playing_game
+  owner: false
+  team: 2
+  order: 2
+
+playing_game_player_three:
+  user: no_friends
+  game: playing_game
+  owner: false
+  team: 1
+  order: 3
+
+playing_game_player_four:
+  user: stranger_one
+  game: playing_game
+  owner: false
+  team: 2
+  order: 4

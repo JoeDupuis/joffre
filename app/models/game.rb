@@ -1,14 +1,18 @@
 class Game < ApplicationRecord
-  enum :status, { pending: 0, started: 1, done: 2 }
+  enum :status, { pending: 0, bidding: 1, playing: 2, done: 3 }
+  enum :all_players_pass_strategy, { move_dealer: 0, dealer_must_bid: 1 }
   has_secure_password validations: false
   validates :password, confirmation: true, if: -> { password.present? }
 
   validate :startable, if: :starting?
-  after_update :deal_cards!, if: :just_started?
+  after_update :setup_bidding_phase!, if: :just_started_bidding?
 
   has_many :players, dependent: :destroy
   has_many :users, through: :players
   has_many :cards, dependent: :destroy
+  has_many :bids, dependent: :destroy
+  has_many :tricks, dependent: :destroy
+  has_many :round_scores, dependent: :destroy
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
@@ -19,6 +23,10 @@ class Game < ApplicationRecord
     players.owner.first&.user
   end
 
+  def dealer
+    players.dealer.sole
+  end
+
   def authenticate_for_join(password)
     return true unless password_digest.present?
     authenticate(password)
@@ -27,6 +35,7 @@ class Game < ApplicationRecord
   def deal_cards!
     raise ArgumentError, "Game must have exactly 4 players" unless players.count == 4
 
+    cards.destroy_all
     deck = Card.deck
     player_list = players.to_a
 
@@ -36,14 +45,189 @@ class Game < ApplicationRecord
     end
   end
 
-  private
+  def bidding_order
+    return [] unless players.count == 4
 
-  def starting?
-    will_save_change_to_status? && status == "started"
+    ordered_players(dealer).rotate(1)
   end
 
-  def just_started?
-    saved_change_to_status? && status == "started"
+  def current_bidder
+    order = bidding_order
+    return nil if order.empty?
+
+    bid_count = bids.count
+    order[bid_count % 4]
+  end
+
+  def highest_bid
+    bids.where.not(amount: nil).order(amount: :desc, created_at: :asc).first
+  end
+
+  def place_bid!(player:, amount:)
+    bid = bids.build(player: player, amount: amount)
+
+    if bid.save
+      if all_players_passed?
+        handle_all_players_passed!
+      elsif bid_complete?
+        update!(status: :playing)
+      end
+    end
+
+    bid
+  end
+
+  def handle_all_players_passed!
+    if move_dealer?
+      rotate_dealer!
+    end
+    bids.destroy_all
+    deal_cards!
+  end
+
+  def current_trick
+    tricks.where(completed: false).first || tricks.create!(sequence: next_trick_sequence)
+  end
+
+  def next_trick_sequence
+    (tricks.maximum(:sequence) || 0) + 1
+  end
+
+  def play_order
+    return [] unless players.count == 4
+    return [] unless playing?
+
+    starting_player = if first_trick?
+                        highest_bid.player
+    else
+                        last_trick_winner
+    end
+    ordered_players(starting_player)
+  end
+
+  def first_trick?
+    tricks.where(completed: true).empty?
+  end
+
+  def last_trick_winner
+    tricks.where(completed: true).order(sequence: :desc).first.winner
+  end
+
+  def trump_suit
+    tricks.find_by(sequence: 1)&.led_suit
+  end
+
+  def active_player
+    order = play_order
+    return nil if order.empty?
+
+    cards_played = current_trick.cards.count
+    return nil if cards_played >= 4
+
+    order[cards_played]
+  end
+
+  def play_card!(card)
+    raise ArgumentError, "Not this player's turn" unless active_player == card.player
+    raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
+
+    trick = current_trick
+
+    if trick.led_suit.present? && trick.requires_following?(card.player)
+      raise ArgumentError, "Must follow suit" unless card.suite == trick.led_suit
+    end
+
+    trick.add_card(card)
+
+    check_round_complete!
+
+    card
+  end
+
+  def all_cards_played?
+    cards.reload.in_hand.count == 0
+  end
+
+  def check_round_complete!
+    return unless all_cards_played?
+
+    calculate_and_save_round_scores!
+    rotate_dealer!
+
+    if game_complete?
+      update!(status: :done)
+    else
+      reset_for_bidding!
+    end
+  end
+
+  def rotate_dealer!
+    current_dealer = dealer
+    new_dealer = ordered_players(current_dealer)[1]
+
+    current_dealer.update!(dealer: false)
+    new_dealer.update!(dealer: true)
+  end
+
+  def reset_for_bidding!
+    tricks.destroy_all
+    bids.destroy_all
+    update!(status: :bidding)
+  end
+
+  def ordered_players(first_player = nil)
+    @ordered_players ||= players.order(:order).to_a
+    return @ordered_players unless first_player.present?
+    index = @ordered_players.index(first_player)
+    @ordered_players.rotate(index)
+  end
+
+  def current_round_number
+    (round_scores.maximum(:number) || 0) + 1
+  end
+
+  def team_total_score(team)
+    round_scores.where(team: team).sum(:score)
+  end
+
+  private
+
+  def game_complete?
+    team_total_score(1) >= max_score || team_total_score(2) >= max_score
+  end
+
+  def all_players_passed?
+    bids.count == 4 && bids.where(amount: nil).count == 4
+  end
+
+  def bid_complete?
+    (bids.count == 4 && highest_bid.present?) || highest_bid&.amount == 12
+  end
+
+  def starting?
+    will_save_change_to_status? && status == "bidding" && status_was == "pending"
+  end
+
+  def just_started_bidding?
+    saved_change_to_status? && status == "bidding" && status_before_last_save == "pending"
+  end
+
+  def setup_bidding_phase!
+    assign_player_orders!
+    deal_cards!
+  end
+
+  def assign_player_orders!
+    dealer_player = dealer
+    dealer_player.update!(order: 1)
+
+    opposite_team = dealer_player.team == 1 ? 2 : 1
+    opposite_players = players.where(team: opposite_team).where.not(id: dealer_player.id).order(:id).to_a
+    opposite_players[0].update!(order: 2)
+    opposite_players[1].update!(order: 4)
+
+    teammate = players.where(team: dealer_player.team).where.not(id: dealer_player.id).sole
+    teammate.update!(order: 3)
   end
 
   def startable
@@ -66,6 +250,25 @@ class Game < ApplicationRecord
     self.game_code = loop do
       code = SecureRandom.alphanumeric(6).upcase
       break code unless Game.exists?(game_code: code)
+    end
+  end
+
+  def calculate_and_save_round_scores!
+    round_number = current_round_number
+    bidding_team = highest_bid.player.team
+    bid_amount = highest_bid.amount
+
+    [ 1, 2 ].each do |team|
+      team_tricks = tricks.where(completed: true, winner: players.where(team: team))
+      team_tricks_value = team_tricks.sum(:value)
+
+      score = if team == bidding_team && team_tricks_value < bid_amount
+        -bid_amount
+      else
+        team_tricks_value
+      end
+
+      round_scores.create!(number: round_number, team: team, score: score)
     end
   end
 end

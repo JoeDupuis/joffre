@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  game: one
+  player: one
+  amount: 1
+
+two:
+  game: two
+  player: two
+  amount: 1
+
+playing_game_bid_one:
+  game: playing_game
+  player: playing_game_player_two
+  amount: 7
+
+playing_game_bid_two:
+  game: playing_game
+  player: playing_game_player_three
+  amount: null
+
+playing_game_bid_three:
+  game: playing_game
+  player: playing_game_player_four
+  amount: null
+
+playing_game_bid_four:
+  game: playing_game
+  player: playing_game_player_one
+  amount: 8

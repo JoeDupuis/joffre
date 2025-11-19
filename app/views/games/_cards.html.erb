@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="your-cards">
+    <h3>Your Cards</h3>
+    <% if Current.player %>
+      <table>
+        <thead>
+          <tr>
+            <th>Suite</th>
+            <th>Rank</th>
+            <% if @game.playing? %>
+              <th>Action</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% Current.player.cards.in_hand.order(:suite, :rank).each do |card| %>
+            <tr class="<%= 'unplayable' unless card.playable? %>">
+              <td><%= card.suite %></td>
+              <td><%= card.rank %></td>
+              <% if @game.playing? %>
+                <td>
+                  <% if card.playable? %>
+                    <%= button_to "Play", game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "button" %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>
