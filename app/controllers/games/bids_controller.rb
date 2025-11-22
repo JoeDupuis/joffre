@@ -12,7 +12,6 @@ module Games
       )
 
       if @bid.errors.empty?
-        flash[:notice] = success_message(@bid) if @game.reload.playing?
         redirect_to @game
       else
         redirect_to @game, alert: failure_message(@bid)
