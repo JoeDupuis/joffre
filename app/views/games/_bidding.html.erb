@@ -1,10 +1,7 @@
 <%
   bidding_order = @game.bidding_order
-  positions = player_positions(bidding_order)
-  current_player = positions[:current]
-  partner = positions[:partner]
-  opponent_left = positions[:opponent_left]
-  opponent_right = positions[:opponent_right]
+  current_player = Current.player
+  partner = partner_of(current_player, bidding_order)
 
   active_bidder = @game.current_bidder
   highest_bid = @game.highest_bid

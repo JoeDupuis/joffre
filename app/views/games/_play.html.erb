@@ -1,9 +1,13 @@
 <%
-  positions = player_positions(@game.play_order)
-  current_player = positions[:current]
-  partner = positions[:partner]
-  opponent_left = positions[:opponent_left]
-  opponent_right = positions[:opponent_right]
+  play_order = @game.play_order
+  current_player = Current.player
+
+  if current_player && play_order.present?
+    current_player_index = play_order.index(current_player)
+    partner = play_order[(current_player_index + 2) % 4] if current_player_index
+    opponent_left = play_order[(current_player_index + 1) % 4] if current_player_index
+    opponent_right = play_order[(current_player_index + 3) % 4] if current_player_index
+  end
 
   active_player = @game.active_player
   current_trick = @game.current_trick

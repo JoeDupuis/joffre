@@ -1,28 +1,22 @@
 module GamesHelper
-  def player_positions(player_order, current_player = Current.player)
-    return default_positions(player_order) unless current_player && player_order.present?
+  def partner_of(player, player_order)
+    return nil unless player && player_order.present?
 
-    current_player_index = player_order.index(current_player)
-    return default_positions(player_order) unless current_player_index
+    player_index = player_order.index(player)
+    return nil unless player_index
 
-    {
-      current: current_player,
-      partner: player_order[(current_player_index + 2) % 4],
-      opponent_left: player_order[(current_player_index + 1) % 4],
-      opponent_right: player_order[(current_player_index + 3) % 4]
-    }
+    player_order[(player_index + 2) % 4]
   end
 
-  private
+  def player_label(player, current_player = Current.player)
+    return player.user.name unless current_player
 
-  def default_positions(player_order)
-    return {} unless player_order.count == 4
-
-    {
-      current: player_order[0],
-      partner: player_order[2],
-      opponent_left: player_order[1],
-      opponent_right: player_order[3]
-    }
+    if player == current_player
+      "You"
+    elsif player == partner_of(current_player, player.game.bidding_order || player.game.play_order)
+      player.user.name
+    else
+      player.user.name
+    end
   end
 end
