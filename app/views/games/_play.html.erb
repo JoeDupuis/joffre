@@ -48,7 +48,7 @@
     <span class="info-label">Bidder:</span>
     <span class="info-value">
       <% if highest_bid %>
-        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? "Partner" : highest_bid.player.user.name) %>
+        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? partner.user.name : highest_bid.player.user.name) %>
       <% else %>
         N/A
       <% end %>
@@ -66,7 +66,7 @@
       Playing - Your turn
     <% else %>
       <% if active_player %>
-        Playing - Waiting for <%= active_player == partner ? "Partner" : active_player.user.name %>
+        Playing - Waiting for <%= active_player == partner ? partner.user.name : active_player.user.name %>
       <% else %>
         Playing
       <% end %>
@@ -87,7 +87,7 @@
   <div class="play-area-wrapper">
     <% if partner %>
       <div class="partner-name <%= 'active-turn' if active_player == partner %>">
-        <span><%= partner == current_player ? "You" : "Partner" %></span>
+        <span><%= partner == current_player ? "You" : partner.user.name %></span>
         <% if partner.dealer? %>
           <span class="dealer-pill">Dealer</span>
         <% end %>
