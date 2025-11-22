@@ -75,12 +75,8 @@
   <div class="bidding-controls">
     <div class="bid-input-section">
       <% minimum = highest_bid ? highest_bid.amount + 1 : @game.minimum_bid %>
-      <% @game.minimum_bid.upto(12) do |amount| %>
-        <% if amount >= minimum %>
-          <%= button_to "Bid #{amount}", game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "bid-option" %>
-        <% else %>
-          <button class="bid-option disabled" disabled><%= amount %></button>
-        <% end %>
+      <% minimum.upto(12) do |amount| %>
+        <%= button_to amount.to_s, game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "bid-option" %>
       <% end %>
     </div>
     <div class="button-group">
