@@ -1,33 +1,15 @@
-<div class="container">
-  <div class="your-cards">
-    <h3>Your Cards</h3>
-    <% if Current.player %>
-      <table>
-        <thead>
-          <tr>
-            <th>Suite</th>
-            <th>Rank</th>
-            <% if @game.playing? %>
-              <th>Action</th>
-            <% end %>
-          </tr>
-        </thead>
-        <tbody>
-          <% Current.player.cards.in_hand.order(:suite, :rank).each do |card| %>
-            <tr class="<%= 'unplayable' unless card.playable? %>">
-              <td><%= card.suite %></td>
-              <td><%= card.rank %></td>
-              <% if @game.playing? %>
-                <td>
-                  <% if card.playable? %>
-                    <%= button_to "Play", game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "button" %>
-                  <% end %>
-                </td>
-              <% end %>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+<% if Current.player %>
+  <div class="player-hand">
+    <% Current.player.cards.in_hand.order(:suite, :rank).each do |card| %>
+      <% if @game.playing? && card.playable? %>
+        <%= button_to game_plays_path(@game), method: :post, params: { play: { card_id: card.id } }, class: "card" do %>
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        <% end %>
+      <% else %>
+        <div class="card <%= 'unplayable' unless card.playable? %>">
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        </div>
+      <% end %>
     <% end %>
   </div>
-</div>
+<% end %>

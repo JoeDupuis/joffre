@@ -1,19 +1,23 @@
 <%= render 'dev_user_switcher' %>
 
-<div class="navigation">
-  <%= link_to "← Back to Games", games_path, class: "button" %>
-</div>
+<% if @game.pending? || @game.bidding? || @game.done? %>
+  <div class="navigation">
+    <%= link_to "← Back to Games", games_path, class: "button" %>
+  </div>
 
-<% if @game.pending? %>
-  <%= render 'lobby' %>
-<% elsif @game.bidding? %>
-  <%= render 'scores' if @game.round_scores.any? %>
-  <%= render 'bidding' %>
-  <%= render 'cards' %>
+  <% if @game.pending? %>
+    <%= render 'lobby' %>
+  <% elsif @game.bidding? %>
+    <%= render 'scores' if @game.round_scores.any? %>
+    <%= render 'bidding' %>
+    <%= render 'cards' %>
+  <% elsif @game.done? %>
+    <%= render 'done' %>
+  <% end %>
 <% elsif @game.playing? %>
-  <%= render 'scores' %>
-  <%= render 'play' %>
-  <%= render 'cards' %>
-<% elsif @game.done? %>
-  <%= render 'done' %>
+  <div class="game-page">
+    <%= render 'scores' %>
+    <%= render 'play' %>
+    <%= render 'cards' %>
+  </div>
 <% end %>

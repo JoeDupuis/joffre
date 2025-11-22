@@ -1,46 +1,15 @@
-<div class="scores">
-  <h2>Scores</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Team</th>
-        <th>Total Score</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Team 1</td>
-        <td><strong><%= @game.team_total_score(1) %></strong> / <%= @game.max_score %></td>
-      </tr>
-      <tr>
-        <td>Team 2</td>
-        <td><strong><%= @game.team_total_score(2) %></strong> / <%= @game.max_score %></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <% if @game.round_scores.any? %>
-    <details>
-      <summary>Round History</summary>
-      <table>
-        <thead>
-          <tr>
-            <th>Round</th>
-            <th>Team 1</th>
-            <th>Team 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% round_numbers = @game.round_scores.select(:number).distinct.pluck(:number).sort %>
-          <% round_numbers.each do |round_num| %>
-            <tr>
-              <td><%= round_num %></td>
-              <td><%= @game.round_scores.find_by(number: round_num, team: 1)&.score || 0 %></td>
-              <td><%= @game.round_scores.find_by(number: round_num, team: 2)&.score || 0 %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </details>
+<div class="score-board">
+  <% if Current.player %>
+    <% current_team = Current.player.team %>
+    <% other_team = current_team == 1 ? 2 : 1 %>
+    <div class="team-line">
+      Team <%= current_team %> (You & Partner): <span><%= @game.team_total_score(current_team) %></span>
+    </div>
+    <div class="team-line">
+      Team <%= other_team %> (Opponents): <span><%= @game.team_total_score(other_team) %></span>
+    </div>
+  <% else %>
+    <div class="team-line">Team 1: <span><%= @game.team_total_score(1) %></span></div>
+    <div class="team-line">Team 2: <span><%= @game.team_total_score(2) %></span></div>
   <% end %>
 </div>
