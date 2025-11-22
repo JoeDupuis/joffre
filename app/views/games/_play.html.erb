@@ -43,7 +43,13 @@
     <span class="info-label">Bidder:</span>
     <span class="info-value">
       <% if highest_bid %>
-        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? partner.user.name : highest_bid.player.user.name) %>
+        <% if highest_bid.player == current_player %>
+          You
+        <% elsif highest_bid.player == partner %>
+          <%= dev_clickable_player_name(partner, game: @game) %>
+        <% else %>
+          <%= dev_clickable_player_name(highest_bid.player, game: @game) %>
+        <% end %>
       <% else %>
         N/A
       <% end %>
@@ -61,7 +67,7 @@
       Playing - Your turn
     <% else %>
       <% if active_player %>
-        Playing - Waiting for <%= active_player == partner ? partner.user.name : active_player.user.name %>
+        Playing - Waiting for <%= active_player == partner ? dev_clickable_player_name(partner, game: @game) : dev_clickable_player_name(active_player, game: @game) %>
       <% else %>
         Playing
       <% end %>
@@ -72,7 +78,7 @@
 <div class="game-container">
   <% if opponent_left %>
     <div class="opponent-left <%= 'active-turn' if active_player == opponent_left %>">
-      <span><%= opponent_left.user.name %></span>
+      <span><%= dev_clickable_player_name(opponent_left, game: @game) %></span>
       <% if opponent_left.dealer? %>
         <span class="dealer-pill">Dealer</span>
       <% end %>
@@ -82,7 +88,7 @@
   <div class="play-area-wrapper">
     <% if partner %>
       <div class="partner-name <%= 'active-turn' if active_player == partner %>">
-        <span><%= partner == current_player ? "You" : partner.user.name %></span>
+        <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>
         <% if partner.dealer? %>
           <span class="dealer-pill">Dealer</span>
         <% end %>
@@ -131,7 +137,7 @@
 
   <% if opponent_right %>
     <div class="opponent-right <%= 'active-turn' if active_player == opponent_right %>">
-      <span><%= opponent_right.user.name %></span>
+      <span><%= dev_clickable_player_name(opponent_right, game: @game) %></span>
       <% if opponent_right.dealer? %>
         <span class="dealer-pill">Dealer</span>
       <% end %>

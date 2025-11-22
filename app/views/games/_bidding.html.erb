@@ -16,7 +16,13 @@
     <span class="info-label">High Bidder:</span>
     <span class="info-value">
       <% if highest_bid %>
-        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? partner.user.name : highest_bid.player.user.name) %>
+        <% if highest_bid.player == current_player %>
+          You
+        <% elsif highest_bid.player == partner %>
+          <%= dev_clickable_player_name(partner, game: @game) %>
+        <% else %>
+          <%= dev_clickable_player_name(highest_bid.player, game: @game) %>
+        <% end %>
       <% else %>
         None
       <% end %>
@@ -30,7 +36,7 @@
       Bidding - Your turn
     <% else %>
       <% if active_bidder %>
-        Bidding - Waiting for <%= active_bidder == partner ? partner.user.name : active_bidder.user.name %>
+        Bidding - Waiting for <%= active_bidder == partner ? dev_clickable_player_name(partner, game: @game) : dev_clickable_player_name(active_bidder, game: @game) %>
       <% else %>
         Bidding
       <% end %>
@@ -46,7 +52,13 @@
       <% is_current = player == active_bidder %>
       <div class="bid-item <%= 'current-turn' if is_current %>">
         <span class="bid-player">
-          <%= player == current_player ? "You" : (player == partner ? partner.user.name : player.user.name) %>
+          <% if player == current_player %>
+            You
+          <% elsif player == partner %>
+            <%= dev_clickable_player_name(partner, game: @game) %>
+          <% else %>
+            <%= dev_clickable_player_name(player, game: @game) %>
+          <% end %>
         </span>
         <span class="bid-value <%= 'passed' if player_bid&.amount.nil? %>">
           <% if player_bid %>

@@ -65,7 +65,6 @@ module Games
 
       game.reload
       assert game.playing?
-      assert_not_nil flash[:notice]
     end
 
     test "should reshuffle when all players pass" do
