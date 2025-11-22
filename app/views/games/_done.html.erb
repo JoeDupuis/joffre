@@ -1,73 +1,49 @@
-<div class="container">
-  <h1><%= @game.name %> - Game Complete!</h1>
+<%= render 'scores' %>
 
+<% if Current.player %>
+  <% current_team = Current.player.team %>
+  <% other_team = current_team == 1 ? 2 : 1 %>
+  <% current_team_score = @game.team_total_score(current_team) %>
+  <% other_team_score = @game.team_total_score(other_team) %>
+  <% did_win = current_team_score >= @game.max_score %>
+  <% margin = current_team_score - other_team_score %>
+
+  <div class="round-result">
+    <div class="result-title <%= did_win ? 'success' : 'failure' %>">
+      <%= did_win ? 'You Win! 🏆' : 'You Lose 😞' %>
+    </div>
+    <div class="result-details">
+      <div class="result-item">
+        <span class="result-label">Final Score:</span>
+        <span class="result-value <%= did_win ? 'positive' : '' %>"><%= current_team_score %> - <%= other_team_score %></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label"><%= did_win ? 'Victory' : 'Defeat' %> Margin:</span>
+        <span class="result-value <%= did_win ? 'positive' : 'negative' %>"><%= did_win ? '+' : '' %><%= margin %> points</span>
+      </div>
+    </div>
+  </div>
+<% else %>
   <% team_1_score = @game.team_total_score(1) %>
   <% team_2_score = @game.team_total_score(2) %>
   <% winning_team = team_1_score >= @game.max_score ? 1 : 2 %>
   <% winning_score = winning_team == 1 ? team_1_score : team_2_score %>
+  <% losing_score = winning_team == 1 ? team_2_score : team_1_score %>
+  <% margin = winning_score - losing_score %>
 
-  <div class="game-winner">
-    <h2>🏆 Team <%= winning_team %> Wins!</h2>
-    <p class="winning-score">Final Score: <strong><%= winning_score %></strong> points</p>
-  </div>
-
-  <div class="final-scores">
-    <h3>Final Standings</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Team</th>
-          <th>Players</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% [1, 2].each do |team| %>
-          <tr class="<%= 'winner' if team == winning_team %>">
-            <td><strong>Team <%= team %></strong></td>
-            <td>
-              <% @game.players.where(team: team).each do |player| %>
-                <%= player.user.name %><br>
-              <% end %>
-            </td>
-            <td><strong><%= @game.team_total_score(team) %></strong></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-
-  <% if @game.round_scores.any? %>
-    <div class="round-history">
-      <h3>Round History</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Round</th>
-            <th>Team 1</th>
-            <th>Team 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% round_numbers = @game.round_scores.select(:number).distinct.pluck(:number).sort %>
-          <% round_numbers.each do |round_num| %>
-            <tr>
-              <td><%= round_num %></td>
-              <td><%= @game.round_scores.find_by(number: round_num, team: 1)&.score || 0 %></td>
-              <td><%= @game.round_scores.find_by(number: round_num, team: 2)&.score || 0 %></td>
-            </tr>
-          <% end %>
-          <tr class="totals">
-            <td><strong>Total</strong></td>
-            <td><strong><%= team_1_score %></strong></td>
-            <td><strong><%= team_2_score %></strong></td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="round-result">
+    <div class="result-title success">Team <%= winning_team %> Wins! 🏆</div>
+    <div class="result-details">
+      <div class="result-item">
+        <span class="result-label">Final Score:</span>
+        <span class="result-value positive"><%= winning_score %> - <%= losing_score %></span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Victory Margin:</span>
+        <span class="result-value positive">+<%= margin %> points</span>
+      </div>
     </div>
-  <% end %>
-
-  <div class="actions">
-    <%= link_to "Back to Dashboard", root_path, class: "button" %>
   </div>
-</div>
+<% end %>
+
+<div class="player-hand"></div>
