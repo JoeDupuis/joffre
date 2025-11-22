@@ -140,7 +140,7 @@ module Games
       get game_url(game)
 
       assert_response :success
-      assert_select "button[type=submit]", text: /Bid \d+/
+      assert_select "button[type=submit]", text: /^\d+$/
       assert_select "button[type=submit]", { text: "Pass", count: 0 }
     end
 

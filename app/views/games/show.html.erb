@@ -8,9 +8,11 @@
   <% if @game.pending? %>
     <%= render 'lobby' %>
   <% elsif @game.bidding? %>
-    <%= render 'scores' if @game.round_scores.any? %>
-    <%= render 'bidding' %>
-    <%= render 'cards' %>
+    <div class="game-page">
+      <%= render 'scores' if @game.round_scores.any? %>
+      <%= render 'bidding' %>
+      <%= render 'cards' %>
+    </div>
   <% end %>
 <% elsif @game.done? %>
   <div class="game-page">
