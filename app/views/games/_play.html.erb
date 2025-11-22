@@ -72,7 +72,7 @@
 <div class="game-container">
   <% if opponent_left %>
     <div class="opponent-left <%= 'active-turn' if active_player == opponent_left %>">
-      <span><%= opponent_left.user.name %></span>
+      <span><%= dev_clickable_player_name(opponent_left, game: @game) %></span>
       <% if opponent_left.dealer? %>
         <span class="dealer-pill">Dealer</span>
       <% end %>
@@ -82,7 +82,7 @@
   <div class="play-area-wrapper">
     <% if partner %>
       <div class="partner-name <%= 'active-turn' if active_player == partner %>">
-        <span><%= partner == current_player ? "You" : partner.user.name %></span>
+        <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>
         <% if partner.dealer? %>
           <span class="dealer-pill">Dealer</span>
         <% end %>
@@ -131,7 +131,7 @@
 
   <% if opponent_right %>
     <div class="opponent-right <%= 'active-turn' if active_player == opponent_right %>">
-      <span><%= opponent_right.user.name %></span>
+      <span><%= dev_clickable_player_name(opponent_right, game: @game) %></span>
       <% if opponent_right.dealer? %>
         <span class="dealer-pill">Dealer</span>
       <% end %>

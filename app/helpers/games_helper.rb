@@ -19,4 +19,18 @@ module GamesHelper
       player.user.name
     end
   end
+
+  def dev_clickable_player_name(player, game: nil)
+    name = player.is_a?(Player) ? player.user.name : player.name
+    game_id = game&.id || (player.is_a?(Player) ? player.game_id : nil)
+
+    if (Rails.env.development? || Rails.env.test?) && game_id
+      user_id = player.is_a?(Player) ? player.user_id : player.id
+      button_to name, dev_switch_user_path(user_id: user_id, game_id: game_id),
+                class: "dev-clickable-name",
+                form: { style: "display: inline;" }
+    else
+      name
+    end
+  end
 end

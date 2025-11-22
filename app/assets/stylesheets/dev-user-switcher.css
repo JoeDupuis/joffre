@@ -117,3 +117,27 @@
   font-size: 1rem;
   font-weight: bold;
 }
+
+@media (max-width: 768px) {
+  .dev-user-switcher {
+    display: none;
+  }
+}
+
+.dev-clickable-name {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.dev-clickable-name:hover {
+  text-decoration-style: solid;
+  opacity: 0.8;
+}
