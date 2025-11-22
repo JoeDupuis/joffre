@@ -1,57 +1,92 @@
-<div class="container">
-  <h1><%= @game.name %> - Bidding Phase</h1>
+<%
+  bidding_order = @game.bidding_order
+  current_player = Current.player
 
-  <div class="bidding-status">
-    <h2>Bidding Status</h2>
-    <% if @game.highest_bid %>
-      <p><strong>Current Bid:</strong> <%= @game.highest_bid.amount %> (by <%= @game.highest_bid.player.user.name %> - Team <%= @game.highest_bid.player.team %>)</p>
-    <% else %>
-      <p><strong>Current Bid:</strong> No bids yet (minimum: <%= @game.minimum_bid %>)</p>
-    <% end %>
+  if current_player && bidding_order.present?
+    current_player_index = bidding_order.index(current_player)
+    partner = bidding_order[(current_player_index + 2) % 4]
+    opponent_left = bidding_order[(current_player_index + 1) % 4]
+    opponent_right = bidding_order[(current_player_index + 3) % 4]
+  else
+    partner = bidding_order[2] if bidding_order.count == 4
+    opponent_left = bidding_order[1] if bidding_order.count == 4
+    opponent_right = bidding_order[3] if bidding_order.count == 4
+    current_player = bidding_order[0] if bidding_order.count == 4
+  end
 
-    <% if Current.player&.is_current_bidder? %>
-      <p class="highlight"><strong>Your turn to bid!</strong></p>
-    <% else %>
-      <p>Waiting for <%= @game.current_bidder.user.name %> to bid...</p>
-    <% end %>
+  active_bidder = @game.current_bidder
+  highest_bid = @game.highest_bid
+%>
+
+<div class="game-info">
+  <div class="info-item">
+    <span class="info-label">Current Bid:</span>
+    <span class="info-value"><%= highest_bid&.amount || @game.minimum_bid %></span>
   </div>
-
-  <div class="bid-history">
-    <h3>Bid History</h3>
-    <% if @game.bids.any? %>
-      <table>
-        <thead>
-          <tr>
-            <th>Player</th>
-            <th>Team</th>
-            <th>Bid</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @game.bids.order(created_at: :asc).each do |bid| %>
-            <tr>
-              <td><%= bid.player.user.name %></td>
-              <td><%= bid.player.team %></td>
-              <td><%= bid.amount || "Pass" %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p>No bids yet</p>
-    <% end %>
-  </div>
-
-  <% if Current.player&.is_current_bidder? %>
-    <div class="bid-actions">
-      <h3>Place Your Bid</h3>
-      <% minimum = @game.highest_bid ? @game.highest_bid.amount + 1 : @game.minimum_bid %>
-      <% (minimum..12).each do |amount| %>
-        <%= button_to "Bid #{amount}", game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "button" %>
+  <div class="info-item">
+    <span class="info-label">High Bidder:</span>
+    <span class="info-value">
+      <% if highest_bid %>
+        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? partner.user.name : highest_bid.player.user.name) %>
+      <% else %>
+        None
       <% end %>
-      <% unless @game.dealer_must_bid? && Current.player == @game.dealer && @game.highest_bid.nil? %>
-        <%= button_to "Pass", game_bids_path(@game), method: :post, params: { bid: { amount: '' } }, class: "button secondary" %>
+    </span>
+  </div>
+</div>
+
+<div class="phase-area">
+  <div class="phase-message">
+    <% if Current.player&.is_current_bidder? %>
+      Bidding - Your turn
+    <% else %>
+      <% if active_bidder %>
+        Bidding - Waiting for <%= active_bidder == partner ? partner.user.name : active_bidder.user.name %>
+      <% else %>
+        Bidding
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="bid-history">
+  <div class="bid-history-title">Bidding Order</div>
+  <div class="bid-list">
+    <% bidding_order.each do |player| %>
+      <% player_bid = @game.bids.find_by(player: player) %>
+      <% is_current = player == active_bidder %>
+      <div class="bid-item <%= 'current-turn' if is_current %>">
+        <span class="bid-player">
+          <%= player == current_player ? "You" : (player == partner ? partner.user.name : player.user.name) %>
+        </span>
+        <span class="bid-value <%= 'passed' if player_bid&.amount.nil? %>">
+          <% if player_bid %>
+            <%= player_bid.amount || "Pass" %>
+          <% else %>
+            <%= is_current ? "?" : "-" %>
+          <% end %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if Current.player&.is_current_bidder? %>
+  <div class="bidding-controls">
+    <div class="bid-input-section">
+      <% minimum = highest_bid ? highest_bid.amount + 1 : @game.minimum_bid %>
+      <% @game.minimum_bid.upto(12) do |amount| %>
+        <% if amount >= minimum %>
+          <%= button_to "Bid #{amount}", game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "bid-option" %>
+        <% else %>
+          <button class="bid-option disabled" disabled><%= amount %></button>
+        <% end %>
       <% end %>
     </div>
-  <% end %>
-</div>
+    <div class="button-group">
+      <% unless @game.dealer_must_bid? && Current.player == @game.dealer && highest_bid.nil? %>
+        <%= button_to "Pass", game_bids_path(@game), method: :post, params: { bid: { amount: '' } }, class: "bid-button secondary" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
