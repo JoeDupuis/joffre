@@ -1,18 +1,10 @@
 <%
   bidding_order = @game.bidding_order
-  current_player = Current.player
-
-  if current_player && bidding_order.present?
-    current_player_index = bidding_order.index(current_player)
-    partner = bidding_order[(current_player_index + 2) % 4]
-    opponent_left = bidding_order[(current_player_index + 1) % 4]
-    opponent_right = bidding_order[(current_player_index + 3) % 4]
-  else
-    partner = bidding_order[2] if bidding_order.count == 4
-    opponent_left = bidding_order[1] if bidding_order.count == 4
-    opponent_right = bidding_order[3] if bidding_order.count == 4
-    current_player = bidding_order[0] if bidding_order.count == 4
-  end
+  positions = player_positions(bidding_order)
+  current_player = positions[:current]
+  partner = positions[:partner]
+  opponent_left = positions[:opponent_left]
+  opponent_right = positions[:opponent_right]
 
   active_bidder = @game.current_bidder
   highest_bid = @game.highest_bid
