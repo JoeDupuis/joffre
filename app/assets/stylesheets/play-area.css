@@ -1,0 +1,327 @@
+.game-page {
+  background: #154734;
+  min-height: 100vh;
+  width: 100vw;
+  color: white;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.score-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  font-size: 0.9em;
+}
+
+.team-line {
+  text-align: center;
+}
+
+.game-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  font-size: 0.85em;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-label {
+  opacity: 0.8;
+}
+
+.info-value {
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.phase-area {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.phase-message {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  font-size: 1em;
+  display: inline-block;
+}
+
+.player-hand {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 15px 10px;
+  max-width: 100%;
+}
+
+.card {
+  width: min(70px, calc((100vw - 80px) / 4));
+  height: min(105px, calc((100vw - 80px) / 4 * 1.5));
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card:hover {
+  transform: translateY(-15px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.game-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  min-height: 0;
+}
+
+.opponent-left,
+.opponent-right {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 1em;
+  font-weight: 600;
+  opacity: 0.9;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: text-shadow 0.3s, color 0.3s;
+}
+
+.opponent-right {
+  transform: rotate(0deg);
+}
+
+.play-area-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.partner-name,
+.player-name {
+  font-size: 1em;
+  font-weight: 600;
+  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: text-shadow 0.3s, color 0.3s;
+}
+
+.active-turn {
+  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+  color: #ffd700;
+}
+
+.dealer-pill {
+  font-size: 0.65em;
+  background: rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  padding: 10px 3px;
+  border-radius: 12px;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.play-area {
+  width: min(400px, calc(100vw - 120px));
+  height: min(400px, calc(100vw - 120px));
+  max-width: 400px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.played-card {
+  position: absolute;
+  width: min(50px, 20%);
+  height: min(75px, 30%);
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.played-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.played-card.top {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.played-card.left {
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.played-card.right {
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.played-card.bottom {
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.indicator {
+  position: absolute;
+  font-size: 0.85em;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.dealer-indicator {
+  background: rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  border: 1px solid #ffd700;
+}
+
+.turn-indicator {
+  background: rgba(76, 175, 80, 0.3);
+  color: #4caf50;
+  border: 1px solid #4caf50;
+}
+
+.opponent-left .indicator,
+.opponent-right .indicator {
+  writing-mode: horizontal-tb;
+  transform: rotate(-90deg);
+  left: -8px;
+  top: 50%;
+  transform-origin: left center;
+}
+
+.opponent-right .indicator {
+  transform: rotate(90deg);
+  right: -8px;
+  left: auto;
+  transform-origin: right center;
+}
+
+.partner-name .indicator,
+.player-name .indicator {
+  left: -25px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 768px) {
+  .score-board {
+    flex-direction: row;
+    gap: 40px;
+    padding: 12px 24px;
+    font-size: 1.1em;
+  }
+
+  .team-line {
+    flex: 1;
+  }
+
+  .game-info {
+    gap: 30px;
+    padding: 10px 20px;
+    font-size: 0.95em;
+    justify-content: center;
+  }
+
+  .phase-message {
+    font-size: 1.1em;
+    padding: 12px 25px;
+  }
+
+  .card {
+    width: 80px;
+    height: 120px;
+    padding: 8px;
+  }
+
+  .card:hover {
+    transform: translateY(-20px) scale(1.05);
+  }
+
+  .played-card {
+    width: 70px;
+    height: 105px;
+  }
+
+  .game-container {
+    gap: 40px;
+  }
+
+  .opponent-left,
+  .opponent-right {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 1.3em;
+    flex-direction: column;
+  }
+
+  .dealer-pill {
+    padding: 3px 10px;
+  }
+
+  .partner-name,
+  .player-name {
+    font-size: 1.3em;
+  }
+}

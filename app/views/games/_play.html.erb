@@ -1,74 +1,145 @@
-<div class="container">
-  <h1><%= @game.name %> - Play Area</h1>
+<%
+  play_order = @game.play_order
+  current_player = Current.player
 
-  <% if @game.highest_bid %>
-    <div class="winning-bid">
-      <h2>Winning Bid</h2>
-      <p>
-        <strong><%= @game.highest_bid.player.user.name %></strong>
-        (Team <%= @game.highest_bid.player.team %>)
-        won the bid with <strong><%= @game.highest_bid.amount %></strong>
-      </p>
-    </div>
-  <% end %>
+  if current_player && play_order.present?
+    current_player_index = play_order.index(current_player)
+    partner = play_order[(current_player_index + 2) % 4]
+    opponent_left = play_order[(current_player_index + 1) % 4]
+    opponent_right = play_order[(current_player_index + 3) % 4]
+  else
+    partner = play_order[2] if play_order.count == 4
+    opponent_left = play_order[1] if play_order.count == 4
+    opponent_right = play_order[3] if play_order.count == 4
+    current_player = play_order[0] if play_order.count == 4
+  end
 
-  <div class="tricks-won">
-    <h2>Tricks Won</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Player</th>
-          <th>Team</th>
-          <th>Tricks</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @game.play_order.each do |player| %>
-          <tr>
-            <td><%= player.user.name %></td>
-            <td><%= player.team %></td>
-            <td><%= player.tricks_won.count %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  active_player = @game.active_player
+  current_trick = @game.current_trick
+  highest_bid = @game.highest_bid
+  trump_suit = @game.trump_suit
+
+  total_tricks = @game.tricks.where(completed: true).count
+  team_tricks = 0
+  if current_player
+    team_tricks = current_player.tricks_won.count
+    if partner
+      team_tricks += partner.tricks_won.count
+    end
+  end
+
+  played_cards = current_trick.cards.order(:trick_sequence).to_a
+  cards_by_player = {}
+  played_cards.each do |card|
+    cards_by_player[card.player.id] = card
+  end
+%>
+
+<div class="game-info">
+  <div class="info-item">
+    <span class="info-label">Trump:</span>
+    <span class="info-value"><%= trump_suit&.capitalize || "None" %></span>
   </div>
+  <div class="info-item">
+    <span class="info-label">Bid:</span>
+    <span class="info-value"><%= highest_bid&.amount || "N/A" %></span>
+  </div>
+  <div class="info-item">
+    <span class="info-label">Bidder:</span>
+    <span class="info-value">
+      <% if highest_bid %>
+        <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? "Partner" : highest_bid.player.user.name) %>
+      <% else %>
+        N/A
+      <% end %>
+    </span>
+  </div>
+  <div class="info-item">
+    <span class="info-label">Tricks:</span>
+    <span class="info-value"><%= team_tricks %>/8</span>
+  </div>
+</div>
 
-  <% current_trick = @game.current_trick %>
-  <div class="current-trick">
-    <h2>Current Trick</h2>
-    <% if current_trick.cards.any? %>
-      <table>
-        <thead>
-          <tr>
-            <th>Player</th>
-            <th>Team</th>
-            <th>Suite</th>
-            <th>Rank</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% current_trick.cards.order(:created_at).each do |card| %>
-            <tr>
-              <td><%= card.player.user.name %></td>
-              <td><%= card.player.team %></td>
-              <td><%= card.suite %></td>
-              <td><%= card.rank %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <% else %>
-      <p>No cards played yet in this trick</p>
-    <% end %>
-
+<div class="phase-area">
+  <div class="phase-message">
     <% if Current.player&.active? %>
-      <p class="highlight"><strong>Your turn to play!</strong></p>
+      Playing - Your turn
     <% else %>
-      <% active_player = @game.active_player %>
       <% if active_player %>
-        <p>Waiting for <%= active_player.user.name %> to play...</p>
+        Playing - Waiting for <%= active_player == partner ? "Partner" : active_player.user.name %>
+      <% else %>
+        Playing
       <% end %>
     <% end %>
   </div>
+</div>
+
+<div class="game-container">
+  <% if opponent_left %>
+    <div class="opponent-left <%= 'active-turn' if active_player == opponent_left %>">
+      <span><%= opponent_left.user.name %></span>
+      <% if opponent_left.dealer? %>
+        <span class="dealer-pill">Dealer</span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="play-area-wrapper">
+    <% if partner %>
+      <div class="partner-name <%= 'active-turn' if active_player == partner %>">
+        <span><%= partner == current_player ? "You" : "Partner" %></span>
+        <% if partner.dealer? %>
+          <span class="dealer-pill">Dealer</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="play-area">
+      <% if partner && cards_by_player[partner.id] %>
+        <% card = cards_by_player[partner.id] %>
+        <div class="played-card top">
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        </div>
+      <% end %>
+
+      <% if opponent_left && cards_by_player[opponent_left.id] %>
+        <% card = cards_by_player[opponent_left.id] %>
+        <div class="played-card left">
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        </div>
+      <% end %>
+
+      <% if opponent_right && cards_by_player[opponent_right.id] %>
+        <% card = cards_by_player[opponent_right.id] %>
+        <div class="played-card right">
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        </div>
+      <% end %>
+
+      <% if current_player && cards_by_player[current_player.id] %>
+        <% card = cards_by_player[current_player.id] %>
+        <div class="played-card bottom">
+          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if current_player %>
+      <div class="player-name <%= 'active-turn' if active_player == current_player %>">
+        <span>You</span>
+        <% if current_player.dealer? %>
+          <span class="dealer-pill">Dealer</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if opponent_right %>
+    <div class="opponent-right <%= 'active-turn' if active_player == opponent_right %>">
+      <span><%= opponent_right.user.name %></span>
+      <% if opponent_right.dealer? %>
+        <span class="dealer-pill">Dealer</span>
+      <% end %>
+    </div>
+  <% end %>
 </div>
