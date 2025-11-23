@@ -1,27 +1,31 @@
-<%= form_with url: session_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
-  <%= form.submit "Sign in" %>
-<% end %>
-<br>
+<div class="container">
+  <h1>Sign in</h1>
 
-<%= link_to "Forgot password?", new_password_path %>
-<br>
-<%= link_to "Don't have an account? Sign up", new_registration_path %>
+  <%= form_with url: session_path do |form| %>
+    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
+    <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
+    <%= form.submit "Sign in" %>
+  <% end %>
+  <br>
 
-<% if Rails.env.development? %>
-  <div class="dev-signin" data-controller="dev-signin">
-    <h3>Development Sign In</h3>
-    <div class="dev-signin-buttons">
-      <% dev_users = User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"]) %>
-      <% dev_users.each do |user| %>
-        <%= button_tag user.name,
-            class: "dev-user-button",
-            data: {
-              action: "click->dev-signin#signIn",
-              email: user.email_address
-            } %>
-      <% end %>
+  <%= link_to "Forgot password?", new_password_path %>
+  <br>
+  <%= link_to "Don't have an account? Sign up", new_registration_path %>
+
+  <% if Rails.env.development? %>
+    <div class="dev-signin" data-controller="dev-signin">
+      <h3>Development Sign In</h3>
+      <div class="dev-signin-buttons">
+        <% dev_users = User.where(email_address: ["alice@example.com", "bob@example.com", "carol@example.com", "david@example.com", "eve@example.com"]) %>
+        <% dev_users.each do |user| %>
+          <%= button_tag user.name,
+              class: "dev-user-button",
+              data: {
+                action: "click->dev-signin#signIn",
+                email: user.email_address
+              } %>
+        <% end %>
+      </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

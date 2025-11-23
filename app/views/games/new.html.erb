@@ -1,39 +1,41 @@
-<h1>New Game</h1>
+<div class="container">
+  <h1>New Game</h1>
 
-<%= form_with model: @game do |form| %>
-  <%= form_errors(@game) %>
+  <%= form_with model: @game do |form| %>
+    <%= form_errors(@game) %>
 
-  <div>
-    <%= form.label :name %>
-    <%= form.text_field :name, required: true, autofocus: true, placeholder: "Enter game name" %>
-  </div>
+    <div>
+      <%= form.label :name %>
+      <%= form.text_field :name, required: true, autofocus: true, placeholder: "Enter game name" %>
+    </div>
 
-  <div>
-    <%= form.label :password, "Password (optional)" %>
-    <%= form.password_field :password, placeholder: "Leave blank for no password" %>
-  </div>
+    <div>
+      <%= form.label :password, "Password (optional)" %>
+      <%= form.password_field :password, placeholder: "Leave blank for no password" %>
+    </div>
 
-  <div>
-    <%= form.label :password_confirmation, "Confirm Password" %>
-    <%= form.password_field :password_confirmation %>
-  </div>
+    <div>
+      <%= form.label :password_confirmation, "Confirm Password" %>
+      <%= form.password_field :password_confirmation %>
+    </div>
 
-  <div>
-    <%= form.label :all_players_pass_strategy, "If all players pass" %>
-    <%= form.select :all_players_pass_strategy,
-                    options_for_select(
-                      Game.all_players_pass_strategies.keys.map { |key|
-                        [t("activerecord.attributes.game.all_players_pass_strategies.#{key}"), key]
-                      },
-                      @game.all_players_pass_strategy
-                    ),
-                    {},
-                    { required: true } %>
-  </div>
+    <div>
+      <%= form.label :all_players_pass_strategy, "If all players pass" %>
+      <%= form.select :all_players_pass_strategy,
+                      options_for_select(
+                        Game.all_players_pass_strategies.keys.map { |key|
+                          [t("activerecord.attributes.game.all_players_pass_strategies.#{key}"), key]
+                        },
+                        @game.all_players_pass_strategy
+                      ),
+                      {},
+                      { required: true } %>
+    </div>
 
-  <div>
-    <%= form.submit "Create Game" %>
-  </div>
-<% end %>
+    <div>
+      <%= form.submit "Create Game" %>
+    </div>
+  <% end %>
 
-<%= link_to "Back to Dashboard", root_path %>
+  <%= link_to "Back to Dashboard", root_path %>
+</div>

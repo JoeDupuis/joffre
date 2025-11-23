@@ -2,13 +2,15 @@
 .invitations-section {
   margin: 2rem 0;
   padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .invitations-section > .-title {
   margin-top: 0;
-  color: #333;
+  color: white;
 }
 
 .invitations-section > .-list {
@@ -18,7 +20,7 @@
 
 .invitations-section > .-list > .-item {
   padding: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -29,7 +31,8 @@
 }
 
 .invitations-section > .-list > .-item > .-friend-code {
-  color: #666;
+  color: #ffd700;
   font-size: 0.9rem;
   margin-left: 1rem;
+  font-weight: 600;
 }
