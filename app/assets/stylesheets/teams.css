@@ -15,17 +15,19 @@
 }
 
 .teams > .-team {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
   padding: 1rem;
-  background-color: #f9f9f9;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .teams > .-team > .-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .teams > .-team > .-players {
@@ -37,18 +39,20 @@
 .teams > .-player {
   padding: 0.75rem;
   margin-bottom: 0.5rem;
-  background-color: white;
-  border-radius: 4px;
-  border: 1px solid #e0e0e0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  color: white;
 }
 
 .teams > .-player > .badge {
-  background-color: #007bff;
-  color: white;
+  background: rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  border: 1px solid #ffd700;
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
