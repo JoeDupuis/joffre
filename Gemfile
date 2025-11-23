@@ -57,6 +57,9 @@ group :development do
 
   # Preview emails in the browser instead of sending them
   gem "letter_opener_web", "~> 3.0"
+
+  # Hotwire development tools [https://github.com/hotwired/hotwire-spark]
+  gem "hotwire-spark"
 end
 
 group :test do
