@@ -1,47 +1,42 @@
-.played-card {
-  position: absolute;
-  width: var(--played-card-width-mobile);
-  height: var(--played-card-height-mobile);
-  background: var(--color-white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  overflow: hidden;
+.play-area {
+  & > .card {
+    position: absolute;
+    width: 19%;
+    aspect-ratio: 2 / 3;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
 
-  & > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+    & > img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-  &.-top {
-    top: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+    &.-top {
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-  &.-left {
-    left: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-  }
+    &.-left {
+      left: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
-  &.-right {
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
-  }
+    &.-right {
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
-  &.-bottom {
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
-@media (min-width: 768px) {
-  .played-card {
-    width: var(--played-card-width-desktop);
-    height: var(--played-card-height-desktop);
+    &.-bottom {
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   }
 }

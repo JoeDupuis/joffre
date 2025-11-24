@@ -1,4 +1,5 @@
 .player-hand {
+  flex: 2;
   display: flex;
   justify-content: center;
   gap: var(--space-8);
