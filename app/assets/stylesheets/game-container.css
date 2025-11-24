@@ -1,0 +1,14 @@
+.game-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-15);
+  min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .game-container {
+    gap: var(--space-40);
+  }
+}

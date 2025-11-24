@@ -1,25 +1,15 @@
-<% if @game.pending? || @game.bidding? %>
-  <div class="navigation">
-    <%= link_to "← Back to Games", games_path, class: "button" %>
-  </div>
-
+<div class="game-page">
   <% if @game.pending? %>
     <%= render 'lobby' %>
   <% elsif @game.bidding? %>
-    <div class="game-page">
-      <%= render 'scores' if @game.round_scores.any? %>
-      <%= render 'bidding' %>
-      <%= render 'cards' %>
-    </div>
-  <% end %>
-<% elsif @game.done? %>
-  <div class="game-page">
-    <%= render 'done' %>
-  </div>
-<% elsif @game.playing? %>
-  <div class="game-page">
-    <%= render 'scores' %>
+    <%= render 'score-board' %>
+    <%= render 'bidding' %>
+    <%= render 'cards' %>
+  <% elsif @game.playing? %>
+    <%= render 'score-board' %>
     <%= render 'play' %>
     <%= render 'cards' %>
-  </div>
-<% end %>
+  <% elsif @game.done? %>
+    <%= render 'done' %>
+  <% end %>
+</div>

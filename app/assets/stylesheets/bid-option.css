@@ -1,5 +1,5 @@
 .bid-option {
-  padding: var(--space-12) var(--space-20);
+  padding: var(--space-15) 0px;
   font-size: var(--font-em-lg);
   border-radius: var(--radius-lg);
   border: 2px solid var(--color-white-alpha-30);

@@ -79,7 +79,7 @@
     </div>
   <% end %>
 
-  <div class="play-area-wrapper">
+  <div class="play-wrapper">
     <% if partner %>
       <div class="opponent-display -top <%= '-active' if active_player == partner %>">
         <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>

@@ -12,9 +12,4 @@
     gap: var(--space-8);
     max-width: 100%;
   }
-
-  & > .actions {
-    display: flex;
-    gap: var(--space-10);
-  }
 }
