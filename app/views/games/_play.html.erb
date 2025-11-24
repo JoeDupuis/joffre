@@ -71,7 +71,7 @@
 
 <div class="game-container">
   <% if opponent_left %>
-    <div class="opponent-display -left <%= '-active' if active_player == opponent_left %>">
+    <div class="player-name -left <%= '-active' if active_player == opponent_left %>">
       <span><%= dev_clickable_player_name(opponent_left, game: @game) %></span>
       <% if opponent_left.dealer? %>
         <span class="dealer-pill">Dealer</span>
@@ -79,58 +79,56 @@
     </div>
   <% end %>
 
-  <div class="play-wrapper">
-    <% if partner %>
-      <div class="opponent-display -top <%= '-active' if active_player == partner %>">
-        <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>
-        <% if partner.dealer? %>
-          <span class="dealer-pill">Dealer</span>
-        <% end %>
+  <% if partner %>
+    <div class="player-name -top <%= '-active' if active_player == partner %>">
+      <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>
+      <% if partner.dealer? %>
+        <span class="dealer-pill">Dealer</span>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="table play-area">
+    <% if partner && cards_by_player[partner.id] %>
+      <% card = cards_by_player[partner.id] %>
+      <div class="played-card -top">
+        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
       </div>
     <% end %>
 
-    <div class="play-area">
-      <% if partner && cards_by_player[partner.id] %>
-        <% card = cards_by_player[partner.id] %>
-        <div class="played-card -top">
-          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-        </div>
-      <% end %>
+    <% if opponent_left && cards_by_player[opponent_left.id] %>
+      <% card = cards_by_player[opponent_left.id] %>
+      <div class="played-card -left">
+        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+      </div>
+    <% end %>
 
-      <% if opponent_left && cards_by_player[opponent_left.id] %>
-        <% card = cards_by_player[opponent_left.id] %>
-        <div class="played-card -left">
-          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-        </div>
-      <% end %>
+    <% if opponent_right && cards_by_player[opponent_right.id] %>
+      <% card = cards_by_player[opponent_right.id] %>
+      <div class="played-card -right">
+        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+      </div>
+    <% end %>
 
-      <% if opponent_right && cards_by_player[opponent_right.id] %>
-        <% card = cards_by_player[opponent_right.id] %>
-        <div class="played-card -right">
-          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-        </div>
-      <% end %>
-
-      <% if current_player && cards_by_player[current_player.id] %>
-        <% card = cards_by_player[current_player.id] %>
-        <div class="played-card -bottom">
-          <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-        </div>
-      <% end %>
-    </div>
-
-    <% if current_player %>
-      <div class="opponent-display -bottom <%= '-active' if active_player == current_player %>">
-        <span>You</span>
-        <% if current_player.dealer? %>
-          <span class="dealer-pill">Dealer</span>
-        <% end %>
+    <% if current_player && cards_by_player[current_player.id] %>
+      <% card = cards_by_player[current_player.id] %>
+      <div class="played-card -bottom">
+        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
       </div>
     <% end %>
   </div>
 
+  <% if current_player %>
+    <div class="player-name -bottom <%= '-active' if active_player == current_player %>">
+      <span>You</span>
+      <% if current_player.dealer? %>
+        <span class="dealer-pill">Dealer</span>
+      <% end %>
+    </div>
+  <% end %>
+
   <% if opponent_right %>
-    <div class="opponent-display -right <%= '-active' if active_player == opponent_right %>">
+    <div class="player-name -right <%= '-active' if active_player == opponent_right %>">
       <span><%= dev_clickable_player_name(opponent_right, game: @game) %></span>
       <% if opponent_right.dealer? %>
         <span class="dealer-pill">Dealer</span>

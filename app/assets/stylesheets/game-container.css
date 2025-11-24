@@ -1,14 +1,41 @@
 .game-container {
   flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-10);
   align-items: center;
-  justify-content: center;
-  gap: var(--space-15);
+  justify-items: center;
   min-height: 0;
+
+  & > .player-name.-left {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  & > .player-name.-top {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  & > .table {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  & > .player-name.-bottom {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  & > .player-name.-right {
+    grid-column: 3;
+    grid-row: 2;
+  }
 }
 
 @media (min-width: 768px) {
   .game-container {
-    gap: var(--space-40);
+    gap: var(--space-15);
   }
 }
