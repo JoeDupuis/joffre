@@ -19,7 +19,7 @@
     border-color: var(--color-danger-alpha-40);
   }
 
-  & > .close {
+  & > .closeBtn {
     position: absolute;
     top: 0;
     right: 0;
