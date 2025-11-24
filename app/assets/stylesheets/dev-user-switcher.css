@@ -1,44 +1,44 @@
 .dev-user-switcher {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: var(--space-20);
+  right: var(--space-20);
   background-color: #f8f9fa;
   border: 2px solid #dee2e6;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  border-radius: var(--radius-lg);
+  padding: var(--space-15);
+  box-shadow: var(--shadow-md);
+  z-index: var(--z-modal);
   min-width: 200px;
   max-width: 250px;
-}
 
-.dev-user-switcher h3 {
-  margin: 0 0 15px 0;
-  color: #495057;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid #dee2e6;
-  padding-bottom: 8px;
+  & h3 {
+    margin: 0 0 var(--space-15) 0;
+    color: #495057;
+    font-size: var(--font-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: var(--space-8);
+  }
 }
 
 .current-user-display {
   background-color: #e9ecef;
-  padding: 8px 10px;
-  border-radius: 4px;
-  margin-bottom: 12px;
-  font-size: 0.85rem;
+  padding: var(--space-8) var(--space-10);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-12);
+  font-size: var(--font-sm);
   color: #495057;
-}
 
-.current-user-display strong {
-  color: #212529;
+  & strong {
+    color: #212529;
+  }
 }
 
 .dev-user-switcher-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .dev-user-switcher-button {
@@ -46,76 +46,76 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 10px 12px;
+  padding: var(--space-10) var(--space-12);
   background-color: #007bff;
-  color: white;
+  color: var(--color-white);
   border: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
+  font-size: var(--font-sm);
+  transition: all var(--transition-fast);
   text-align: left;
   width: 100%;
-}
 
-.dev-user-switcher-button:hover {
-  background-color: #0056b3;
-  transform: translateX(-2px);
-}
+  &:hover {
+    background-color: #0056b3;
+    transform: translateX(-2px);
+  }
 
-.dev-user-switcher-button:active {
-  transform: scale(0.98);
-}
+  &:active {
+    transform: scale(0.98);
+  }
 
-.dev-user-switcher-button.current-user {
-  background-color: #28a745;
-  border-color: #1e7e34;
-}
+  &.-current {
+    background-color: #28a745;
+    border-color: #1e7e34;
 
-.dev-user-switcher-button.current-user:hover {
-  background-color: #218838;
-}
+    &:hover {
+      background-color: #218838;
+    }
+  }
 
-.dev-user-switcher-button .user-name {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
+  & > .name {
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-4);
+  }
 
-.dev-user-switcher-button .team-badge {
-  font-size: 0.75rem;
-  opacity: 0.9;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-top: 2px;
-}
+  & > .teambadge {
+    font-size: var(--font-xs);
+    opacity: 0.9;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-2);
+  }
 
-.dev-user-switcher-button .dealer-badge {
-  font-size: 0.7rem;
-  background-color: rgba(255, 215, 0, 0.3);
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-top: 2px;
-  font-weight: 600;
-}
+  & > .dealerbadge {
+    font-size: var(--font-em-xs);
+    background-color: var(--color-accent-alpha-30);
+    color: var(--color-white);
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+  }
 
-.dev-user-switcher-button .active-badge {
-  font-size: 0.7rem;
-  background-color: rgba(255, 69, 0, 0.4);
-  color: #fff;
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-top: 2px;
-  font-weight: 600;
-}
+  & > .activebadge {
+    font-size: var(--font-em-xs);
+    background-color: rgba(255, 69, 0, 0.4);
+    color: var(--color-white);
+    padding: var(--space-2) var(--space-6);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-2);
+    font-weight: var(--font-weight-semibold);
+  }
 
-.dev-user-switcher-button .current-badge {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 1rem;
-  font-weight: bold;
+  & > .currentbadge {
+    position: absolute;
+    top: var(--space-8);
+    right: var(--space-10);
+    font-size: var(--font-base);
+    font-weight: var(--font-weight-bold);
+  }
 }
 
 @media (max-width: 768px) {
@@ -135,9 +135,9 @@
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 2px;
-}
 
-.dev-clickable-name:hover {
-  text-decoration-style: solid;
-  opacity: 0.8;
+  &:hover {
+    text-decoration-style: solid;
+    opacity: 0.8;
+  }
 }

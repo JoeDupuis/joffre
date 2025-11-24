@@ -13,7 +13,7 @@ module ApplicationHelper
       role: "alert",
       data: {
         controller: "alert",
-        close_btn_class: "closeBtn"
+        close_btn_class: "close"
       }
     )
   end

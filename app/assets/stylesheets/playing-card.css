@@ -1,0 +1,47 @@
+.playing-card {
+  width: var(--card-width-mobile);
+  height: var(--card-height-mobile);
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+
+  & > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &:hover {
+    transform: translateY(-15px);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-card-hover);
+  }
+
+  &.-unplayable {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: var(--shadow-md);
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .playing-card {
+    width: var(--card-width-desktop);
+    height: var(--card-height-desktop);
+
+    &:hover {
+      transform: translateY(-20px) scale(1.05);
+    }
+  }
+}

@@ -1,0 +1,27 @@
+.score-board {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  background: var(--glass-bg);
+  padding: var(--space-8) var(--space-12);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  font-size: var(--font-em-base);
+
+  & > .team {
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .score-board {
+    flex-direction: row;
+    gap: var(--space-40);
+    padding: var(--space-12) var(--space-24);
+    font-size: var(--font-em-lg);
+
+    & > .team {
+      flex: 1;
+    }
+  }
+}

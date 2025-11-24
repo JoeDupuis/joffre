@@ -1,0 +1,22 @@
+.error-display {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: var(--radius-sm);
+  color: #c00;
+  margin-bottom: var(--space-md);
+  padding: var(--space-md);
+
+  & h2 {
+    font-size: var(--font-lg);
+    margin: 0 0 var(--space-sm) 0;
+  }
+
+  & ul {
+    margin: 0;
+    padding-left: var(--space-lg);
+  }
+
+  & li {
+    margin-bottom: var(--space-xs);
+  }
+}

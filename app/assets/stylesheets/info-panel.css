@@ -1,15 +1,14 @@
-/* Info panel component */
 .info-panel {
-  margin-top: 2rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  color: white;
-}
+  margin-top: var(--space-xl);
+  padding: var(--space-md);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  color: var(--color-white);
 
-.info-panel > .-title {
-  margin-top: 0;
-  color: white;
+  & > .title {
+    margin-top: 0;
+    color: var(--color-white);
+  }
 }

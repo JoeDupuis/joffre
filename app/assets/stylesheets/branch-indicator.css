@@ -1,25 +1,25 @@
 .branch-indicator {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: var(--space-20);
+  right: var(--space-20);
   background-color: #2d3748;
   color: #e2e8f0;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: var(--space-8) var(--space-16);
+  border-radius: var(--radius-sm);
   font-family: monospace;
   font-size: 14px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  z-index: var(--z-modal);
   opacity: 0.9;
-  transition: opacity 0.2s ease;
-}
+  transition: opacity var(--transition-fast) ease;
 
-.branch-indicator:hover {
-  opacity: 1;
-}
+  &:hover {
+    opacity: 1;
+  }
 
-.branch-indicator::before {
-  content: "⎇ ";
-  font-size: 16px;
-  vertical-align: middle;
+  &::before {
+    content: "⎇ ";
+    font-size: 16px;
+    vertical-align: middle;
+  }
 }

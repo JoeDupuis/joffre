@@ -1,0 +1,50 @@
+.bid-history {
+  background: var(--glass-bg);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  margin-bottom: var(--space-20);
+  max-width: var(--max-width-form);
+  margin-left: auto;
+  margin-right: auto;
+
+  & > .title {
+    font-size: var(--font-em-base);
+    opacity: 0.8;
+    margin-bottom: var(--space-8);
+    text-align: center;
+  }
+
+  & > .list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  & > .list > .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-6) var(--space-10);
+    background: var(--color-black-alpha-20);
+    border-radius: var(--radius-md);
+
+    &.-current {
+      background: var(--color-accent-alpha-20);
+      border: 1px solid var(--color-accent-alpha-40);
+    }
+
+    & > .player {
+      font-weight: var(--font-weight-semibold);
+    }
+
+    & > .value {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-accent);
+
+      &.-passed {
+        color: var(--color-gray);
+      }
+    }
+  }
+}

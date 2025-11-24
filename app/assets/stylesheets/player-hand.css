@@ -1,0 +1,8 @@
+.player-hand {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+  padding: var(--space-15) var(--space-10);
+  max-width: 100%;
+}

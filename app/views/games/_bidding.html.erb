@@ -8,13 +8,13 @@
 %>
 
 <div class="game-info">
-  <div class="info-item">
-    <span class="info-label">Current Bid:</span>
-    <span class="info-value"><%= highest_bid&.amount || @game.minimum_bid %></span>
+  <div class="item">
+    <span class="label">Current Bid:</span>
+    <span class="value"><%= highest_bid&.amount || @game.minimum_bid %></span>
   </div>
-  <div class="info-item">
-    <span class="info-label">High Bidder:</span>
-    <span class="info-value">
+  <div class="item">
+    <span class="label">High Bidder:</span>
+    <span class="value">
       <% if highest_bid %>
         <%= highest_bid.player == current_player ? "You" : (highest_bid.player == partner ? partner.user.name : highest_bid.player.user.name) %>
       <% else %>
@@ -39,16 +39,16 @@
 </div>
 
 <div class="bid-history">
-  <div class="bid-history-title">Bidding Order</div>
-  <div class="bid-list">
+  <div class="title">Bidding Order</div>
+  <div class="list">
     <% bidding_order.each do |player| %>
       <% player_bid = @game.bids.find_by(player: player) %>
       <% is_current = player == active_bidder %>
-      <div class="bid-item <%= 'current-turn' if is_current %>">
-        <span class="bid-player">
+      <div class="item <%= '-current' if is_current %>">
+        <span class="player">
           <%= player == current_player ? "You" : dev_clickable_player_name(player, game: @game) %>
         </span>
-        <span class="bid-value <%= 'passed' if player_bid&.amount.nil? %>">
+        <span class="value <%= '-passed' if player_bid&.amount.nil? %>">
           <% if player_bid %>
             <%= player_bid.amount || "Pass" %>
           <% else %>
@@ -61,16 +61,16 @@
 </div>
 
 <% if Current.player&.is_current_bidder? %>
-  <div class="bidding-controls">
-    <div class="bid-input-section">
+  <div class="bid-controls">
+    <div class="options">
       <% minimum = highest_bid ? highest_bid.amount + 1 : @game.minimum_bid %>
       <% minimum.upto(12) do |amount| %>
         <%= button_to amount.to_s, game_bids_path(@game), method: :post, params: { bid: { amount: amount } }, class: "bid-option" %>
       <% end %>
     </div>
-    <div class="button-group">
+    <div class="actions">
       <% unless @game.dealer_must_bid? && Current.player == @game.dealer && highest_bid.nil? %>
-        <%= button_to "Pass", game_bids_path(@game), method: :post, params: { bid: { amount: '' } }, class: "bid-button secondary" %>
+        <%= button_to "Pass", game_bids_path(@game), method: :post, params: { bid: { amount: '' } }, class: "bid-button -secondary" %>
       <% end %>
     </div>
   </div>

@@ -1,0 +1,15 @@
+.phase-message {
+  background: var(--glass-bg-light);
+  padding: var(--space-10) var(--space-20);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  font-size: 1em;
+  display: inline-block;
+}
+
+@media (min-width: 768px) {
+  .phase-message {
+    font-size: var(--font-em-lg);
+    padding: var(--space-12) var(--space-25);
+  }
+}

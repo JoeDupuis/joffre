@@ -1,18 +1,17 @@
-/* User info component */
 .user-info {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1rem;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  margin-bottom: 2rem;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  padding: var(--space-md);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  margin-bottom: var(--space-xl);
   text-align: center;
-  color: white;
-}
+  color: var(--color-white);
 
-.user-info > .-code {
-  font-family: monospace;
-  font-size: 1.2rem;
-  color: #ffd700;
-  font-weight: bold;
+  & > .code {
+    font-family: monospace;
+    font-size: var(--font-xl);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-bold);
+  }
 }

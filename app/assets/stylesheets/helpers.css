@@ -1,0 +1,27 @@
+._center {
+  text-align: center !important;
+}
+
+._unmargin {
+  margin: 0 !important;
+}
+
+._unpadding {
+  padding: 0 !important;
+}
+
+._hidden {
+  display: none !important;
+}
+
+._block {
+  display: block !important;
+}
+
+._inline-block {
+  display: inline-block !important;
+}
+
+._flex {
+  display: flex !important;
+}

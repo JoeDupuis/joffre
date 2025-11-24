@@ -1,7 +1,8 @@
-/* Form field component */
-.form-field > .-help {
-  display: block;
-  margin-top: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+.form-field {
+  & > .help {
+    display: block;
+    margin-top: var(--space-sm);
+    color: var(--color-white-alpha-70);
+    font-size: var(--font-sm);
+  }
 }
