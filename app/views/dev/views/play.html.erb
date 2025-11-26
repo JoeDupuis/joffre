@@ -44,12 +44,12 @@
 
   <div class="table game-container">
     <div class="player-name -left">
-      <span><%= left_name %></span>
-      <% if dealer == 1 %><span class="dealer-pill -vertical">Dealer</span><% end %>
+      <span class="name"><%= left_name %></span>
+      <% if dealer == 1 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
 
     <div class="player-name -top">
-      <span><%= top_name %></span>
+      <span class="name"><%= top_name %></span>
       <% if dealer == 2 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
 
@@ -72,13 +72,13 @@
     </div>
 
     <div class="player-name -bottom -active">
-      <span><%= bottom_name %></span>
+      <span class="name"><%= bottom_name %></span>
       <% if dealer == 3 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
 
     <div class="player-name -right">
-      <span><%= right_name %></span>
-      <% if dealer == 4 %><span class="dealer-pill -vertical">Dealer</span><% end %>
+      <span class="name"><%= right_name %></span>
+      <% if dealer == 4 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
   </div>
 
