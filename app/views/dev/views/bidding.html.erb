@@ -1,3 +1,10 @@
+<%
+  min_bid = (params[:bid] || 6).to_i.clamp(5, 12)
+  name1 = params[:name1] || "Alice"
+  name2 = params[:name2] || "Bob"
+  name3 = params[:name3] || "Diana"
+  show_pass = params[:pass] != "false"
+%>
 <div class="game-page">
   <div class="score-board">
     <div class="team-line">
@@ -15,7 +22,7 @@
     </div>
     <div class="item">
       <span class="label">High Bidder:</span>
-      <span class="value">Bob</span>
+      <span class="value"><%= name2 %></span>
     </div>
   </div>
 
@@ -29,11 +36,11 @@
     <div class="title">Bidding Order</div>
     <div class="list">
       <div class="item">
-        <span class="player">Alice</span>
+        <span class="player"><%= name1 %></span>
         <span class="value -passed">Pass</span>
       </div>
       <div class="item">
-        <span class="player">Bob</span>
+        <span class="player"><%= name2 %></span>
         <span class="value">7</span>
       </div>
       <div class="item -current">
@@ -41,7 +48,7 @@
         <span class="value">?</span>
       </div>
       <div class="item">
-        <span class="player">Diana</span>
+        <span class="player"><%= name3 %></span>
         <span class="value">-</span>
       </div>
     </div>
@@ -49,12 +56,12 @@
 
   <div class="bid-controls">
     <div class="options">
-      <button class="bid-option">8</button>
-      <button class="bid-option">9</button>
-      <button class="bid-option">10</button>
-      <button class="bid-option">11</button>
-      <button class="bid-option">12</button>
-      <button class="bid-option -secondary">Pass</button>
+      <% (min_bid..12).each do |bid| %>
+        <button class="bid-option"><%= bid %></button>
+      <% end %>
+      <% if show_pass %>
+        <button class="bid-option -secondary">Pass</button>
+      <% end %>
     </div>
   </div>
 
