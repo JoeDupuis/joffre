@@ -1,4 +1,10 @@
-<% dealer = (params[:dealer] || 2).to_i.clamp(1, 4) %>
+<%
+  dealer = (params[:dealer] || 2).to_i.clamp(1, 4)
+  left_name = params[:left] || "Bob"
+  top_name = params[:top] || "Charlie"
+  bottom_name = params[:bottom] || "You"
+  right_name = params[:right] || "Diana"
+%>
 <div class="game-page">
   <div class="header">
     <div class="score-board">
@@ -38,12 +44,12 @@
 
   <div class="table game-container">
     <div class="player-name -left">
-      <span>Bob</span>
-      <% if dealer == 1 %><span class="dealer-pill">Dealer</span><% end %>
+      <span><%= left_name %></span>
+      <% if dealer == 1 %><span class="dealer-pill -vertical">Dealer</span><% end %>
     </div>
 
     <div class="player-name -top">
-      <span>Charlie</span>
+      <span><%= top_name %></span>
       <% if dealer == 2 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
 
@@ -66,13 +72,13 @@
     </div>
 
     <div class="player-name -bottom -active">
-      <span>You</span>
+      <span><%= bottom_name %></span>
       <% if dealer == 3 %><span class="dealer-pill">Dealer</span><% end %>
     </div>
 
     <div class="player-name -right">
-      <span>Diana</span>
-      <% if dealer == 4 %><span class="dealer-pill">Dealer</span><% end %>
+      <span><%= right_name %></span>
+      <% if dealer == 4 %><span class="dealer-pill -vertical">Dealer</span><% end %>
     </div>
   </div>
 
