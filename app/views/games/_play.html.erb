@@ -74,7 +74,7 @@
     <div class="player-name -left <%= '-active' if active_player == opponent_left %>">
       <span><%= dev_clickable_player_name(opponent_left, game: @game) %></span>
       <% if opponent_left.dealer? %>
-        <span class="dealer-pill">Dealer</span>
+        <span class="dealerpill">Dealer</span>
       <% end %>
     </div>
   <% end %>
@@ -83,7 +83,7 @@
     <div class="player-name -top <%= '-active' if active_player == partner %>">
       <span><%= partner == current_player ? "You" : dev_clickable_player_name(partner, game: @game) %></span>
       <% if partner.dealer? %>
-        <span class="dealer-pill">Dealer</span>
+        <span class="dealerpill">Dealer</span>
       <% end %>
     </div>
   <% end %>
@@ -122,7 +122,7 @@
     <div class="player-name -bottom <%= '-active' if active_player == current_player %>">
       <span>You</span>
       <% if current_player.dealer? %>
-        <span class="dealer-pill">Dealer</span>
+        <span class="dealerpill">Dealer</span>
       <% end %>
     </div>
   <% end %>
@@ -131,7 +131,7 @@
     <div class="player-name -right <%= '-active' if active_player == opponent_right %>">
       <span><%= dev_clickable_player_name(opponent_right, game: @game) %></span>
       <% if opponent_right.dealer? %>
-        <span class="dealer-pill">Dealer</span>
+        <span class="dealerpill">Dealer</span>
       <% end %>
     </div>
   <% end %>

@@ -1,12 +1,32 @@
 .player-name {
-  font-size: 1em;
   font-weight: var(--font-weight-semibold);
   opacity: 0.9;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-8);
   transition: text-shadow var(--transition-base), color var(--transition-base);
+  max-width: 100%;
+
+  & > .name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  & > .dealerpill {
+    font-size: var(--font-em-xs);
+    background: var(--color-accent-alpha-30);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-2xl);
+    font-weight: var(--font-weight-normal);
+    white-space: nowrap;
+    padding: var(--space-3) var(--space-10);
+  }
 
   &.-active {
     text-shadow: var(--glow-accent);
@@ -18,6 +38,17 @@
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     flex-shrink: 0;
+    max-width: none;
+    max-height: 100%;
+
+    & > .name {
+      max-width: none;
+      max-height: 100%;
+    }
+
+    & > .dealerpill {
+      padding: var(--space-10) var(--space-3);
+    }
   }
 
   &.-right {
@@ -32,16 +63,11 @@
 
 @media (min-width: 768px) {
   .player-name {
-    &.-left,
-    &.-right {
-      writing-mode: horizontal-tb;
-      transform: none;
-      font-size: var(--font-em-xl);
-    }
-
     &.-top,
     &.-bottom {
-      font-size: var(--font-em-xl);
+      & > .name {
+        font-size: var(--font-em-xl);
+      }
     }
   }
 }
