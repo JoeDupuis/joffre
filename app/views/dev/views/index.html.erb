@@ -1,0 +1,7 @@
+<h1>Dev Views</h1>
+
+<ul>
+  <% @views.each do |view| %>
+    <li><%= link_to view, dev_view_path(name: view) %></li>
+  <% end %>
+</ul>

@@ -1,0 +1,101 @@
+<div class="game-page">
+  <div class="header">
+    <div class="score-board">
+      <div class="team-line">
+        Team 1 (You & Partner): <span>12</span>
+      </div>
+      <div class="team-line">
+        Team 2 (Opponents): <span>8</span>
+      </div>
+    </div>
+
+    <div class="game-info">
+      <div class="item">
+        <span class="label">Trump:</span>
+        <span class="value">Red</span>
+      </div>
+      <div class="item">
+        <span class="label">Bid:</span>
+        <span class="value">8</span>
+      </div>
+      <div class="item">
+        <span class="label">Bidder:</span>
+        <span class="value">You</span>
+      </div>
+      <div class="item">
+        <span class="label">Tricks:</span>
+        <span class="value">3/8</span>
+      </div>
+    </div>
+
+    <div class="phase-area">
+      <div class="phase-message">
+        Playing - Your turn
+      </div>
+    </div>
+  </div>
+
+  <div class="table game-container">
+    <div class="player-name -left">
+      <span>Bob</span>
+    </div>
+
+    <div class="player-name -top">
+      <span>Charlie</span>
+      <span class="dealer-pill">Dealer</span>
+    </div>
+
+    <div class="table play-area">
+      <div class="card -top">
+        <%= image_tag "cards/blue_5.png", alt: "Blue 5" %>
+      </div>
+
+      <div class="card -left">
+        <%= image_tag "cards/blue_7.png", alt: "Blue 7" %>
+      </div>
+
+      <div class="card -right">
+        <%= image_tag "cards/blue_3.png", alt: "Blue 3" %>
+      </div>
+
+      <div class="card -bottom">
+        <%= image_tag "cards/blue_6.png", alt: "Blue 6" %>
+      </div>
+    </div>
+
+    <div class="player-name -bottom -active">
+      <span>You</span>
+    </div>
+
+    <div class="player-name -right">
+      <span>Diana</span>
+    </div>
+  </div>
+
+  <%
+    cards = (params[:cards] || 8).to_i.clamp(0, 8)
+    all_cards = [
+      { image: "red_5", playable: false },
+      { image: "red_7", playable: true },
+      { image: "blue_4", playable: true },
+      { image: "green_6", playable: false },
+      { image: "green_3", playable: false },
+      { image: "brown_7", playable: false },
+      { image: "brown_4", playable: false },
+      { image: "brown_2", playable: false }
+    ]
+  %>
+  <div class="hand player-hand">
+    <% all_cards.first(cards).each do |card| %>
+      <% if card[:playable] %>
+        <button class="card">
+          <%= image_tag "cards/#{card[:image]}.png", alt: card[:image].titleize %>
+        </button>
+      <% else %>
+        <div class="card -unplayable">
+          <%= image_tag "cards/#{card[:image]}.png", alt: card[:image].titleize %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

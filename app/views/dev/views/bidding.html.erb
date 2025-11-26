@@ -1,0 +1,87 @@
+<div class="game-page">
+  <div class="score-board">
+    <div class="team-line">
+      Team 1 (You & Partner): <span>0</span>
+    </div>
+    <div class="team-line">
+      Team 2 (Opponents): <span>0</span>
+    </div>
+  </div>
+
+  <div class="game-info">
+    <div class="item">
+      <span class="label">Current Bid:</span>
+      <span class="value">7</span>
+    </div>
+    <div class="item">
+      <span class="label">High Bidder:</span>
+      <span class="value">Bob</span>
+    </div>
+  </div>
+
+  <div class="phase-area">
+    <div class="phase-message">
+      Bidding - Your turn
+    </div>
+  </div>
+
+  <div class="bid-history">
+    <div class="title">Bidding Order</div>
+    <div class="list">
+      <div class="item">
+        <span class="player">Alice</span>
+        <span class="value -passed">Pass</span>
+      </div>
+      <div class="item">
+        <span class="player">Bob</span>
+        <span class="value">7</span>
+      </div>
+      <div class="item -current">
+        <span class="player">You</span>
+        <span class="value">?</span>
+      </div>
+      <div class="item">
+        <span class="player">Diana</span>
+        <span class="value">-</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bid-controls">
+    <div class="options">
+      <button class="bid-option">8</button>
+      <button class="bid-option">9</button>
+      <button class="bid-option">10</button>
+      <button class="bid-option">11</button>
+      <button class="bid-option">12</button>
+      <button class="bid-option -secondary">Pass</button>
+    </div>
+  </div>
+
+  <div class="player-hand">
+    <div class="card">
+      <%= image_tag "cards/red_7.png", alt: "Red 7" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/red_5.png", alt: "Red 5" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/blue_7.png", alt: "Blue 7" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/blue_4.png", alt: "Blue 4" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/green_6.png", alt: "Green 6" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/green_3.png", alt: "Green 3" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/brown_7.png", alt: "Brown 7" %>
+    </div>
+    <div class="card">
+      <%= image_tag "cards/brown_2.png", alt: "Brown 2" %>
+    </div>
+  </div>
+</div>

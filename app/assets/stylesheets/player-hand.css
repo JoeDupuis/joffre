@@ -1,11 +1,12 @@
 .player-hand {
-  flex: 5;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fit, 24%);
+  @media (min-aspect-ratio: 9/10) {
+    grid-template-columns: repeat(auto-fit, 10%);
+  }
   justify-items: center;
   align-content: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-10);
+  justify-content: center;
   max-width: 100%;
   min-height: 0;
 
@@ -36,11 +37,11 @@
     padding: 0;
     border: none;
     background: transparent;
-    aspect-ratio: 2 / 3;
-    height: auto;
-    width: auto;
-    max-height: 100%;
-    max-width: 100%;
+    /* aspect-ratio: 2 / 3; */
+    /* height: auto; */
+    /* width: auto; */
+    /* max-height: 100%; */
+    /* max-width: 100%; */
 
     & > img {
       height: 100%;

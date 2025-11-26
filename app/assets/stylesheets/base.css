@@ -8,9 +8,11 @@ body {
 }
 
 #flash-messages {
+  position: absolute;
   padding: var(--space-md) var(--space-xl) 0 var(--space-xl);
   max-width: var(--max-width-container);
   margin: 0 auto;
+  z-index: 10;
 }
 
 a {

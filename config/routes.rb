@@ -20,6 +20,9 @@ Rails.application.routes.draw do
 
   if Rails.env.development? || Rails.env.test?
     post "dev/switch_user" => "dev#switch_user", as: :dev_switch_user
+    namespace :dev do
+      resources :views, only: [ :index, :show ], param: :name
+    end
   end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
