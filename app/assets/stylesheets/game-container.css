@@ -26,6 +26,7 @@
 
   & > .player-name.-top {
     grid-area: partner;
+    justify-content: end;
   }
 
   & > .table {
@@ -37,6 +38,7 @@
 
   & > .player-name.-bottom {
     grid-area: player;
+    justify-content: start;
   }
 
   & > .player-name.-right {

@@ -4,6 +4,7 @@
   top_name = params[:top] || "Charlie"
   bottom_name = params[:bottom] || "You"
   right_name = params[:right] || "Diana"
+  trump = params[:trump] || "Opponents"
 %>
 <div class="game-page">
   <div class="header">
@@ -19,7 +20,7 @@
     <div class="game-info">
       <div class="item">
         <span class="label">Trump:</span>
-        <span class="value">Red</span>
+        <span class="value"><%= trump %></span>
       </div>
       <div class="item">
         <span class="label">Bid:</span>
@@ -27,16 +28,16 @@
       </div>
       <div class="item">
         <span class="label">Bidder:</span>
-        <span class="value">You</span>
+        <span class="value">Bidder</span>
       </div>
       <div class="item">
         <span class="label">Tricks:</span>
-        <span class="value">3/8</span>
+        <span class="value">8</span>
       </div>
     </div>
 
     <div class="phase-area">
-      <div class="phase-message">
+      <div class="message">
         Playing - Your turn
       </div>
     </div>

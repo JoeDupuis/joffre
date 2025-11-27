@@ -8,6 +8,7 @@
   gap: var(--space-8);
   transition: text-shadow var(--transition-base), color var(--transition-base);
   max-width: 100%;
+  font-size: clamp(0.1em, min(1.9vh, 3.5vw), 1.3em);
 
   & > .name {
     white-space: nowrap;
@@ -30,7 +31,6 @@
   }
 
   &.-active {
-    text-shadow: var(--glow-accent);
     color: var(--color-accent);
   }
 
@@ -61,16 +61,5 @@
   &.-top,
   &.-bottom {
     gap: var(--space-4);
-  }
-}
-
-@media (min-width: 768px) {
-  .player-name {
-    &.-top,
-    &.-bottom {
-      & > .name {
-        font-size: var(--font-em-xl);
-      }
-    }
   }
 }

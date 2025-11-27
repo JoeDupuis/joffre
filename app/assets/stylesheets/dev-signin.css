@@ -38,6 +38,10 @@
   }
 }
 
+.dev-signout-form {
+  position: absolute;
+}
+
 .dev-signout-button {
   position: fixed;
   bottom: var(--space-10);
