@@ -33,7 +33,7 @@
       <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :bidding } }, class: "button" %>
     <% end %>
     <% if @game.owner == Current.user %>
-      <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button -danger" %>
+      <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button -danger", data: { turbo_confirm: "Delete #{@game.name} for everyone?" } %>
     <% elsif Current.player %>
       <%= button_to "Quit Game", games_player_path(Current.player), method: :delete, class: "button -danger" %>
     <% end %>

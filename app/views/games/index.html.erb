@@ -24,8 +24,8 @@
               <% end %>
             </p>
           <% end %>
-          <% if owner && (game.pending? || game.done?) %>
-            <%= button_to "Delete", game_path(game), method: :delete, class: "button -danger -small", data: { turbo_confirm: "Delete #{game.name}?" } %>
+          <% if owner %>
+            <%= button_to "Delete", game_path(game), method: :delete, class: "button -danger -small", data: { turbo_confirm: "Delete #{game.name} for everyone?" } %>
           <% elsif game.pending? && (player = game.players.find { |member| member.user_id == Current.user.id }) %>
             <%= button_to "Quit", games_player_path(player), method: :delete, class: "button -danger -small" %>
           <% end %>

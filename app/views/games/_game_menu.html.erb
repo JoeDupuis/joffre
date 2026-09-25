@@ -1,0 +1,9 @@
+<details class="game-menu">
+  <summary class="toggle" aria-label="Game menu">☰</summary>
+  <div class="items">
+    <%= link_to "All games", games_path, class: "item" %>
+    <% if @game.owner == Current.user %>
+      <%= button_to "Delete game", game_path(@game), method: :delete, class: "item -danger", form_class: "form", data: { turbo_confirm: "Delete #{@game.name} for everyone?" } %>
+    <% end %>
+  </div>
+</details>
