@@ -51,6 +51,10 @@ en:
           attributes:
             amount:
               dealer_must_bid: "Dealer must bid"
+  games:
+    show:
+      failure: "That game was deleted."
+      removed: "You're no longer in that game."
   application:
     form_errors:
       title:

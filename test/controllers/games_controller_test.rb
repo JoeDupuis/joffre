@@ -109,14 +109,39 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert game.pending?
   end
 
-  test "cannot delete started game" do
-    game = games(:started_game)
+  test "owner can delete a game in progress" do
+    game = games(:playing_game)
+    game.play_card!(game.active_player.playable_cards.first)
     sign_in_as(game.owner)
 
-    delete game_url(game)
+    assert_difference("Game.count", -1) do
+      delete game_url(game)
+    end
 
-    assert_response :unprocessable_entity
-    assert Game.exists?(game.id)
+    assert_redirected_to games_url
+    assert_equal 0, Card.where(game_id: game.id).count
+  end
+
+  test "owner can delete a game during bidding" do
+    game = games(:bidding_game)
+    sign_in_as(game.owner)
+
+    assert_difference("Game.count", -1) do
+      delete game_url(game)
+    end
+
+    assert_redirected_to games_url
+  end
+
+  test "non owner cannot delete a game in progress" do
+    sign_in_as(users(:two))
+    game = games(:playing_game)
+
+    assert_no_difference("Game.count") do
+      delete game_url(game)
+    end
+
+    assert_response :not_found
   end
 
   test "player can view their own game" do
@@ -127,13 +152,56 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "non-player cannot view game they are not a member of" do
+  test "non-player is sent to the games list when viewing a game they are not in" do
     sign_in_as(users(:no_friends))
     game = games(:one)
 
     get game_url(game)
 
-    assert_response :not_found
+    assert_redirected_to games_url
+    assert_equal "You're no longer in that game.", flash[:alert]
+  end
+
+  test "kicked player is sent to the games list" do
+    game = games(:one)
+    player = game.players.find_by!(owner: false)
+    sign_in_as(player.user)
+    player.destroy!
+
+    get game_url(game)
+
+    assert_redirected_to games_url
+    follow_redirect!
+    assert_select ".flash-alert", text: "You're no longer in that game."
+  end
+
+  test "player is sent to the games list when the game was deleted" do
+    game = games(:playing_game)
+    game.destroy!
+
+    get game_url(game)
+
+    assert_redirected_to games_url
+    follow_redirect!
+    assert_select ".flash-alert", text: "That game was deleted."
+  end
+
+  test "owner sees a delete option in game" do
+    game = games(:playing_game)
+    sign_in_as(game.owner)
+
+    get game_url(game)
+
+    assert_select ".game-menu form[action='#{game_path(game)}'] button[data-turbo-confirm]", text: "Delete game"
+  end
+
+  test "non owner does not see a delete option in game" do
+    sign_in_as(users(:two))
+
+    get game_url(games(:playing_game))
+
+    assert_select ".game-menu a[href='#{games_path}']"
+    assert_select ".game-menu form[action='#{game_path(games(:playing_game))}']", 0
   end
 
   test "should create game with custom settings" do
@@ -272,17 +340,39 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_select ".game-item", text: /Game One.*Waiting for players \(2\/4\)/m
     assert_select ".game-item", text: /Bidding Game.*Bidding: Team 1 0 – Team 2 0/m
-    assert_select ".game-item", text: /Playing Game.*Finished: Team 1 won 42–12/m
+    assert_select ".game-item", text: /Playing Game.*Finished: Team 1 won 42 to 12/m
   end
 
-  test "index lets owner delete pending and finished games only" do
+  test "index lets owner delete games in any status with a confirmation" do
     games(:playing_game).update_column(:status, Game.statuses[:done])
 
     get games_url
 
-    assert_select "form[action='#{game_path(games(:one))}'] button", text: "Delete"
-    assert_select "form[action='#{game_path(games(:playing_game))}'] button", text: "Delete"
-    assert_select "form[action='#{game_path(games(:bidding_game))}']", count: 0
+    assert_select "form[action='#{game_path(games(:one))}'] button[data-turbo-confirm]", text: "Delete"
+    assert_select "form[action='#{game_path(games(:playing_game))}'] button[data-turbo-confirm]", text: "Delete"
+    assert_select "form[action='#{game_path(games(:bidding_game))}'] button[data-turbo-confirm]", text: "Delete"
+  end
+
+  test "index only lets non owners quit pending games" do
+    sign_in_as(users(:two))
+
+    get games_url
+
+    assert_select ".game-item", text: /Game One.*Quit/m
+    assert_select ".game-item", text: /Playing Game/ do |items|
+      assert_select items.first, "form", 0
+    end
+  end
+
+  test "index shows negative scores with a minus sign" do
+    finished = games(:playing_game)
+    finished.update_column(:status, Game.statuses[:done])
+    finished.round_scores.create!(number: 1, team: 1, score: -18)
+    finished.round_scores.create!(number: 1, team: 2, score: 48)
+
+    get games_url
+
+    assert_select ".game-item", text: /Finished: Team 2 won 48 to −18/
   end
 
   test "should show the end screen to the winning team of a done game" do

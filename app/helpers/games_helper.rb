@@ -35,13 +35,17 @@ module GamesHelper
       winner = game.winning_team
       if winner
         loser = winner == 1 ? 2 : 1
-        "Finished: Team #{winner} won #{scores[winner]}–#{scores[loser]}"
+        "Finished: Team #{winner} won #{score_text(scores[winner])} to #{score_text(scores[loser])}"
       else
-        "Finished: #{scores[1]}–#{scores[2]}"
+        "Finished: #{score_text(scores[1])} to #{score_text(scores[2])}"
       end
     else
-      "#{game.status.humanize}: Team 1 #{scores[1]} – Team 2 #{scores[2]}"
+      "#{game.status.humanize}: Team 1 #{score_text(scores[1])} – Team 2 #{score_text(scores[2])}"
     end
+  end
+
+  def score_text(value)
+    value.negative? ? "−#{value.abs}" : value.to_s
   end
 
   def signed_points(value)

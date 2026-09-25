@@ -1,5 +1,6 @@
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 <%= turbo_stream_from @game %>
+<%= render "game_menu" if @game.bidding? || @game.playing? %>
 <div class="game-page">
   <% if @game.pending? %>
     <%= render 'lobby' %>
