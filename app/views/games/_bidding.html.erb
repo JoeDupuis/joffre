@@ -7,6 +7,8 @@
   highest_bid = @game.highest_bid
 %>
 
+<%= render "round_summary", summary: @game.last_round_summary %>
+
 <div class="game-info">
   <div class="item">
     <span class="label">Current Bid:</span>

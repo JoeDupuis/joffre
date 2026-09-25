@@ -1,0 +1,37 @@
+<% if summaries.any? %>
+  <details class="score-history <%= '-inline' if local_assigns[:inline] %>" <%= 'open' if local_assigns[:inline] %>>
+    <summary class="toggle">Score history</summary>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Bid</th>
+          <% ordered_teams.each do |team| %>
+            <th scope="col"><%= team_label(team) %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% summaries.each do |summary| %>
+          <tr>
+            <td class="round"><%= summary.number %></td>
+            <td class="bid">
+              <% if summary.bid_known? %>
+                <span class="bidder"><%= player_label(summary.bidder) %></span>
+                <%= summary.bid_amount %><span class="outcome <%= summary.made? ? '-made' : '-set' %>"><%= summary.made? ? "✓" : "✗" %></span>
+              <% else %>
+                –
+              <% end %>
+            </td>
+            <% ordered_teams.each do |team| %>
+              <td class="points">
+                <span class="delta <%= '-negative' if summary.score(team).negative? %>"><%= signed_points(summary.score(team)) %></span>
+                <span class="total"><%= summary.total(team) %></span>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </details>
+<% end %>

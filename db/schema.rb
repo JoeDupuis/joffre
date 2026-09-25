@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_16_231001) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_25_133102) do
   create_table "bids", force: :cascade do |t|
     t.integer "amount"
     t.datetime "created_at", null: false
@@ -78,12 +78,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_231001) do
   end
 
   create_table "round_scores", force: :cascade do |t|
+    t.integer "bid_amount"
+    t.integer "bidder_id"
     t.datetime "created_at", null: false
     t.integer "game_id", null: false
     t.integer "number", null: false
+    t.integer "points_taken"
     t.integer "score", null: false
     t.integer "team", null: false
     t.datetime "updated_at", null: false
+    t.index ["bidder_id"], name: "index_round_scores_on_bidder_id"
     t.index ["game_id", "number", "team"], name: "index_round_scores_on_game_id_and_number_and_team", unique: true
     t.index ["game_id"], name: "index_round_scores_on_game_id"
   end
@@ -131,6 +135,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_16_231001) do
   add_foreign_key "players", "games"
   add_foreign_key "players", "users"
   add_foreign_key "round_scores", "games"
+  add_foreign_key "round_scores", "players", column: "bidder_id"
   add_foreign_key "sessions", "users"
   add_foreign_key "tricks", "games"
   add_foreign_key "tricks", "players", column: "winner_id"

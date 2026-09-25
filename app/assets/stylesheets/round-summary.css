@@ -1,0 +1,100 @@
+.round-summary {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+  padding: var(--space-8) var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: var(--max-width-form);
+  width: 100%;
+  margin: 0 auto;
+  align-self: start;
+  font-size: var(--font-em-base);
+
+  & > .heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  & > .heading > .title {
+    font-weight: var(--font-weight-bold);
+    opacity: 0.8;
+  }
+
+  & > .heading > .outcome {
+    font-weight: var(--font-weight-bold);
+    border-radius: var(--radius-full);
+    padding: 0.1em 0.7em;
+    font-size: var(--font-em-md);
+
+    &.-made {
+      background: var(--color-success-alpha-30);
+      color: var(--color-success);
+      border: 1px solid var(--color-success);
+    }
+
+    &.-set {
+      background: var(--color-danger-alpha-20);
+      color: var(--color-danger);
+      border: 1px solid var(--color-danger);
+    }
+  }
+
+  & > .bid {
+    margin: 0;
+
+    & > strong {
+      color: var(--color-accent);
+    }
+  }
+
+  & > .teams {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+
+  & > .teams > .team {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "name score" "taken score";
+    align-items: center;
+    column-gap: var(--space-8);
+    padding: var(--space-6) var(--space-10);
+    background: var(--color-black-alpha-20);
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+
+    &.-bidding {
+      border-color: var(--color-accent-alpha-40);
+    }
+
+    & > .name {
+      grid-area: name;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    & > .taken {
+      grid-area: taken;
+      font-size: var(--font-em-md);
+      opacity: 0.7;
+    }
+
+    & > .score {
+      grid-area: score;
+      font-size: var(--font-em-xl);
+      font-weight: var(--font-weight-bold);
+
+      &.-positive {
+        color: var(--color-success);
+      }
+
+      &.-negative {
+        color: var(--color-danger);
+      }
+    }
+  }
+}

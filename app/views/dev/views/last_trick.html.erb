@@ -5,6 +5,10 @@
   bottom_name = params[:bottom] || "You"
   right_name = params[:right] || "Diana"
   trump = params[:trump] || "Opponents"
+  winner = %w[left top right bottom].include?(params[:winner]) ? params[:winner] : "top"
+  value = (params[:value] || 6).to_i
+  winner_name = { "left" => left_name, "top" => top_name, "right" => right_name, "bottom" => "You" }[winner]
+  trick = { "top" => "red_0", "left" => "red_3", "right" => "red_7", "bottom" => "red_5" }
 %>
 <div class="game-page">
   <div class="header">
@@ -39,6 +43,7 @@
 
     <div class="phase-area">
       <div class="message">
+        <span class="lasttrick"><%= winner_name %> took the trick ·</span>
         Playing - Your turn
       </div>
     </div>
@@ -55,22 +60,15 @@
       <% if dealer == 2 %><span class="dealerpill">Dealer</span><% end %>
     </div>
 
-    <div class="table play-area">
-      <div class="card -top">
-        <%= image_tag "cards/blue_5.png", alt: "Blue 5" %>
-      </div>
-
-      <div class="card -left">
-        <%= image_tag "cards/blue_7.png", alt: "Blue 7" %>
-      </div>
-
-      <div class="card -right">
-        <%= image_tag "cards/blue_3.png", alt: "Blue 3" %>
-      </div>
-
-      <div class="card -bottom">
-        <%= image_tag "cards/blue_6.png", alt: "Blue 6" %>
-      </div>
+    <div class="table play-area -last">
+      <% %w[top left right bottom].each do |seat| %>
+        <div class="card -<%= seat %> <%= '-winner' if seat == winner %>">
+          <%= image_tag "cards/#{trick[seat]}.png", alt: trick[seat].titleize %>
+          <% if seat == winner %>
+            <span class="points <%= value.negative? ? '-negative' : '-positive' %>"><%= value.negative? ? "−#{value.abs}" : "+#{value}" %></span>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 
     <div class="player-name -bottom -active">

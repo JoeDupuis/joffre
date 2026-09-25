@@ -1,5 +1,6 @@
 class RoundScore < ApplicationRecord
   belongs_to :game
+  belongs_to :bidder, class_name: "Player", optional: true
 
   validates :number, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :team, presence: true, inclusion: { in: [ 1, 2 ] }
