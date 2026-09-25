@@ -1,9 +1,11 @@
 class Player < ApplicationRecord
   belongs_to :user
   belongs_to :game
+  broadcasts_refreshes_to :game
   has_many :cards, dependent: :destroy
   has_many :bids, dependent: :destroy
   has_many :tricks_won, class_name: "Trick", foreign_key: :winner_id, dependent: :nullify
+  has_many :bid_round_scores, class_name: "RoundScore", foreign_key: :bidder_id, dependent: :nullify
 
   attr_accessor :password
 

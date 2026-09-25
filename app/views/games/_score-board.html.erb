@@ -12,4 +12,5 @@
     <div class="team-line">Team 1: <span><%= @game.team_total_score(1) %></span></div>
     <div class="team-line">Team 2: <span><%= @game.team_total_score(2) %></span></div>
   <% end %>
+  <%= render "score_history", summaries: @game.round_summaries unless @game.done? %>
 </div>

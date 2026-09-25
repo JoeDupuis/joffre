@@ -306,4 +306,208 @@ class GameTest < ActiveSupport::TestCase
       assert game.errors[:max_score].any?
     end
   end
+
+  test "a full round of play re-deals fresh cards for the next round" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+    original_card_ids = game.cards.pluck(:id)
+
+    game = Game.find(game.id)
+    game.place_bid!(player: game.current_bidder, amount: 7)
+    3.times do
+      game = Game.find(game.id)
+      game.place_bid!(player: game.current_bidder, amount: nil)
+    end
+    assert Game.find(game.id).playing?
+
+    32.times do
+      game = Game.find(game.id)
+      player = game.active_player
+      game.play_card!(game.current_trick.playable_cards(player).first)
+    end
+
+    game = Game.find(game.id)
+    assert game.bidding?
+    assert_equal 2, game.round_scores.count
+    assert_equal 0, game.bids.count
+    assert_equal 0, game.tricks.count
+    assert_equal 32, game.cards.count
+    assert_empty game.cards.pluck(:id) & original_card_ids
+    assert_equal 0, game.cards.where.not(trick_sequence: nil).count
+    game.players.each do |player|
+      assert_equal 8, player.cards.in_hand.count
+    end
+  end
+
+  test "winning_team is nil when no team reached max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 40)
+    game.round_scores.create!(number: 1, team: 2, score: 10)
+
+    assert_nil game.winning_team
+  end
+
+  test "winning_team is the team that reached max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 1, team: 2, score: 42)
+
+    assert_equal 2, game.winning_team
+  end
+
+  test "winning_team is the higher score when both teams reach max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 45)
+    game.round_scores.create!(number: 1, team: 2, score: 48)
+
+    assert_equal 2, game.winning_team
+  end
+
+  test "winning_team is nil when both teams tie above max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 45)
+    game.round_scores.create!(number: 1, team: 2, score: 45)
+
+    assert_nil game.winning_team
+  end
+
+  test "game is won by the higher score when both teams cross max_score on the same hand" do
+    game = games(:playing_game)
+    game.round_scores.create!(number: 1, team: 1, score: 0)
+    game.round_scores.create!(number: 1, team: 2, score: 50)
+    team_1_player = game.players.find_by(team: 1)
+
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_player)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 2, game.winning_team
+  end
+
+  test "another hand is played when both teams tie above max_score" do
+    game = games(:playing_game)
+    game.round_scores.create!(number: 1, team: 1, score: 0)
+    game.round_scores.create!(number: 1, team: 2, score: 48)
+    team_1_player = game.players.find_by(team: 1)
+
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_player)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.bidding?
+    assert_nil game.winning_team
+    assert_equal 48, game.team_total_score(1)
+    assert_equal 48, game.team_total_score(2)
+  end
+
+  test "team_round_points sums completed trick values won by a team" do
+    game = games(:playing_game)
+    team_1_player = players(:playing_game_player_one)
+    team_2_player = players(:playing_game_player_two)
+
+    game.tricks.create!(sequence: 1, completed: true, value: 6, winner: team_1_player)
+    game.tricks.create!(sequence: 2, completed: true, value: -2, winner: team_2_player)
+    game.tricks.create!(sequence: 3, completed: true, value: 1, winner: players(:playing_game_player_three))
+    game.tricks.create!(sequence: 4, completed: false)
+
+    assert_equal 7, game.team_round_points(1)
+    assert_equal(-2, game.team_round_points(2))
+  end
+
+  test "last_completed_trick returns the most recent completed trick" do
+    game = games(:playing_game)
+    assert_nil game.last_completed_trick
+
+    game.tricks.create!(sequence: 1, completed: true, value: 1, winner: players(:playing_game_player_one))
+    second = game.tricks.create!(sequence: 2, completed: true, value: 1, winner: players(:playing_game_player_two))
+    game.tricks.create!(sequence: 3, completed: false)
+
+    assert_equal second, game.last_completed_trick
+  end
+
+  test "round scores record the bid, bidder and points taken when the bid is made" do
+    game = games(:playing_game)
+    bidder = players(:playing_game_player_one)
+
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 1, winner: bidder)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+
+    bidding_row = game.round_scores.find_by(number: 1, team: 1)
+    other_row = game.round_scores.find_by(number: 1, team: 2)
+    assert_equal [ bidder, 8, 8, 8 ], [ bidding_row.bidder, bidding_row.bid_amount, bidding_row.points_taken, bidding_row.score ]
+    assert_equal [ bidder, 8, 0, 0 ], [ other_row.bidder, other_row.bid_amount, other_row.points_taken, other_row.score ]
+
+    summary = game.last_round_summary
+    assert_equal 1, summary.number
+    assert_equal bidder, summary.bidder
+    assert_equal 1, summary.bidding_team
+    assert summary.made?
+  end
+
+  test "round scores record points taken when the bidding team is set" do
+    game = games(:playing_game)
+    team_1_player = players(:playing_game_player_one)
+    team_2_player = players(:playing_game_player_two)
+
+    game.tricks.create!(sequence: 1, completed: true, value: 6, winner: team_1_player)
+    7.times do |i|
+      game.tricks.create!(sequence: i + 2, completed: true, value: 1, winner: team_2_player)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+
+    summary = game.last_round_summary
+    assert_not summary.made?
+    assert_equal 6, summary.points_taken(1)
+    assert_equal(-8, summary.score(1))
+    assert_equal 7, summary.points_taken(2)
+    assert_equal 7, summary.score(2)
+  end
+
+  test "round_summaries group rounds with running totals" do
+    game = games(:playing_game)
+    bidder = players(:playing_game_player_two)
+    game.round_scores.create!(number: 1, team: 1, score: 3, points_taken: 3, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 1, team: 2, score: 7, points_taken: 7, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 2, team: 1, score: 5, points_taken: 5, bidder:, bid_amount: 8)
+    game.round_scores.create!(number: 2, team: 2, score: -8, points_taken: 5, bidder:, bid_amount: 8)
+
+    summaries = game.round_summaries
+
+    assert_equal [ 1, 2 ], summaries.map(&:number)
+    assert_equal [ 3, 7 ], [ summaries.first.total(1), summaries.first.total(2) ]
+    assert_equal [ 8, -1 ], [ summaries.last.total(1), summaries.last.total(2) ]
+    assert summaries.first.made?
+    assert_not summaries.last.made?
+  end
+
+  test "round_summaries tolerate rounds recorded without bid details" do
+    game = games(:playing_game)
+    game.round_scores.create!(number: 1, team: 1, score: 4)
+    game.round_scores.create!(number: 1, team: 2, score: 5)
+
+    summary = game.last_round_summary
+
+    assert_not summary.bid_known?
+    assert_not summary.made?
+    assert_equal 5, summary.total(2)
+  end
+
+  test "last_round_summary is nil before any round is scored" do
+    assert_nil games(:playing_game).last_round_summary
+  end
 end

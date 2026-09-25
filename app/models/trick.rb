@@ -1,6 +1,7 @@
 class Trick < ApplicationRecord
   belongs_to :game
   belongs_to :winner, class_name: "Player", optional: true
+  broadcasts_refreshes_to :game
   has_many :cards, dependent: :nullify
 
   validates :sequence, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 8 }

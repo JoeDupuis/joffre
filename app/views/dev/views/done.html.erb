@@ -1,19 +1,26 @@
 <div class="game-page">
   <div class="round-result">
-    <div class="result-title success">
+    <div class="title -success">
       You Win! 🏆
     </div>
-    <div class="result-details">
-      <div class="result-item">
-        <span class="result-label">Final Score:</span>
-        <span class="result-value positive">52 - 38</span>
+    <div class="details">
+      <div class="item">
+        <span class="label">Your Team:</span>
+        <span class="value">52</span>
       </div>
-      <div class="result-item">
-        <span class="result-label">Victory Margin:</span>
-        <span class="result-value positive">+14 points</span>
+      <div class="item">
+        <span class="label">Opponents:</span>
+        <span class="value">-18</span>
+      </div>
+      <div class="item">
+        <span class="label">Victory Margin:</span>
+        <span class="value -positive">+70 points</span>
       </div>
     </div>
+    <a href="#" class="link-button">Back to Games</a>
   </div>
+
+  <%= render "dev/views/score_history", inline: true %>
 
   <div class="player-hand"></div>
 </div>

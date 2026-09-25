@@ -14,20 +14,14 @@
   highest_bid = @game.highest_bid
   trump_suit = @game.trump_suit
 
-  total_tricks = @game.tricks.where(completed: true).count
-  team_tricks = 0
-  if current_player
-    team_tricks = current_player.tricks_won.count
-    if partner
-      team_tricks += partner.tricks_won.count
-    end
-  end
+  team_points = @game.team_round_points(current_player.team) if current_player
 
   played_cards = current_trick.cards.order(:trick_sequence).to_a
-  cards_by_player = {}
-  played_cards.each do |card|
-    cards_by_player[card.player.id] = card
-  end
+  last_trick = @game.last_completed_trick if played_cards.empty?
+  played_cards = last_trick.cards.order(:trick_sequence).to_a if last_trick
+  cards_by_player = played_cards.index_by(&:player_id)
+
+  seats = [ [ partner, "top" ], [ opponent_left, "left" ], [ opponent_right, "right" ], [ current_player, "bottom" ] ]
 %>
 
 <div class="game-info">
@@ -49,14 +43,19 @@
       <% end %>
     </span>
   </div>
-  <div class="item">
-    <span class="label">Tricks:</span>
-    <span class="value"><%= team_tricks %>/8</span>
-  </div>
+  <% if team_points %>
+    <div class="item">
+      <span class="label">Points:</span>
+      <span class="value"><%= team_points %></span>
+    </div>
+  <% end %>
 </div>
 
 <div class="phase-area">
   <div class="message">
+    <% if last_trick %>
+      <span class="lasttrick"><%= player_label(last_trick.winner) %> took the trick ·</span>
+    <% end %>
     <% if Current.player&.active? %>
       Playing - Your turn
     <% else %>
@@ -88,32 +87,16 @@
     </div>
   <% end %>
 
-  <div class="table play-area">
-    <% if partner && cards_by_player[partner.id] %>
-      <% card = cards_by_player[partner.id] %>
-      <div class="card -top">
+  <div class="table play-area <%= '-last' if last_trick %>">
+    <% seats.each do |seat_player, seat| %>
+      <% card = seat_player && cards_by_player[seat_player.id] %>
+      <% next unless card %>
+      <% won = last_trick&.winner_id == seat_player.id %>
+      <div class="card -<%= seat %> <%= '-winner' if won %>">
         <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-      </div>
-    <% end %>
-
-    <% if opponent_left && cards_by_player[opponent_left.id] %>
-      <% card = cards_by_player[opponent_left.id] %>
-      <div class="card -left">
-        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-      </div>
-    <% end %>
-
-    <% if opponent_right && cards_by_player[opponent_right.id] %>
-      <% card = cards_by_player[opponent_right.id] %>
-      <div class="card -right">
-        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
-      </div>
-    <% end %>
-
-    <% if current_player && cards_by_player[current_player.id] %>
-      <% card = cards_by_player[current_player.id] %>
-      <div class="card -bottom">
-        <%= image_tag "cards/#{card.suite}_#{card.rank}.png", alt: "#{card.suite.capitalize} #{card.rank}" %>
+        <% if won %>
+          <span class="points <%= last_trick.value.negative? ? '-negative' : '-positive' %>"><%= signed_points(last_trick.value) %></span>
+        <% end %>
       </div>
     <% end %>
   </div>

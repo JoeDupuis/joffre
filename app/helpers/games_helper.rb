@@ -32,15 +32,34 @@ module GamesHelper
     elsif game.pending?
       "Waiting for players (#{game.players.size}/4)"
     elsif game.done?
-      winner, loser = scores.keys.sort_by { |team| -scores[team] }
-      if scores[winner] == scores[loser]
-        "Finished: tied #{scores[winner]}–#{scores[loser]}"
-      else
+      winner = game.winning_team
+      if winner
+        loser = winner == 1 ? 2 : 1
         "Finished: Team #{winner} won #{scores[winner]}–#{scores[loser]}"
+      else
+        "Finished: #{scores[1]}–#{scores[2]}"
       end
     else
       "#{game.status.humanize}: Team 1 #{scores[1]} – Team 2 #{scores[2]}"
     end
+  end
+
+  def signed_points(value)
+    return "0" if value.to_i.zero?
+
+    value.negative? ? "−#{value.abs}" : "+#{value}"
+  end
+
+  def team_label(team, current_player = Current.player)
+    return "Team #{team}" unless current_player
+
+    current_player.team == team ? "Us" : "Them"
+  end
+
+  def ordered_teams(current_player = Current.player)
+    return [ 1, 2 ] unless current_player&.team
+
+    [ current_player.team, current_player.team == 1 ? 2 : 1 ]
   end
 
   def dev_clickable_player_name(player, game: nil)

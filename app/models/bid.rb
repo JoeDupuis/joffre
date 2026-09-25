@@ -1,6 +1,7 @@
 class Bid < ApplicationRecord
   belongs_to :game
   belongs_to :player
+  broadcasts_refreshes_to :game
 
   validates :player_id, presence: true
   validates :game_id, presence: true
