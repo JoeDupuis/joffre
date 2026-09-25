@@ -1,10 +1,13 @@
 <div class="game-page">
   <h1>Friday Night Kaiser</h1>
 
-  <div class="game-info">
-    <p><strong>Game Code:</strong> ABC123</p>
-    <p><em>This game is password protected</em></p>
-  </div>
+  <dl class="game-settings">
+    <div class="item"><dt class="label">Game code</dt><dd class="value">ABC123</dd></div>
+    <div class="item"><dt class="label">Starting bid</dt><dd class="value">6</dd></div>
+    <div class="item"><dt class="label">Target score</dt><dd class="value">41</dd></div>
+    <div class="item"><dt class="label">If all players pass</dt><dd class="value">Dealer must bid (no passing)</dd></div>
+    <div class="item"><dt class="label">Access</dt><dd class="value">Password protected</dd></div>
+  </dl>
 
   <div class="team-display">
     <h2 class="title">Teams (4/4 players)</h2>
@@ -42,9 +45,9 @@
     </div>
   </div>
 
-  <div class="actions">
+  <div class="action-buttons">
     <button class="button">Start Game</button>
-    <button class="button">Delete Game</button>
-    <a href="#" class="button">Back to Dashboard</a>
+    <button class="button -danger">Delete Game</button>
+    <a href="#" class="button -secondary">Back to Dashboard</a>
   </div>
 </div>

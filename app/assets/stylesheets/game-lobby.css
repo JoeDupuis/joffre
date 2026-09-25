@@ -1,0 +1,8 @@
+.game-lobby {
+  grid-row: 1 / -1;
+  min-width: 0;
+
+  & > .action-buttons {
+    margin-bottom: var(--space-2xl);
+  }
+}

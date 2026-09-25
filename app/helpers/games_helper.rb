@@ -20,6 +20,30 @@ module GamesHelper
     end
   end
 
+  def team_scores(game)
+    [ 1, 2 ].index_with { |team| game.round_scores.select { |score| score.team == team }.sum(&:score) }
+  end
+
+  def game_status_text(game)
+    scores = team_scores(game)
+
+    if game.pending? && game.players.size == 4
+      "Ready to start (4/4 players)"
+    elsif game.pending?
+      "Waiting for players (#{game.players.size}/4)"
+    elsif game.done?
+      winner = game.winning_team
+      if winner
+        loser = winner == 1 ? 2 : 1
+        "Finished: Team #{winner} won #{scores[winner]}–#{scores[loser]}"
+      else
+        "Finished: #{scores[1]}–#{scores[2]}"
+      end
+    else
+      "#{game.status.humanize}: Team 1 #{scores[1]} – Team 2 #{scores[2]}"
+    end
+  end
+
   def signed_points(value)
     return "0" if value.to_i.zero?
 

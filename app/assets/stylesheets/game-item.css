@@ -5,6 +5,10 @@
   padding: var(--space-lg);
   backdrop-filter: var(--glass-blur);
 
+  & > .title {
+    margin-top: 0;
+  }
+
   & > .title a {
     color: var(--color-white);
     font-size: var(--font-xl);
@@ -19,8 +23,16 @@
     color: var(--color-white-alpha-90);
   }
 
-  & > .count {
+  & > .status {
+    margin: var(--space-sm) 0;
+  }
+
+  & > .info > .count {
     color: var(--color-white-alpha-70);
     margin-left: var(--space-sm);
+  }
+
+  & > form {
+    margin: var(--space-sm) 0 0;
   }
 }

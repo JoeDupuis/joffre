@@ -1,0 +1,29 @@
+.game-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-sm) var(--space-md);
+  margin: 0 0 var(--space-lg);
+  padding: var(--space-md);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--glass-blur);
+
+  & > .item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  & > .item > .label {
+    font-size: var(--font-sm);
+    color: var(--color-white-alpha-70);
+  }
+
+  & > .item > .value {
+    margin: 0;
+    padding: 0;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+  }
+}

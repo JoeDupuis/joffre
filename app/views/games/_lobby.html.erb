@@ -1,22 +1,42 @@
-<h1><%= @game.name %></h1>
+<div class="game-lobby">
+  <h1><%= @game.name %></h1>
 
-<div class="game-info">
-  <p><strong>Game Code:</strong> <%= @game.game_code %></p>
-  <% if @game.password_digest.present? %>
-    <p><em>This game is password protected</em></p>
-  <% end %>
-</div>
+  <dl class="game-settings">
+    <div class="item">
+      <dt class="label">Game code</dt>
+      <dd class="value"><%= @game.game_code %></dd>
+    </div>
+    <div class="item">
+      <dt class="label">Starting bid</dt>
+      <dd class="value"><%= @game.minimum_bid %></dd>
+    </div>
+    <div class="item">
+      <dt class="label">Target score</dt>
+      <dd class="value"><%= @game.max_score %></dd>
+    </div>
+    <div class="item">
+      <dt class="label">If all players pass</dt>
+      <dd class="value"><%= t("activerecord.attributes.game.all_players_pass_strategies.#{@game.all_players_pass_strategy}") %></dd>
+    </div>
+    <% if @game.password_digest.present? %>
+      <div class="item">
+        <dt class="label">Access</dt>
+        <dd class="value">Password protected</dd>
+      </div>
+    <% end %>
+  </dl>
 
-<%= render "team_picker", game: @game %>
+  <%= render "team_picker", game: @game %>
 
-<div class="actions">
-  <% if @game.owner == Current.user && @game.players.count == 4 %>
-    <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :bidding } }, class: "button" %>
-  <% end %>
-  <% if @game.owner == Current.user %>
-    <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button" %>
-  <% elsif Current.player %>
-    <%= button_to "Quit Game", games_player_path(Current.player), method: :delete, class: "button" %>
-  <% end %>
-  <%= link_to "Back to Dashboard", root_path, class: "button" %>
+  <div class="action-buttons">
+    <% if @game.owner == Current.user && @game.players.count == 4 %>
+      <%= button_to "Start Game", game_path(@game), method: :patch, params: { game: { status: :bidding } }, class: "button" %>
+    <% end %>
+    <% if @game.owner == Current.user %>
+      <%= button_to "Delete Game", game_path(@game), method: :delete, class: "button -danger" %>
+    <% elsif Current.player %>
+      <%= button_to "Quit Game", games_player_path(Current.player), method: :delete, class: "button -danger" %>
+    <% end %>
+    <%= link_to "Back to Dashboard", root_path, class: "button -secondary" %>
+  </div>
 </div>

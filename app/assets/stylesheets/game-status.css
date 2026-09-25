@@ -1,0 +1,23 @@
+.game-status {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent-alpha-20);
+  color: var(--color-accent);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-semibold);
+
+  &.-bidding,
+  &.-playing {
+    border-color: var(--color-success);
+    background: var(--color-success-alpha-20);
+    color: var(--color-white);
+  }
+
+  &.-done {
+    border-color: var(--color-white-alpha-30);
+    background: var(--color-white-alpha-10);
+    color: var(--color-white-alpha-90);
+  }
+}
