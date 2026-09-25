@@ -91,7 +91,7 @@ class Game < ApplicationRecord
   end
 
   def current_trick
-    tricks.where(completed: false).first || tricks.create!(sequence: next_trick_sequence)
+    tricks.where(completed: false).first || Trick.new(game_id: id, sequence: next_trick_sequence)
   end
 
   def next_trick_sequence
@@ -139,6 +139,7 @@ class Game < ApplicationRecord
       raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
       trick = current_trick
+      trick.save! if trick.new_record?
 
       if trick.led_suit.present? && trick.requires_following?(card.player)
         raise ArgumentError, "Must follow suit" unless card.suite == trick.led_suit

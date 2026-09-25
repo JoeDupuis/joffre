@@ -307,6 +307,75 @@ class GameTest < ActiveSupport::TestCase
     end
   end
 
+  test "current_trick does not persist a trick when none is in progress" do
+    game = games(:playing_game)
+
+    assert_no_difference "Trick.count" do
+      trick = game.current_trick
+      assert trick.new_record?
+      assert_equal 1, trick.sequence
+      assert_empty trick.cards
+    end
+  end
+
+  test "reading game state after a trick completes does not create the next trick" do
+    game = games(:playing_game)
+    4.times do
+      game = Game.find(game.id)
+      game.play_card!(game.active_player.playable_cards.first)
+    end
+
+    assert_no_difference "Trick.count" do
+      4.times do
+        game = Game.find(game.id)
+        game.active_player
+        game.current_trick
+        game.players.each(&:playable_cards)
+      end
+    end
+    assert_equal [ 1 ], game.tricks.pluck(:sequence)
+  end
+
+  test "a full round is led by the high bidder then each trick's winner with trump from the first lead" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+
+    game = Game.find(game.id)
+    game.place_bid!(player: game.current_bidder, amount: 7)
+    3.times do
+      game = Game.find(game.id)
+      game.place_bid!(player: game.current_bidder, amount: nil)
+    end
+    game = Game.find(game.id)
+    bidder = game.highest_bid.player
+    assert_equal 0, game.tricks.count
+
+    expected_leader = bidder
+    8.times do |index|
+      game = Game.find(game.id)
+      assert_equal expected_leader, game.active_player
+      assert_equal index, game.tricks.count
+
+      4.times do
+        game = Game.find(game.id)
+        game.play_card!(game.current_trick.playable_cards(game.active_player).first)
+      end
+
+      game = Game.find(game.id)
+      break if index == 7
+
+      trick = game.last_completed_trick
+      assert_equal index + 1, trick.sequence
+      assert_equal 4, trick.cards.count
+      assert_equal game.tricks.find_by(sequence: 1).cards.order(:trick_sequence).first.suite, game.trump_suit
+      expected_leader = trick.winner
+    end
+
+    assert game.bidding?
+    assert_equal 0, game.tricks.count
+    assert_equal 2, game.round_scores.count
+  end
+
   test "a full round of play re-deals fresh cards for the next round" do
     game = games(:full_game)
     game.update!(status: :bidding)
