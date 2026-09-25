@@ -1,0 +1,61 @@
+#!/bin/bash
+set -euo pipefail
+
+cd "$(dirname "$0")/../.."
+PORT="${PORT:-3000}"
+PID_FILE="tmp/pids/playtest-server-$PORT.pid"
+LOG_FILE="log/playtest-server-$PORT.log"
+mkdir -p tmp/pids log
+
+running() {
+  [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2> /dev/null
+}
+
+case "${1:-status}" in
+  start)
+    if running; then
+      echo "Already running on port $PORT (pid $(cat "$PID_FILE"))"
+      exit 0
+    fi
+    bin/rails db:prepare > /dev/null
+    nohup bin/rails server -p "$PORT" -b 127.0.0.1 -P "$PID_FILE" > "$LOG_FILE" 2>&1 &
+    for _ in $(seq 1 60); do
+      if curl -fsS "http://127.0.0.1:$PORT/up" > /dev/null 2>&1; then
+        echo "Started on http://localhost:$PORT (pid $(cat "$PID_FILE"), log $LOG_FILE)"
+        exit 0
+      fi
+      sleep 0.5
+    done
+    echo "Server did not come up, see $LOG_FILE" >&2
+    exit 1
+    ;;
+  stop)
+    if running; then
+      kill "$(cat "$PID_FILE")"
+      for _ in $(seq 1 20); do
+        running || break
+        sleep 0.25
+      done
+      echo "Stopped server on port $PORT"
+    else
+      echo "Not running on port $PORT"
+    fi
+    rm -f "$PID_FILE"
+    ;;
+  restart)
+    "$0" stop
+    "$0" start
+    ;;
+  status)
+    if running; then
+      echo "Running on port $PORT (pid $(cat "$PID_FILE"))"
+    else
+      echo "Not running on port $PORT"
+      exit 1
+    fi
+    ;;
+  *)
+    echo "Usage: script/playtest/server start|stop|restart|status (PORT=3000)" >&2
+    exit 1
+    ;;
+esac
