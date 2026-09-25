@@ -331,6 +331,26 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".phase-area .lasttrick", text: /took the trick/
   end
 
+  test "showing the game between tricks does not create or modify tricks" do
+    game = games(:playing_game)
+
+    4.times do
+      player = game.reload.active_player
+      game.play_card!(player.playable_cards.first)
+    end
+    before = game.tricks.order(:id).map(&:attributes)
+
+    assert_no_difference "Trick.count" do
+      game.players.each do |player|
+        sign_in_as(player.user)
+        get game_url(game)
+        assert_response :success
+        assert_select ".play-area.-last > .card", 4
+      end
+    end
+    assert_equal before, game.tricks.order(:id).map(&:attributes)
+  end
+
   test "hides the last trick once the next trick is led" do
     game = games(:playing_game)
 
