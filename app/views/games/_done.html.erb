@@ -22,7 +22,7 @@
     </div>
     <div class="item">
       <span class="label"><%= did_win ? 'Victory' : 'Defeat' %> Margin:</span>
-      <span class="value <%= did_win ? '-positive' : '-negative' %>"><%= format('%+d', margin) %> points</span>
+      <span class="value <%= did_win ? '-positive' : '-negative' %>"><%= signed_points(margin) %> points</span>
     </div>
   </div>
   <%= link_to "Back to Games", games_path, class: "link-button" %>
