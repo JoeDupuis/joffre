@@ -4,17 +4,24 @@ class Dev::ViewsController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    @views = Dir.glob(Rails.root.join("app/views/dev/views/*.html.erb"))
+    @views = available_views
+  end
+
+  def show
+    view = available_views.find { |name| name == params[:name] }
+    return head :not_found unless view
+
+    render view
+  end
+
+  private
+
+  def available_views
+    Dir.glob(Rails.root.join("app/views/dev/views/*.html.erb"))
       .map { |f| File.basename(f, ".html.erb") }
       .reject { |f| f.start_with?("_") || f == "index" }
       .sort
   end
-
-  def show
-    render params[:name]
-  end
-
-  private
 
   def ensure_development_environment
     head :forbidden unless Rails.env.development?
