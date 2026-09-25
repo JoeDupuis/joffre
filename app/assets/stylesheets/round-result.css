@@ -36,6 +36,7 @@
   & > .details > .item {
     display: flex;
     justify-content: space-between;
+    gap: var(--space-10);
     padding: var(--space-8) var(--space-15);
     background: var(--color-black-alpha-20);
     border-radius: var(--radius-lg);

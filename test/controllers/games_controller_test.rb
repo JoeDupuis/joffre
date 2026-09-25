@@ -310,7 +310,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".round-result > .title.-failure", text: /You Lose/
-    assert_select ".round-result > .details > .item > .value.-negative", text: "-3 points"
+    assert_select ".round-result > .details > .item > .value.-negative", text: "−3 points"
   end
 
   test "shows the last completed trick with its winner until the next card is led" do
@@ -372,6 +372,8 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".round-summary .bid", text: /You\s+bid\s+8/
     assert_select ".round-summary .team.-bidding .score", text: "+8"
     assert_select ".score-board .score-history tbody tr", 1
+    assert_select ".score-board .score-history[data-controller='score-history']:not([open])"
+    assert_select ".score-board .score-history[data-action*='turbo:before-morph-element->score-history#preserveOpen']"
     assert_select ".score-history td.points .total", text: "8"
   end
 
@@ -398,5 +400,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".score-history", 1
     assert_select ".score-history.-inline[open] tbody tr", 2
     assert_select ".score-history tbody tr:last-child td.points .total", text: "48"
+    assert_select ".score-history[data-controller]", 0
+    assert_select ".round-result .item .value.-positive", text: "+47 points"
   end
 end

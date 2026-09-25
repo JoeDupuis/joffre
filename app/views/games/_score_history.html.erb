@@ -1,5 +1,9 @@
 <% if summaries.any? %>
-  <details class="score-history <%= '-inline' if local_assigns[:inline] %>" <%= 'open' if local_assigns[:inline] %>>
+  <% if local_assigns[:inline] %>
+    <details class="score-history -inline" open>
+  <% else %>
+    <details class="score-history" data-controller="score-history" data-action="turbo:before-morph-element->score-history#preserveOpen">
+  <% end %>
     <summary class="toggle">Score history</summary>
     <table class="table">
       <thead>
