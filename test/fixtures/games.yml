@@ -6,10 +6,12 @@ DEFAULTS: &DEFAULTS
 one:
   <<: *DEFAULTS
   name: Game One
+  game_code: ONE001
 
 two:
   <<: *DEFAULTS
   name: Game Two
+  game_code: TWO001
 
 full_game:
   <<: *DEFAULTS

@@ -34,7 +34,7 @@
 
       & > .player {
         padding: var(--space-sm);
-        margin-bottom: var(--space-sm);
+        margin: 0 0 var(--space-sm);
         background: var(--color-black-alpha-20);
         border-radius: var(--radius-lg);
         border: 1px solid var(--color-white-alpha-10);
@@ -43,6 +43,10 @@
         gap: var(--space-sm);
         flex-wrap: wrap;
         color: var(--color-white);
+
+        & > form {
+          margin: 0;
+        }
       }
     }
   }

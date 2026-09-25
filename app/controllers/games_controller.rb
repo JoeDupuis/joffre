@@ -3,7 +3,7 @@ class GamesController < ApplicationController
   before_action :set_game, only: [ :show, :update, :destroy ]
 
   def index
-    @games = Current.user.games.includes(:players, :users)
+    @games = Current.user.games.includes(:round_scores, players: :user).order(created_at: :desc)
   end
 
   def new
@@ -27,8 +27,9 @@ class GamesController < ApplicationController
 
   def update
     return head :not_found unless @game.players.exists?(user: Current.user, owner: true)
+    return head :unprocessable_entity unless @game.pending? && update_game_params[:status] == "bidding"
 
-    if @game.update(update_game_params)
+    if @game.update(status: :bidding)
       redirect_to @game, notice: success_message(@game)
     else
       head :unprocessable_entity
@@ -37,7 +38,7 @@ class GamesController < ApplicationController
 
   def destroy
     return head :not_found unless @game.players.exists?(user: Current.user, owner: true)
-    return head :unprocessable_entity unless @game.pending?
+    return head :unprocessable_entity unless @game.pending? || @game.done?
     @game.destroy
     redirect_to games_path, notice: success_message(@game)
   end
@@ -49,7 +50,7 @@ class GamesController < ApplicationController
   end
 
   def game_params
-    params.require(:game).permit(:name, :password, :password_confirmation, :all_players_pass_strategy)
+    params.require(:game).permit(:name, :password, :password_confirmation, :all_players_pass_strategy, :minimum_bid, :max_score)
   end
 
   def update_game_params

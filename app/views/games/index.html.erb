@@ -4,29 +4,31 @@
   <% if @games.any? %>
     <div class="games-list">
       <% @games.each do |game| %>
+        <% owner = game.players.find(&:owner?)&.user == Current.user %>
         <div class="game-item">
-          <h3><%= link_to game.name, game %></h3>
-          <p>
+          <h3 class="title"><%= link_to game.name, game %></h3>
+          <p class="status">
+            <span class="game-status -<%= game.status %>"><%= game_status_text(game) %></span>
+          </p>
+          <p class="info">
             <strong>Code:</strong> <%= game.game_code %>
-            <span class="player-count">(<%= game.players.count %>/4 players)</span>
+            <span class="count">Starting bid <%= game.minimum_bid %> · Target <%= game.max_score %></span>
           </p>
-          <p>
-            <% if game.owner == Current.user %>
-              <span class="badge">Owner</span>
-            <% end %>
-            <% if game.password_digest.present? %>
-              <span class="badge">Password Protected</span>
-            <% end %>
-          </p>
-          <p>
-            <% if game.pending? %>
-              <% if game.owner == Current.user %>
-                <%= button_to "Delete", game_path(game), method: :delete, class: "button --small" %>
-              <% elsif (player = game.players.find_by(user: Current.user)) %>
-                <%= button_to "Quit", games_player_path(player), method: :delete, class: "button --small" %>
+          <% if owner || game.password_digest.present? %>
+            <p class="info">
+              <% if owner %>
+                <span class="status-badge">Owner</span>
               <% end %>
-            <% end %>
-          </p>
+              <% if game.password_digest.present? %>
+                <span class="status-badge">Password Protected</span>
+              <% end %>
+            </p>
+          <% end %>
+          <% if owner && (game.pending? || game.done?) %>
+            <%= button_to "Delete", game_path(game), method: :delete, class: "button -danger -small", data: { turbo_confirm: "Delete #{game.name}?" } %>
+          <% elsif game.pending? && (player = game.players.find { |member| member.user_id == Current.user.id }) %>
+            <%= button_to "Quit", games_player_path(player), method: :delete, class: "button -danger -small" %>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -34,9 +36,9 @@
     <p>You haven't joined any games yet.</p>
   <% end %>
 
-  <div class="actions">
+  <div class="action-buttons">
     <%= link_to "Create New Game", new_game_path, class: "button" %>
     <%= link_to "Join Game", new_games_player_path, class: "button" %>
-    <%= link_to "Back to Dashboard", root_path, class: "button" %>
+    <%= link_to "Back to Dashboard", root_path, class: "button -secondary" %>
   </div>
 </div>

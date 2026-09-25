@@ -16,6 +16,8 @@ class Game < ApplicationRecord
 
   validates :name, presence: true
   validates :game_code, presence: true, uniqueness: true
+  validates :minimum_bid, inclusion: { in: [ 6, 7 ] }
+  validates :max_score, numericality: { only_integer: true, greater_than: 0 }
 
   before_validation :generate_game_code, on: :create
 

@@ -276,4 +276,34 @@ class GameTest < ActiveSupport::TestCase
     assert game.done?
     assert_equal 48, game.team_total_score(2)
   end
+
+  test "minimum_bid defaults to 6" do
+    assert_equal 6, Game.new.minimum_bid
+  end
+
+  test "minimum_bid must be 6 or 7" do
+    game = games(:one)
+
+    game.minimum_bid = 7
+    assert game.valid?
+
+    [ 5, 8, nil ].each do |amount|
+      game.minimum_bid = amount
+      assert_not game.valid?, "expected minimum_bid #{amount.inspect} to be invalid"
+      assert game.errors[:minimum_bid].any?
+    end
+  end
+
+  test "max_score must be a positive integer" do
+    game = games(:one)
+
+    game.max_score = 40
+    assert game.valid?
+
+    [ 0, -5, 40.5, nil ].each do |score|
+      game.max_score = score
+      assert_not game.valid?, "expected max_score #{score.inspect} to be invalid"
+      assert game.errors[:max_score].any?
+    end
+  end
 end
