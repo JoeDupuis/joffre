@@ -64,17 +64,19 @@ class Game < ApplicationRecord
   end
 
   def place_bid!(player:, amount:)
-    bid = bids.build(player: player, amount: amount)
+    with_lock do
+      bid = bids.build(player: player, amount: amount)
 
-    if bid.save
-      if all_players_passed?
-        handle_all_players_passed!
-      elsif bid_complete?
-        update!(status: :playing)
+      if bid.save
+        if all_players_passed?
+          handle_all_players_passed!
+        elsif bid_complete?
+          update!(status: :playing)
+        end
       end
-    end
 
-    bid
+      bid
+    end
   end
 
   def handle_all_players_passed!
@@ -128,20 +130,23 @@ class Game < ApplicationRecord
   end
 
   def play_card!(card)
-    raise ArgumentError, "Not this player's turn" unless active_player == card.player
-    raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
+    with_lock do
+      card.reload
+      raise ArgumentError, "Not this player's turn" unless active_player == card.player
+      raise ArgumentError, "Card not in player's hand" unless card.trick_id.nil?
 
-    trick = current_trick
+      trick = current_trick
 
-    if trick.led_suit.present? && trick.requires_following?(card.player)
-      raise ArgumentError, "Must follow suit" unless card.suite == trick.led_suit
+      if trick.led_suit.present? && trick.requires_following?(card.player)
+        raise ArgumentError, "Must follow suit" unless card.suite == trick.led_suit
+      end
+
+      trick.add_card(card)
+
+      check_round_complete!
+
+      card
     end
-
-    trick.add_card(card)
-
-    check_round_complete!
-
-    card
   end
 
   def all_cards_played?
@@ -170,8 +175,9 @@ class Game < ApplicationRecord
   end
 
   def reset_for_bidding!
-    tricks.destroy_all
     bids.destroy_all
+    deal_cards!
+    tricks.destroy_all
     update!(status: :bidding)
   end
 
@@ -190,10 +196,19 @@ class Game < ApplicationRecord
     round_scores.where(team: team).sum(:score)
   end
 
+  def winning_team
+    team_one_score = team_total_score(1)
+    team_two_score = team_total_score(2)
+    return if team_one_score == team_two_score
+    return if [ team_one_score, team_two_score ].max < max_score
+
+    team_one_score > team_two_score ? 1 : 2
+  end
+
   private
 
   def game_complete?
-    team_total_score(1) >= max_score || team_total_score(2) >= max_score
+    winning_team.present?
   end
 
   def all_players_passed?
