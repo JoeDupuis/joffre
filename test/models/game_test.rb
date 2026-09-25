@@ -276,4 +276,36 @@ class GameTest < ActiveSupport::TestCase
     assert game.done?
     assert_equal 48, game.team_total_score(2)
   end
+
+  test "a full round of play re-deals fresh cards for the next round" do
+    game = games(:full_game)
+    game.update!(status: :bidding)
+    original_card_ids = game.cards.pluck(:id)
+
+    game = Game.find(game.id)
+    game.place_bid!(player: game.current_bidder, amount: 7)
+    3.times do
+      game = Game.find(game.id)
+      game.place_bid!(player: game.current_bidder, amount: nil)
+    end
+    assert Game.find(game.id).playing?
+
+    32.times do
+      game = Game.find(game.id)
+      player = game.active_player
+      game.play_card!(game.current_trick.playable_cards(player).first)
+    end
+
+    game = Game.find(game.id)
+    assert game.bidding?
+    assert_equal 2, game.round_scores.count
+    assert_equal 0, game.bids.count
+    assert_equal 0, game.tricks.count
+    assert_equal 32, game.cards.count
+    assert_empty game.cards.pluck(:id) & original_card_ids
+    assert_equal 0, game.cards.where.not(trick_sequence: nil).count
+    game.players.each do |player|
+      assert_equal 8, player.cards.in_hand.count
+    end
+  end
 end

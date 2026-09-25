@@ -170,8 +170,9 @@ class Game < ApplicationRecord
   end
 
   def reset_for_bidding!
-    tricks.destroy_all
     bids.destroy_all
+    deal_cards!
+    tricks.destroy_all
     update!(status: :bidding)
   end
 
