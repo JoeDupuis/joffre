@@ -8,7 +8,7 @@ LOG_FILE="log/playtest-server-$PORT.log"
 mkdir -p tmp/pids log
 
 running() {
-  [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2> /dev/null
+  [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE" 2> /dev/null)" 2> /dev/null
 }
 
 case "${1:-status}" in
