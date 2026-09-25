@@ -135,4 +135,32 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test "should show the end screen to the winning team of a done game" do
+    game = games(:playing_game)
+    game.update!(status: :done)
+    game.round_scores.create!(number: 1, team: 1, score: 48)
+    game.round_scores.create!(number: 1, team: 2, score: -18)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".round-result > .title.-success", text: /You Win/
+    assert_select ".round-result > .details > .item > .value.-positive", text: "+66 points"
+    assert_select ".round-result a[href=?]", games_path
+  end
+
+  test "should show the end screen to the losing team when both teams crossed max_score" do
+    sign_in_as(users(:two))
+    game = games(:playing_game)
+    game.update!(status: :done)
+    game.round_scores.create!(number: 1, team: 1, score: 48)
+    game.round_scores.create!(number: 1, team: 2, score: 45)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".round-result > .title.-failure", text: /You Lose/
+    assert_select ".round-result > .details > .item > .value.-negative", text: "-3 points"
+  end
 end

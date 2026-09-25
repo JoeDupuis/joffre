@@ -308,4 +308,74 @@ class GameTest < ActiveSupport::TestCase
       assert_equal 8, player.cards.in_hand.count
     end
   end
+
+  test "winning_team is nil when no team reached max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 40)
+    game.round_scores.create!(number: 1, team: 2, score: 10)
+
+    assert_nil game.winning_team
+  end
+
+  test "winning_team is the team that reached max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 10)
+    game.round_scores.create!(number: 1, team: 2, score: 42)
+
+    assert_equal 2, game.winning_team
+  end
+
+  test "winning_team is the higher score when both teams reach max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 45)
+    game.round_scores.create!(number: 1, team: 2, score: 48)
+
+    assert_equal 2, game.winning_team
+  end
+
+  test "winning_team is nil when both teams tie above max_score" do
+    game = games(:full_game)
+    game.round_scores.create!(number: 1, team: 1, score: 45)
+    game.round_scores.create!(number: 1, team: 2, score: 45)
+
+    assert_nil game.winning_team
+  end
+
+  test "game is won by the higher score when both teams cross max_score on the same hand" do
+    game = games(:playing_game)
+    game.round_scores.create!(number: 1, team: 1, score: 0)
+    game.round_scores.create!(number: 1, team: 2, score: 50)
+    team_1_player = game.players.find_by(team: 1)
+
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_player)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.done?
+    assert_equal 2, game.winning_team
+  end
+
+  test "another hand is played when both teams tie above max_score" do
+    game = games(:playing_game)
+    game.round_scores.create!(number: 1, team: 1, score: 0)
+    game.round_scores.create!(number: 1, team: 2, score: 48)
+    team_1_player = game.players.find_by(team: 1)
+
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 6, winner: team_1_player)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+
+    game.check_round_complete!
+    game.reload
+
+    assert game.bidding?
+    assert_nil game.winning_team
+    assert_equal 48, game.team_total_score(1)
+    assert_equal 48, game.team_total_score(2)
+  end
 end

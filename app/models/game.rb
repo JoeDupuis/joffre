@@ -191,10 +191,19 @@ class Game < ApplicationRecord
     round_scores.where(team: team).sum(:score)
   end
 
+  def winning_team
+    team_one_score = team_total_score(1)
+    team_two_score = team_total_score(2)
+    return if team_one_score == team_two_score
+    return if [ team_one_score, team_two_score ].max < max_score
+
+    team_one_score > team_two_score ? 1 : 2
+  end
+
   private
 
   def game_complete?
-    team_total_score(1) >= max_score || team_total_score(2) >= max_score
+    winning_team.present?
   end
 
   def all_players_passed?
