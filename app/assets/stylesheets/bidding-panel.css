@@ -1,0 +1,13 @@
+.bidding-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-8);
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .bidding-panel {
+    gap: var(--space-16);
+  }
+}

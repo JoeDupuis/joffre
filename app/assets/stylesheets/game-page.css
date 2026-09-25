@@ -26,3 +26,40 @@
     grid-area: hand;
   }
 }
+
+.game-page:has(> .bidding-panel) {
+  height: auto;
+  min-height: 100dvh;
+  grid-template-rows: auto auto minmax(10rem, 1fr);
+  gap: var(--space-12);
+
+  & > .player-hand {
+    container-type: size;
+    grid-template-columns: repeat(4, auto);
+    grid-auto-rows: auto;
+    gap: var(--space-4);
+
+    & > .card {
+      width: min(calc(25cqw - var(--space-4)), calc((50cqh - var(--space-4)) * 2 / 3));
+      max-height: none;
+
+      & > img {
+        height: auto;
+      }
+    }
+
+    @media (min-aspect-ratio: 9/10) {
+      grid-template-columns: repeat(8, auto);
+
+      & > .card {
+        width: min(10cqw, calc(100cqh * 2 / 3));
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .game-page:has(> .bidding-panel) {
+    gap: 1em;
+  }
+}
