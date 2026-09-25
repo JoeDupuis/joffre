@@ -20,6 +20,24 @@ module GamesHelper
     end
   end
 
+  def signed_points(value)
+    return "0" if value.to_i.zero?
+
+    value.negative? ? "−#{value.abs}" : "+#{value}"
+  end
+
+  def team_label(team, current_player = Current.player)
+    return "Team #{team}" unless current_player
+
+    current_player.team == team ? "Us" : "Them"
+  end
+
+  def ordered_teams(current_player = Current.player)
+    return [ 1, 2 ] unless current_player&.team
+
+    [ current_player.team, current_player.team == 1 ? 2 : 1 ]
+  end
+
   def dev_clickable_player_name(player, game: nil)
     name = player.is_a?(Player) ? player.user.name : player.name
     game_id = game&.id || (player.is_a?(Player) ? player.game_id : nil)

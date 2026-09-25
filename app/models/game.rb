@@ -197,6 +197,28 @@ class Game < ApplicationRecord
     round_scores.where(team: team).sum(:score)
   end
 
+  def team_round_points(team)
+    tricks.where(completed: true, winner: players.where(team: team)).sum(:value)
+  end
+
+  def last_completed_trick
+    tricks.where(completed: true).order(sequence: :desc).first
+  end
+
+  def round_summaries
+    totals = Hash.new(0)
+
+    round_scores.includes(bidder: :user).order(:number, :team).group_by(&:number).map do |number, rows|
+      by_team = rows.index_by(&:team)
+      by_team.each { |team, row| totals[team] += row.score }
+      RoundSummary.new(number:, rows: by_team, totals: totals.dup)
+    end
+  end
+
+  def last_round_summary
+    round_summaries.last
+  end
+
   def winning_team
     team_one_score = team_total_score(1)
     team_two_score = team_total_score(2)
@@ -271,20 +293,21 @@ class Game < ApplicationRecord
 
   def calculate_and_save_round_scores!
     round_number = current_round_number
-    bidding_team = highest_bid.player.team
-    bid_amount = highest_bid.amount
+    bid = highest_bid
+    bidding_team = bid.player.team
 
     [ 1, 2 ].each do |team|
-      team_tricks = tricks.where(completed: true, winner: players.where(team: team))
-      team_tricks_value = team_tricks.sum(:value)
+      points = team_round_points(team)
+      score = team == bidding_team && points < bid.amount ? -bid.amount : points
 
-      score = if team == bidding_team && team_tricks_value < bid_amount
-        -bid_amount
-      else
-        team_tricks_value
-      end
-
-      round_scores.create!(number: round_number, team: team, score: score)
+      round_scores.create!(
+        number: round_number,
+        team: team,
+        score: score,
+        points_taken: points,
+        bidder: bid.player,
+        bid_amount: bid.amount
+      )
     end
   end
 end

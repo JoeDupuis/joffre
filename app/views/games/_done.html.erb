@@ -28,4 +28,6 @@
   <%= link_to "Back to Games", games_path, class: "link-button" %>
 </div>
 
+<%= render "score_history", summaries: @game.round_summaries, inline: true %>
+
 <div class="player-hand"></div>

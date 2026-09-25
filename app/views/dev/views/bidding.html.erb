@@ -4,6 +4,8 @@
   name2 = params[:name2] || "Bob"
   name3 = params[:name3] || "Diana"
   show_pass = params[:pass] != "false"
+  show_summary = params[:summary] != "false"
+  set = params[:set] == "true"
 %>
 <div class="game-page">
   <div class="score-board">
@@ -13,7 +15,32 @@
     <div class="team-line">
       Team 2 (Opponents): <span>0</span>
     </div>
+    <%= render "dev/views/score_history", open: params[:history] == "true" %>
   </div>
+
+  <% if show_summary %>
+    <section class="round-summary">
+      <header class="heading">
+        <span class="title">Round 4</span>
+        <span class="outcome <%= set ? '-set' : '-made' %>"><%= set ? "Set" : "Made" %></span>
+      </header>
+      <p class="bid">
+        <strong><%= name2 %></strong> bid <strong>8</strong>
+      </p>
+      <div class="teams">
+        <div class="team">
+          <span class="name">Us</span>
+          <span class="taken"><%= set ? 4 : 1 %> pts taken</span>
+          <span class="score -positive">+<%= set ? 4 : 1 %></span>
+        </div>
+        <div class="team -bidding">
+          <span class="name">Them</span>
+          <span class="taken"><%= set ? 5 : 8 %> pts taken</span>
+          <span class="score <%= set ? '-negative' : '-positive' %>"><%= set ? "−8" : "+8" %></span>
+        </div>
+      </div>
+    </section>
+  <% end %>
 
   <div class="game-info">
     <div class="item">

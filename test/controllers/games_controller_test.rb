@@ -163,4 +163,91 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".round-result > .title.-failure", text: /You Lose/
     assert_select ".round-result > .details > .item > .value.-negative", text: "-3 points"
   end
+
+  test "shows the last completed trick with its winner until the next card is led" do
+    game = games(:playing_game)
+
+    4.times do
+      player = game.reload.active_player
+      game.play_card!(player.playable_cards.first)
+    end
+    trick = game.last_completed_trick
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".play-area.-last > .card", 4
+    assert_select ".play-area > .card.-winner", 1
+    assert_select ".play-area > .card.-winner > .points", text: "+#{trick.value}"
+    assert_select ".phase-area .lasttrick", text: /took the trick/
+  end
+
+  test "hides the last trick once the next trick is led" do
+    game = games(:playing_game)
+
+    5.times do
+      player = game.reload.active_player
+      game.play_card!(player.playable_cards.first)
+    end
+
+    get game_url(game)
+
+    assert_select ".play-area.-last", 0
+    assert_select ".play-area > .card", 1
+    assert_select ".play-area > .card.-winner", 0
+  end
+
+  test "shows the team's points for the round while playing" do
+    game = games(:playing_game)
+    game.tricks.create!(sequence: 1, completed: true, value: 6, winner: players(:playing_game_player_three))
+
+    get game_url(game)
+
+    assert_select ".game-info .item", text: /Points:\s*6/
+  end
+
+  test "shows the previous round summary and score history during bidding" do
+    game = games(:playing_game)
+    bidder = players(:playing_game_player_one)
+    8.times do |i|
+      game.tricks.create!(sequence: i + 1, completed: true, value: 1, winner: bidder)
+    end
+    game.cards.update_all(trick_id: game.tricks.first.id)
+    game.check_round_complete!
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".round-summary .title", text: "Round 1"
+    assert_select ".round-summary .outcome.-made", text: "Made"
+    assert_select ".round-summary .bid", text: /You\s+bid\s+8/
+    assert_select ".round-summary .team.-bidding .score", text: "+8"
+    assert_select ".score-board .score-history tbody tr", 1
+    assert_select ".score-history td.points .total", text: "8"
+  end
+
+  test "does not show a round summary before the first round is scored" do
+    get game_url(games(:bidding_game))
+
+    assert_response :success
+    assert_select ".round-summary", 0
+    assert_select ".score-history", 0
+  end
+
+  test "shows the full score history on the end screen" do
+    game = games(:playing_game)
+    game.update!(status: :done)
+    bidder = players(:playing_game_player_one)
+    game.round_scores.create!(number: 1, team: 1, score: 9, points_taken: 9, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 1, team: 2, score: 1, points_taken: 1, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 2, team: 1, score: 39, points_taken: 39, bidder:, bid_amount: 8)
+    game.round_scores.create!(number: 2, team: 2, score: 0, points_taken: 0, bidder:, bid_amount: 8)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".score-history", 1
+    assert_select ".score-history.-inline[open] tbody tr", 2
+    assert_select ".score-history tbody tr:last-child td.points .total", text: "48"
+  end
 end

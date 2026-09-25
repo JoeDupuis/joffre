@@ -7,6 +7,8 @@
   border-radius: var(--radius-xl);
   backdrop-filter: var(--glass-blur);
   font-size: var(--font-em-base);
+  position: relative;
+  z-index: var(--z-dropdown);
 
   & > .team {
     text-align: center;

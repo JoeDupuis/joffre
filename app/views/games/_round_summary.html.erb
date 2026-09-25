@@ -1,0 +1,20 @@
+<% if summary&.bid_known? %>
+  <section class="round-summary">
+    <header class="heading">
+      <span class="title">Round <%= summary.number %></span>
+      <span class="outcome <%= summary.made? ? '-made' : '-set' %>"><%= summary.made? ? "Made" : "Set" %></span>
+    </header>
+    <p class="bid">
+      <strong><%= player_label(summary.bidder) %></strong> bid <strong><%= summary.bid_amount %></strong>
+    </p>
+    <div class="teams">
+      <% ordered_teams.each do |team| %>
+        <div class="team <%= '-bidding' if team == summary.bidding_team %>">
+          <span class="name"><%= team_label(team) %></span>
+          <span class="taken"><%= summary.points_taken(team) %> pts taken</span>
+          <span class="score <%= summary.score(team).negative? ? '-negative' : '-positive' %>"><%= signed_points(summary.score(team)) %></span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

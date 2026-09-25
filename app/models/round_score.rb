@@ -1,5 +1,6 @@
 class RoundScore < ApplicationRecord
   belongs_to :game
+  belongs_to :bidder, class_name: "Player", optional: true
   broadcasts_refreshes_to :game
 
   validates :number, presence: true, numericality: { only_integer: true, greater_than: 0 }
