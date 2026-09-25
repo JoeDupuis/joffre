@@ -18,77 +18,79 @@
     <%= render "dev/views/score_history", open: params[:history] == "true" %>
   </div>
 
-  <% if show_summary %>
-    <section class="round-summary">
-      <header class="heading">
-        <span class="title">Round 4</span>
-        <span class="outcome <%= set ? '-set' : '-made' %>"><%= set ? "Set" : "Made" %></span>
-      </header>
-      <p class="bid">
-        <strong><%= name2 %></strong> bid <strong>8</strong>
-      </p>
-      <div class="teams">
-        <div class="team">
-          <span class="name">Us</span>
-          <span class="taken"><%= set ? 4 : 1 %> pts taken</span>
-          <span class="score -positive">+<%= set ? 4 : 1 %></span>
+  <div class="bidding-panel">
+    <% if show_summary %>
+      <section class="round-summary">
+        <header class="heading">
+          <span class="title">Round 4</span>
+          <span class="bid">
+            <strong><%= name2 %></strong> bid <strong>8</strong>
+          </span>
+          <span class="outcome <%= set ? '-set' : '-made' %>"><%= set ? "Set" : "Made" %></span>
+        </header>
+        <div class="teams">
+          <div class="team">
+            <span class="name">Us</span>
+            <span class="taken"><%= set ? 4 : 1 %> pts taken</span>
+            <span class="score -positive">+<%= set ? 4 : 1 %></span>
+          </div>
+          <div class="team -bidding">
+            <span class="name">Them</span>
+            <span class="taken"><%= set ? 5 : 8 %> pts taken</span>
+            <span class="score <%= set ? '-negative' : '-positive' %>"><%= set ? "−8" : "+8" %></span>
+          </div>
         </div>
-        <div class="team -bidding">
-          <span class="name">Them</span>
-          <span class="taken"><%= set ? 5 : 8 %> pts taken</span>
-          <span class="score <%= set ? '-negative' : '-positive' %>"><%= set ? "−8" : "+8" %></span>
-        </div>
-      </div>
-    </section>
-  <% end %>
+      </section>
+    <% end %>
 
-  <div class="game-info">
-    <div class="item">
-      <span class="label">Current Bid:</span>
-      <span class="value">7</span>
-    </div>
-    <div class="item">
-      <span class="label">High Bidder:</span>
-      <span class="value"><%= name2 %></span>
-    </div>
-  </div>
-
-  <div class="phase-area">
-    <div class="message">
-      Bidding - Your turn
-    </div>
-  </div>
-
-  <div class="bid-history">
-    <div class="title">Bidding Order</div>
-    <div class="list">
+    <div class="game-info">
       <div class="item">
-        <span class="player"><%= name1 %></span>
-        <span class="value -passed">Pass</span>
-      </div>
-      <div class="item">
-        <span class="player"><%= name2 %></span>
+        <span class="label">Current Bid:</span>
         <span class="value">7</span>
       </div>
-      <div class="item -current">
-        <span class="player">You</span>
-        <span class="value">?</span>
-      </div>
       <div class="item">
-        <span class="player"><%= name3 %></span>
-        <span class="value">-</span>
+        <span class="label">High Bidder:</span>
+        <span class="value"><%= name2 %></span>
       </div>
     </div>
-  </div>
 
-  <div class="bid-controls">
-    <div class="options">
-      <% (min_bid..12).each do |bid| %>
-        <button class="bid-option"><%= bid %></button>
-      <% end %>
-      <% if show_pass %>
-        <button class="bid-option -secondary">Pass</button>
-      <% end %>
+    <div class="phase-area">
+      <div class="message">
+        Bidding - Your turn
+      </div>
+    </div>
+
+    <div class="bid-history">
+      <div class="title">Bidding Order</div>
+      <div class="list">
+        <div class="item">
+          <span class="player"><%= name1 %></span>
+          <span class="value -passed">Pass</span>
+        </div>
+        <div class="item">
+          <span class="player"><%= name2 %></span>
+          <span class="value">7</span>
+        </div>
+        <div class="item -current">
+          <span class="player">You</span>
+          <span class="value">?</span>
+        </div>
+        <div class="item">
+          <span class="player"><%= name3 %></span>
+          <span class="value">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bid-controls">
+      <div class="options">
+        <% (min_bid..12).each do |bid| %>
+          <button class="bid-option"><%= bid %></button>
+        <% end %>
+        <% if show_pass %>
+          <button class="bid-option -secondary">Pass</button>
+        <% end %>
+      </div>
     </div>
   </div>
 

@@ -2,11 +2,11 @@
   <section class="round-summary">
     <header class="heading">
       <span class="title">Round <%= summary.number %></span>
+      <span class="bid">
+        <strong><%= player_label(summary.bidder) %></strong> bid <strong><%= summary.bid_amount %></strong>
+      </span>
       <span class="outcome <%= summary.made? ? '-made' : '-set' %>"><%= summary.made? ? "Made" : "Set" %></span>
     </header>
-    <p class="bid">
-      <strong><%= player_label(summary.bidder) %></strong> bid <strong><%= summary.bid_amount %></strong>
-    </p>
     <div class="teams">
       <% ordered_teams.each do |team| %>
         <div class="team <%= '-bidding' if team == summary.bidding_team %>">
