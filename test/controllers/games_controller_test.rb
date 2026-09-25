@@ -136,6 +136,34 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "should show the end screen to the winning team of a done game" do
+    game = games(:playing_game)
+    game.update!(status: :done)
+    game.round_scores.create!(number: 1, team: 1, score: 48)
+    game.round_scores.create!(number: 1, team: 2, score: -18)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".round-result > .title.-success", text: /You Win/
+    assert_select ".round-result > .details > .item > .value.-positive", text: "+66 points"
+    assert_select ".round-result a[href=?]", games_path
+  end
+
+  test "should show the end screen to the losing team when both teams crossed max_score" do
+    sign_in_as(users(:two))
+    game = games(:playing_game)
+    game.update!(status: :done)
+    game.round_scores.create!(number: 1, team: 1, score: 48)
+    game.round_scores.create!(number: 1, team: 2, score: 45)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".round-result > .title.-failure", text: /You Lose/
+    assert_select ".round-result > .details > .item > .value.-negative", text: "-3 points"
+  end
+
   test "shows the last completed trick with its winner until the next card is led" do
     game = games(:playing_game)
 
@@ -204,5 +232,22 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select ".round-summary", 0
     assert_select ".score-history", 0
+  end
+
+  test "shows the full score history on the end screen" do
+    game = games(:playing_game)
+    game.update!(status: :done)
+    bidder = players(:playing_game_player_one)
+    game.round_scores.create!(number: 1, team: 1, score: 9, points_taken: 9, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 1, team: 2, score: 1, points_taken: 1, bidder:, bid_amount: 7)
+    game.round_scores.create!(number: 2, team: 1, score: 39, points_taken: 39, bidder:, bid_amount: 8)
+    game.round_scores.create!(number: 2, team: 2, score: 0, points_taken: 0, bidder:, bid_amount: 8)
+
+    get game_url(game)
+
+    assert_response :success
+    assert_select ".score-history", 1
+    assert_select ".score-history.-inline[open] tbody tr", 2
+    assert_select ".score-history tbody tr:last-child td.points .total", text: "48"
   end
 end
