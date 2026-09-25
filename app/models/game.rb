@@ -2,6 +2,7 @@ class Game < ApplicationRecord
   enum :status, { pending: 0, bidding: 1, playing: 2, done: 3 }
   enum :all_players_pass_strategy, { move_dealer: 0, dealer_must_bid: 1 }
   has_secure_password validations: false
+  broadcasts_refreshes
   validates :password, confirmation: true, if: -> { password.present? }
 
   validate :startable, if: :starting?

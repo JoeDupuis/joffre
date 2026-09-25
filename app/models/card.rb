@@ -2,6 +2,7 @@ class Card < ApplicationRecord
   belongs_to :game
   belongs_to :player
   belongs_to :trick, optional: true
+  broadcasts_refreshes_to :game
 
   enum :suite, { blue: 0, green: 1, brown: 2, red: 3 }
 
