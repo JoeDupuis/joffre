@@ -1,0 +1,32 @@
+<% us = table.us %>
+<% them = table.them %>
+<% bidder_is_you = summary.bidder == table.you %>
+<% outcome = summary.made? ? "made" : "missed" %>
+<div class="overlay -round" role="dialog" aria-modal="true" aria-labelledby="round-result-title" hidden
+     data-controller="round-result" data-round-result-key-value="joffre:game-<%= table.game.id %>:round-<%= summary.number %>">
+  <div class="head">
+    <div class="kicker"><%= t("games.round_result.kicker", number: summary.number) %></div>
+    <h2 class="title" id="round-result-title"><%= summary.made? ? t("games.round_result.made") : t("games.round_result.set") %></h2>
+    <p class="lede">
+      <%= t("games.round_result.#{outcome}_by#{"_you" if bidder_is_you}", name: seat_name(summary.bidder, table), amount: summary.bid_amount, taken: summary.points_taken(summary.bidding_team).to_i) %>
+    </p>
+  </div>
+  <div class="body">
+    <div class="tally">
+      <div class="column -us <%= "-win" if summary.score(us) >= summary.score(them) %>">
+        <div class="who"><%= t("games.table.us") %></div>
+        <div class="points"><%= score_text(summary.total(us)) %></div>
+        <div class="delta <%= summary.score(us).negative? ? "-down" : "-up" %>"><%= signed_points(summary.score(us)) %> <%= t("games.round_result.this_hand") %></div>
+      </div>
+      <div class="column -them <%= "-win" if summary.score(them) > summary.score(us) %>">
+        <div class="who"><%= t("games.table.opponents") %></div>
+        <div class="points"><%= score_text(summary.total(them)) %></div>
+        <div class="delta <%= summary.score(them).negative? ? "-down" : "-up" %>"><%= signed_points(summary.score(them)) %> <%= t("games.round_result.this_hand") %></div>
+      </div>
+    </div>
+    <div class="breakdown">
+      <span class="chip"><%= t("games.round_result.taken", us: summary.points_taken(us).to_i, them: summary.points_taken(them).to_i) %></span>
+    </div>
+  </div>
+  <button type="button" class="overlay-button -primary" data-action="round-result#dismiss"><%= t("games.round_result.next") %></button>
+</div>

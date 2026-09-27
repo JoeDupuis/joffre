@@ -1,0 +1,178 @@
+@property --stage-w { syntax: "<length>"; inherits: true; initial-value: 320px; }
+@property --stage-h { syntax: "<length>"; inherits: true; initial-value: 568px; }
+@property --pad { syntax: "<length>"; inherits: true; initial-value: 8px; }
+@property --inner { syntax: "<length>"; inherits: true; initial-value: 304px; }
+@property --topbar-h { syntax: "<length>"; inherits: true; initial-value: 52px; }
+@property --strip-h { syntax: "<length>"; inherits: true; initial-value: 24px; }
+@property --hand-area-h { syntax: "<length>"; inherits: true; initial-value: 170px; }
+@property --hand-w { syntax: "<length>"; inherits: true; initial-value: 76px; }
+@property --trick-w { syntax: "<length>"; inherits: true; initial-value: 70px; }
+@property --back-w { syntax: "<length>"; inherits: true; initial-value: 40px; }
+
+body:has(> .table-app) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.table-app {
+  position: fixed;
+  inset: 0;
+  container: table / size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(90% 70% at 50% 0%, #15342c 0%, #0d1c18 68%, #0a1512 100%);
+  color: var(--cream);
+  font-family: var(--font-ui);
+  line-height: normal;
+  text-wrap: pretty;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+}
+
+:where(.table-app) {
+  & :where(button) {
+    margin: 0;
+    font: inherit;
+    color: inherit;
+  }
+
+  & :where(form) {
+    margin: 0;
+  }
+}
+
+.table-app {
+
+  & :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  & [hidden] {
+    display: none !important;
+  }
+}
+
+.stage {
+  --stage-w: min(100cqw, 960px);
+  --stage-h: 100cqh;
+  --pad: clamp(8px, var(--stage-w) * 0.024, 18px);
+  --inner: calc(var(--stage-w) - var(--pad) * 2);
+  --topbar-h: 52px;
+  --strip-h: 24px;
+  --hand-share: 0.3;
+  --hand-area-h: clamp(74px, var(--stage-h) * var(--hand-share), 200px);
+  --hand-w: max(40px, min(var(--inner) / 3.95, 96px, (var(--hand-area-h) - var(--strip-h)) / 1.5));
+  --side-w: 132px;
+
+  position: relative;
+  width: var(--stage-w);
+  height: var(--stage-h);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: radial-gradient(120% 78% at 50% 38%, var(--felt-2) 0%, var(--felt-1) 46%, var(--felt-0) 100%);
+}
+
+@container table (max-height: 459.98px) {
+  .stage {
+    --topbar-h: 44px;
+    --strip-h: 20px;
+  }
+}
+
+@container table ((min-aspect-ratio: 23/20) and (max-width: 960px)) or ((min-width: 960px) and (max-height: 834px)) {
+  .stage {
+    --hand-share: 0.36;
+  }
+}
+
+@container table (min-width: 1040px) and (min-height: 720px) {
+  .stage {
+    --stage-h: min(100cqh, 900px);
+    border-radius: 26px;
+    box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--line);
+  }
+}
+
+@container table (min-width: 1122px) and (min-height: 1034px) {
+  .stage { scale: 1.1; }
+}
+
+@container table (min-width: 1275px) and (min-height: 1175px) {
+  .stage { scale: 1.25; }
+}
+
+@container table (min-width: 1428px) and (min-height: 1316px) {
+  .stage { scale: 1.4; }
+}
+
+@container table (min-width: 1581px) and (min-height: 1457px) {
+  .stage { scale: 1.55; }
+}
+
+@container table (min-width: 1785px) and (min-height: 1645px) {
+  .stage { scale: 1.75; }
+}
+
+.felt {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 2px var(--pad) 0;
+  container: felt / size;
+}
+
+.seating {
+  --back-w: clamp(32px, 100cqh / 14, 44px);
+
+  height: 100%;
+  display: grid;
+  grid-template-columns: var(--side-w) minmax(0, 1fr) var(--side-w);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "partner partner partner"
+    "left zone right";
+}
+
+.zone {
+  grid-area: zone;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  container: zone / size;
+}
+
+@container felt (max-width: 459.98px) or (max-height: 329.98px) {
+  .seating {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      "left partner right"
+      "zone zone zone";
+    column-gap: 6px;
+    row-gap: 6px;
+    padding-top: 2px;
+  }
+}
+
+.handbar {
+  flex: 0 0 auto;
+  position: relative;
+  padding: 0 var(--pad) calc(6px + env(safe-area-inset-bottom));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .table-app *,
+  .table-app *::before,
+  .table-app *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

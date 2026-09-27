@@ -1,0 +1,30 @@
+<% us_score = table.score(table.us) %>
+<% them_score = table.score(table.them) %>
+<% you_won = table.winning_team == table.us %>
+<% summaries = table.game.round_summaries %>
+<div class="overlay -game-over" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+  <div class="head">
+    <div class="kicker"><%= t("games.game_over.kicker", score: table.game.max_score) %></div>
+    <h2 class="title" id="game-over-title"><%= you_won ? t("games.game_over.you_win") : t("games.game_over.they_win") %></h2>
+    <p class="lede"><%= t("games.game_over.final_score", us: score_text(us_score), them: score_text(them_score)) %></p>
+  </div>
+  <div class="body -scroll">
+    <div class="tally">
+      <div class="column -us <%= "-win" if you_won %>">
+        <div class="who"><%= t("games.table.us") %></div>
+        <div class="points"><%= score_text(us_score) %></div>
+        <div class="delta <%= us_score >= them_score ? "-up" : "-down" %>"><%= signed_points(us_score - them_score) %></div>
+      </div>
+      <div class="column -them <%= "-win" unless you_won %>">
+        <div class="who"><%= t("games.table.opponents") %></div>
+        <div class="points"><%= score_text(them_score) %></div>
+        <div class="delta <%= them_score >= us_score ? "-up" : "-down" %>"><%= signed_points(them_score - us_score) %></div>
+      </div>
+    </div>
+    <% if summaries.any? %>
+      <h3 class="section-title"><%= t("games.menu.history") %></h3>
+      <%= render "games/table/score_history", table:, summaries: %>
+    <% end %>
+  </div>
+  <%= link_to t("games.game_over.back"), games_path, class: "overlay-button -primary" %>
+</div>

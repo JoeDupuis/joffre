@@ -1,0 +1,218 @@
+.trick {
+  --trick-w: max(26px, min((100cqw - 12px) / 2.9, (100cqh - 4px) / 3, var(--hand-w) * 0.95, 84px));
+
+  position: relative;
+  width: calc(var(--trick-w) * 2.9);
+  height: calc(var(--trick-w) * 3);
+  font-size: calc(var(--trick-w) * 0.185);
+
+  & > .slot {
+    & > .place {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      border-radius: 0.42em;
+    }
+
+    & > .who {
+      display: none;
+    }
+
+    & .playing-card {
+      animation: trick-drop 0.24s cubic-bezier(0.2, 0.8, 0.3, 1.1) both;
+    }
+
+    &.-winner .playing-card {
+      box-shadow: 0 0 0 2px var(--gold), 0 6px 16px rgba(0, 0, 0, 0.45);
+    }
+
+    & .points {
+      position: absolute;
+      bottom: -0.55em;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.1em 0.6em;
+      font-family: var(--font-display);
+      font-size: 0.8em;
+      font-weight: 700;
+      line-height: 1.3;
+      white-space: nowrap;
+      color: var(--gold-ink);
+      background: var(--gold);
+      border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+
+      &.-negative {
+        color: var(--cream);
+        background: var(--rust);
+      }
+    }
+  }
+
+  &.-last .slot:not(.-winner) .playing-card {
+    filter: brightness(0.86);
+  }
+
+  & > .tag {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--cream-dim);
+    opacity: 0.3;
+    pointer-events: none;
+
+    & > .line {
+      display: block;
+    }
+  }
+}
+
+.won-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  pointer-events: none;
+
+  & > .tag {
+    max-width: 100%;
+    padding: 6px 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: clamp(13px, var(--hand-w) * 0.24, 20px);
+    font-weight: 600;
+    text-align: center;
+    color: var(--gold-ink);
+    background: var(--gold);
+    border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    animation: won-pop 1.6s ease both;
+  }
+}
+
+@keyframes trick-drop {
+  from {
+    opacity: 0;
+    transform: scale(0.82) translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes won-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+
+  12% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@container zone (min-height: 240px) {
+  .trick > .slot {
+    position: absolute;
+    width: var(--trick-w);
+
+    &:not(.-filled) {
+      display: none;
+    }
+
+    &.-S {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.-N {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.-W {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    &.-E {
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+@container zone (max-height: 239.98px) {
+  .trick {
+    --trick-w: max(26px, min((100cqw - 24px) / 4, (100cqh - 18px) / 1.5, var(--hand-w) * 0.95, 84px));
+
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+
+    & > .slot {
+      width: var(--trick-w);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+
+      &:not(.-filled) > .place {
+        background: rgba(0, 0, 0, 0.12);
+        border: 1px dashed var(--line);
+      }
+
+      & > .who {
+        display: block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 9px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--cream-dim);
+        opacity: 0.6;
+      }
+    }
+
+    & > .tag {
+      top: -14px;
+      transform: translateX(-50%);
+
+      & > .line {
+        display: inline;
+      }
+    }
+  }
+}

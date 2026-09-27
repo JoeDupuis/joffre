@@ -1,0 +1,36 @@
+<% cards = table.trick_cards_by_position %>
+<% last_trick = table.last_trick %>
+<div class="trick <%= "-last" if last_trick %>">
+  <% GameTable::TRICK_SLOTS.each do |position, compass| %>
+    <% card = cards[position] %>
+    <% winner = last_trick && card && card.player_id == last_trick.winner_id %>
+    <div class="slot -<%= compass %> <%= "-filled" if card %> <%= "-winner" if winner %>">
+      <div class="place">
+        <% if card %>
+          <%= render "games/table/card", card: %>
+        <% end %>
+        <% if winner %>
+          <span class="points <%= last_trick.value.negative? ? "-negative" : "-positive" %>"><%= signed_points(last_trick.value) %></span>
+        <% end %>
+      </div>
+      <span class="who"><%= seat_name(table.player_at(position), table) %></span>
+    </div>
+  <% end %>
+  <% if cards.empty? %>
+    <span class="tag">
+      <span class="line"><%= t("games.table.trick") %></span>
+      <span class="line"><%= t("games.table.trick_of", number: table.trick_number, total: GameTable::TRICKS_PER_HAND) %></span>
+    </span>
+  <% end %>
+</div>
+<% if last_trick %>
+  <div class="won-flash">
+    <span class="tag">
+      <% if last_trick.winner == table.you %>
+        <%= t("games.table.takes_it_you") %>
+      <% else %>
+        <%= t("games.table.takes_it", name: seat_name(last_trick.winner, table)) %>
+      <% end %>
+    </span>
+  </div>
+<% end %>

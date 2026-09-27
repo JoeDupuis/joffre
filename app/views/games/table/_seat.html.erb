@@ -1,0 +1,33 @@
+<% player = seat.player %>
+<% bid = table.bid_for(player) if table.game.bidding? %>
+<div class="seat -<%= seat.position %> <%= table.teammate?(player) ? "-us" : "-them" %> <%= "-active" if table.active_player == player %>">
+  <div class="token">
+    <span class="avatar" aria-hidden="true">
+      <%= seat_initial(player) %>
+      <% if player.dealer? %>
+        <span class="dealer" title="<%= t("games.table.dealer") %>"><%= t("games.table.dealer_mark") %></span>
+      <% end %>
+    </span>
+    <span class="meta">
+      <span class="name" title="<%= player.user.name %>"><%= dev_clickable_player_name(player, game: table.game, label: seat_name(player, table)) %></span>
+      <span class="role"><%= table.teammate?(player) ? t("games.table.your_team") : t("games.table.opponent") %></span>
+    </span>
+  </div>
+  <div class="fan">
+    <span class="back" aria-hidden="true"></span>
+    <span class="back" aria-hidden="true"></span>
+    <span class="back" aria-hidden="true"></span>
+    <span class="count"><%= table.cards_left(player) %></span>
+  </div>
+  <div class="bubble-slot">
+    <% if bid %>
+      <% if bid.amount %>
+        <span class="bubble"><%= t("games.table.bid_bubble", amount: bid.amount) %></span>
+      <% else %>
+        <span class="bubble -pass"><%= t("games.table.passed") %></span>
+      <% end %>
+    <% elsif table.game.playing? && table.high_bid&.player == player %>
+      <span class="bubble -win">★ <%= table.high_bid.amount %></span>
+    <% end %>
+  </div>
+</div>

@@ -1,128 +1,89 @@
 .score-history {
-  position: relative;
-  font-size: var(--font-em-md);
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--cream);
 
-  & > .toggle {
-    cursor: pointer;
-    opacity: 0.8;
-    list-style: none;
-    user-select: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-
-    &::after {
-      content: " ▾";
-    }
+  & th {
+    padding: 4px 6px 6px;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-align: left;
+    text-transform: uppercase;
+    color: var(--cream-dim);
+    opacity: 0.75;
+    border-bottom: 1px solid var(--line);
   }
 
-  &[open] > .toggle::after {
-    content: " ▴";
-  }
-
-  & > .table {
-    position: absolute;
-    top: calc(100% + var(--space-6));
-    left: 0;
-    z-index: var(--z-dropdown);
-    width: max-content;
-    max-width: calc(100vw - 2rem);
-    max-height: 50vh;
-    overflow-y: auto;
-    display: block;
-    border-collapse: collapse;
-    background: var(--color-primary-dark);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    padding: var(--space-6);
-    font-variant-numeric: tabular-nums;
-  }
-
-  &.-inline {
-    max-width: var(--max-width-content);
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  &.-inline > .table {
-    position: static;
-    display: table;
-    margin-top: var(--space-8);
-    width: 100%;
-    max-width: none;
-    max-height: none;
-    box-shadow: none;
-  }
-
-  & th,
   & td {
-    border: 0;
-    padding: var(--space-4) var(--space-8);
+    padding: 6px;
+    vertical-align: baseline;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  & .round {
+    width: 2.2em;
+    color: var(--cream-dim);
+  }
+
+  & .points {
     text-align: right;
     white-space: nowrap;
   }
 
-  & th {
-    font-weight: var(--font-weight-semibold);
-    opacity: 0.7;
-    border-bottom: 1px solid var(--glass-border);
+  & th.points.-us {
+    color: var(--team-us);
   }
 
-  & th:nth-child(2) {
-    text-align: left;
+  & th.points.-them {
+    color: var(--team-them);
   }
 
-  & th:first-child,
-  & td.round {
-    text-align: left;
-    opacity: 0.7;
+  & .bidder {
+    display: inline-block;
+    max-width: 9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+    color: var(--cream-dim);
   }
 
-  & td.bid {
-    text-align: left;
+  & .amount {
+    margin-left: 4px;
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
 
-    & > .bidder {
-      display: inline-block;
-      max-width: 6em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      vertical-align: bottom;
-      opacity: 0.8;
+  & .outcome {
+    margin-left: 3px;
+
+    &.-made {
+      color: var(--up);
     }
 
-    & > .outcome {
-      margin-left: 0.2em;
-
-      &.-made {
-        color: var(--color-success);
-      }
-
-      &.-set {
-        color: var(--color-danger);
-      }
+    &.-set {
+      color: var(--down);
     }
   }
 
-  & td.points {
-    & > .delta {
-      opacity: 0.7;
-      margin-right: 0.4em;
+  & .delta {
+    margin-right: 6px;
+    font-size: 11px;
+    color: var(--up);
 
-      &.-negative {
-        color: var(--color-danger);
-        opacity: 1;
-      }
-    }
-
-    & > .total {
-      font-weight: var(--font-weight-bold);
-      color: var(--color-accent);
+    &.-negative {
+      color: var(--down);
     }
   }
 
-  & tbody > tr:nth-child(even) {
-    background: var(--color-white-alpha-5);
+  & .total {
+    display: inline-block;
+    min-width: 2.2em;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
   }
 }

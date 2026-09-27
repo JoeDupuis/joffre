@@ -1,18 +1,9 @@
 <% turbo_refreshes_with method: :morph, scroll: :preserve %>
 <%= turbo_stream_from @game %>
-<%= render "game_menu" if @game.bidding? || @game.playing? %>
-<div class="game-page">
-  <% if @game.pending? %>
-    <%= render 'lobby' %>
-  <% elsif @game.bidding? %>
-    <%= render 'score-board' %>
-    <%= render 'bidding' %>
-    <%= render 'cards' %>
-  <% elsif @game.playing? %>
-    <%= render 'score-board' %>
-    <%= render 'play' %>
-    <%= render 'cards' %>
-  <% elsif @game.done? %>
-    <%= render 'done' %>
-  <% end %>
-</div>
+<% if @game.pending? %>
+  <div class="game-page">
+    <%= render "lobby" %>
+  </div>
+<% else %>
+  <%= render "games/table/table", table: GameTable.new(@game, Current.player) %>
+<% end %>

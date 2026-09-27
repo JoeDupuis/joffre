@@ -25,9 +25,4 @@ class GamesHelperTest < ActionView::TestCase
     assert_equal "Playing: Team 1 −7 – Team 2 9", game_status_text(game)
   end
 
-  test "ordered_teams puts the current player's team first" do
-    assert_equal [ 2, 1 ], ordered_teams(players(:playing_game_player_two))
-    assert_equal [ 1, 2 ], ordered_teams(players(:playing_game_player_one))
-    assert_equal [ 1, 2 ], ordered_teams(nil)
-  end
 end

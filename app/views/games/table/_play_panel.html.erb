@@ -1,0 +1,29 @@
+<% your_turn = table.your_turn? %>
+<div class="play-panel" data-controller="hand" data-hand-refusal-value="<%= t("games.table.must_follow", suit: suit_name(table.led_suit)) if table.led_suit %>">
+  <div class="you-strip <%= "-active" if your_turn %>">
+    <% if your_turn %>
+      <span class="turn-flag" data-hand-target="flag"><%= t("games.table.your_turn_play") %></span>
+    <% elsif table.active_player %>
+      <span class="hint"><%= t("games.table.waiting_play", name: seat_name(table.active_player, table)) %></span>
+    <% end %>
+    <%= render "games/table/dealer_chip" if table.you.dealer? %>
+  </div>
+
+  <%= form_with url: game_plays_path(table.game), method: :post, class: "hand", html: { style: "--count: #{table.hand.size}" } do %>
+    <% table.hand.each do |card| %>
+      <% if your_turn && table.playable_card_ids.include?(card.id) %>
+        <%= button_tag name: "play[card_id]", value: card.id, class: "slot -playable", aria: { label: card_label(card) } do %>
+          <%= render "games/table/card", card: %>
+        <% end %>
+      <% elsif your_turn %>
+        <%= button_tag type: "button", class: "slot -dim", aria: { label: card_label(card), disabled: true }, data: { action: "hand#refuse" } do %>
+          <%= render "games/table/card", card: %>
+        <% end %>
+      <% else %>
+        <div class="slot" role="img" aria-label="<%= card_label(card) %>">
+          <%= render "games/table/card", card: %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

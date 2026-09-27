@@ -1,0 +1,37 @@
+<% your_turn = table.your_turn? %>
+<% your_bid = table.bid_for(table.you) %>
+<div class="bid-panel">
+  <div class="you-strip <%= "-active" if your_turn %>">
+    <% if your_turn %>
+      <span class="turn-flag"><%= t("games.table.your_turn_bid") %></span>
+    <% elsif your_bid %>
+      <span class="hint"><%= your_bid.amount ? t("games.table.you_bid", amount: your_bid.amount) : t("games.table.you_passed") %></span>
+    <% elsif table.active_player %>
+      <span class="hint"><%= t("games.table.waiting_bid", name: seat_name(table.active_player, table)) %></span>
+    <% end %>
+    <%= render "games/table/dealer_chip" if table.you.dealer? %>
+  </div>
+
+  <div class="hand" style="--count: <%= table.hand.size %>">
+    <% table.hand.each do |card| %>
+      <div class="slot" role="img" aria-label="<%= card_label(card) %>">
+        <%= render "games/table/card", card: %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if your_turn %>
+    <% options = table.bid_options %>
+    <%= form_with url: game_bids_path(table.game), method: :post, class: "bid-grid", html: { style: "--cols: #{bid_columns(options.size + (table.can_pass? ? 1 : 0))}" } do %>
+      <% if table.can_pass? %>
+        <%= button_tag t("games.table.pass"), name: "bid[amount]", value: "", class: "bid-button -pass" %>
+      <% end %>
+      <% options.each do |amount| %>
+        <%= button_tag amount, name: "bid[amount]", value: amount, class: "bid-button #{"-special" if amount == GameTable::MAX_BID}" %>
+      <% end %>
+    <% end %>
+    <p class="bid-foot">
+      <%= table.can_pass? ? t("games.table.bid_help", min: options.first, max: GameTable::MAX_BID) : t("games.table.dealer_must_bid") %>
+    </p>
+  <% end %>
+</div>

@@ -1,0 +1,45 @@
+<header class="topbar">
+  <div class="score-pill">
+    <span class="team -us">
+      <span class="label"><%= t("games.table.us") %></span>
+      <span class="value"><%= score_text(table.score(table.us)) %></span>
+    </span>
+    <span class="separator"></span>
+    <span class="team -them">
+      <span class="label"><%= t("games.table.opp") %></span>
+      <span class="value"><%= score_text(table.score(table.them)) %></span>
+    </span>
+  </div>
+
+  <div class="status">
+    <div class="hand-number">
+      <%= t("games.table.hand_number", number: table.hand_number) %> · <%= t("games.table.to_goal", score: table.game.max_score) %>
+    </div>
+    <div class="contract">
+      <% if table.game.bidding? %>
+        <span class="bid -pending"><%= t("games.table.bidding") %></span>
+      <% elsif table.game.playing? && table.high_bid %>
+        <span class="bid">
+          <b class="name"><%= seat_name(table.high_bid.player, table) %></b>
+          <span class="amount">· <%= table.high_bid.amount %></span>
+          <% if table.trump %>
+            <span class="suit-pip -<%= table.trump %>" title="<%= t("games.table.trump_suit", suit: suit_name(table.trump)) %>"></span>
+          <% end %>
+        </span>
+      <% else %>
+        <span class="bid -pending">—</span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if table.trump %>
+    <div class="trump-chip" title="<%= t("games.table.trump_suit", suit: suit_name(table.trump)) %>">
+      <span class="suit-pip -<%= table.trump %>" aria-hidden="true"></span>
+      <span class="label"><%= t("games.table.trump") %></span>
+    </div>
+  <% end %>
+
+  <% unless table.game.done? %>
+    <button type="button" class="icon-button" aria-label="<%= t("games.table.menu") %>" aria-haspopup="dialog" data-action="table#openMenu">☰</button>
+  <% end %>
+</header>
