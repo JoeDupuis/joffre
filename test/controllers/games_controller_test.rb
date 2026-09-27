@@ -159,7 +159,19 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
 
     assert_redirected_to games_url
-    assert_equal "You're no longer in that game.", flash[:alert]
+    follow_redirect!
+    assert_select ".flash-alert", text: "You're not a player in that game, or it was deleted."
+  end
+
+  test "non-player gets the same message for an existing game and a missing one" do
+    sign_in_as(users(:no_friends))
+
+    get game_url(games(:one))
+    existing_alert = flash[:alert]
+    get game_url(id: Game.maximum(:id) + 1)
+
+    assert_redirected_to games_url
+    assert_equal existing_alert, flash[:alert]
   end
 
   test "kicked player is sent to the games list" do
@@ -172,7 +184,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to games_url
     follow_redirect!
-    assert_select ".flash-alert", text: "You're no longer in that game."
+    assert_select ".flash-alert", text: "You're not a player in that game, or it was deleted."
   end
 
   test "player is sent to the games list when the game was deleted" do
@@ -183,7 +195,18 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to games_url
     follow_redirect!
-    assert_select ".flash-alert", text: "That game was deleted."
+    assert_select ".flash-alert", text: "You're not a player in that game, or it was deleted."
+  end
+
+  test "French-speaking non-player sees the access message in French" do
+    users(:no_friends).update!(locale: "fr")
+    sign_in_as(users(:no_friends))
+
+    get game_url(games(:one))
+
+    assert_redirected_to games_url
+    follow_redirect!
+    assert_select ".flash-alert", text: "Vous ne jouez pas dans cette partie, ou elle a été supprimée."
   end
 
   test "owner sees a delete option in game" do

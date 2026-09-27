@@ -23,13 +23,7 @@ class GamesController < ApplicationController
 
   def show
     Current.game = @game = Current.user.games.find_by(id: params[:id])
-    return if @game
-
-    if Game.exists?(id: params[:id])
-      redirect_to games_path, alert: t(".removed")
-    else
-      redirect_to games_path, alert: failure_message
-    end
+    redirect_to games_path, alert: failure_message unless @game
   end
 
   def update

@@ -28,6 +28,9 @@ fr:
           attributes:
             amount:
               dealer_must_bid: "Le donneur doit miser"
+  games:
+    show:
+      failure: "Vous ne jouez pas dans cette partie, ou elle a été supprimée."
   application:
     form_errors:
       title:

@@ -53,8 +53,7 @@ en:
               dealer_must_bid: "Dealer must bid"
   games:
     show:
-      failure: "That game was deleted."
-      removed: "You're no longer in that game."
+      failure: "You're not a player in that game, or it was deleted."
   application:
     form_errors:
       title:
