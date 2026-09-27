@@ -1,0 +1,28 @@
+<div class="table-app" data-controller="table" data-action="keydown.esc@window->table#closeMenu">
+  <div class="stage">
+    <%= render "games/table/topbar", table: %>
+
+    <div class="felt">
+      <div class="seating">
+        <% table.seats.each do |seat| %>
+          <%= render "games/table/seat", table:, seat: %>
+        <% end %>
+        <div class="zone">
+          <%= render "games/table/trick", table: table if table.game.playing? %>
+        </div>
+      </div>
+    </div>
+
+    <div class="handbar">
+      <% if table.game.bidding? %>
+        <%= render "games/table/bid_panel", table: %>
+      <% elsif table.game.playing? %>
+        <%= render "games/table/play_panel", table: %>
+      <% end %>
+    </div>
+
+    <%= render "games/table/round_result", table:, summary: table.last_round if table.show_last_round? %>
+    <%= render "games/table/game_over", table: table if table.game.done? %>
+    <%= render "games/table/menu", table: table unless table.game.done? %>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<% summaries = table.game.round_summaries %>
+<div id="table-menu" class="overlay -menu" role="dialog" aria-modal="true" aria-labelledby="menu-title" hidden data-table-target="menu">
+  <div class="head">
+    <div class="kicker"><%= t("games.table.menu") %></div>
+    <h2 class="title" id="menu-title"><%= table.game.name %></h2>
+  </div>
+  <div class="body -scroll">
+    <div class="menu-actions">
+      <%= link_to t("games.menu.all_games"), games_path, class: "overlay-button -ghost" %>
+      <% if table.game.owner == Current.user %>
+        <%= button_to t("games.menu.delete_game"), game_path(table.game), method: :delete, class: "overlay-button -danger", form_class: "form", data: { turbo_confirm: t("games.menu.delete_confirm", name: table.game.name) } %>
+      <% end %>
+    </div>
+
+    <div class="language-row">
+      <span class="label"><%= t("games.menu.language") %></span>
+      <div class="segmented" role="group" aria-label="<%= t("games.menu.language") %>">
+        <% I18n.available_locales.each do |locale| %>
+          <%= button_to locale.to_s.upcase, locale_path, method: :patch, params: { locale: }, class: "segment #{"-on" if I18n.locale == locale}", form_class: "form", aria: { pressed: I18n.locale == locale } %>
+        <% end %>
+      </div>
+    </div>
+
+    <% if summaries.any? %>
+      <h3 class="section-title"><%= t("games.menu.history") %></h3>
+      <%= render "games/table/score_history", table:, summaries: %>
+    <% end %>
+
+    <%= render "games/table/rules", game: table.game %>
+  </div>
+  <button type="button" class="overlay-button -ghost" data-action="table#closeMenu"><%= t("games.table.close") %></button>
+</div>

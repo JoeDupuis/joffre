@@ -1,0 +1,19 @@
+<section class="rules">
+  <h3 class="section-title"><%= t("games.rules.title") %></h3>
+  <h4><%= t("games.rules.deck") %></h4>
+  <p><%= t("games.rules.deck_body") %></p>
+  <h4><%= t("games.rules.bidding") %></h4>
+  <p>
+    <%= t("games.rules.bidding_body", min: game.minimum_bid, max: GameTable::MAX_BID) %>
+    <%= t("games.rules.all_pass.#{game.all_players_pass_strategy}") %>
+  </p>
+  <h4><%= t("games.rules.play") %></h4>
+  <p><%= t("games.rules.play_body") %></p>
+  <h4><%= t("games.rules.scoring") %></h4>
+  <ul>
+    <% t("games.rules.scoring_items").each do |item| %>
+      <li><%= item %></li>
+    <% end %>
+  </ul>
+  <p><%= t("games.rules.goal", score: game.max_score) %></p>
+</section>

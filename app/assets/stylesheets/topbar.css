@@ -1,0 +1,187 @@
+.topbar {
+  flex: 0 0 auto;
+  min-height: calc(var(--topbar-h) + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(4px + env(safe-area-inset-top)) var(--pad) 4px;
+
+  & > .score-pill {
+    flex: 0 0 auto;
+    min-width: max-content;
+    display: flex;
+    align-items: stretch;
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+    font-variant-numeric: tabular-nums;
+
+    & > .team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3px 10px;
+      line-height: 1;
+    }
+
+    & .label {
+      margin-bottom: 3px;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: rgba(231, 220, 196, 0.72);
+
+      & > .round {
+        margin-left: 2px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        color: var(--cream);
+      }
+    }
+
+    & .value {
+      min-width: 1.6ch;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    & > .team.-us .value {
+      color: var(--team-us);
+    }
+
+    & > .team.-them .value {
+      color: var(--team-them);
+    }
+
+    & > .separator {
+      width: 1px;
+      background: var(--line);
+    }
+  }
+
+  & > .status {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: center;
+  }
+
+  & .hand-number {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--cream-dim);
+    opacity: 0.7;
+  }
+
+  & .contract {
+    min-width: 0;
+    margin-top: 1px;
+    display: flex;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 13.5px;
+  }
+
+  & .bid {
+    min-width: 0;
+    max-width: 100%;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+
+    &.-pending {
+      opacity: 0.72;
+    }
+
+    & > .name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    & > .amount {
+      flex: 0 0 auto;
+    }
+
+    & > .suit-pip {
+      display: none;
+      align-self: center;
+      width: 10px;
+      height: 10px;
+      margin-left: 2px;
+    }
+  }
+
+  & > .trump-chip {
+    flex: 0 0 auto;
+    min-width: max-content;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+
+    & > .suit-pip {
+      width: 11px;
+      height: 11px;
+    }
+
+    & > .label {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--cream-dim);
+      opacity: 0.85;
+    }
+  }
+
+  & > .icon-button {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}
+
+@container table (max-height: 459.98px) {
+  .topbar > .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@container table (max-width: 379.98px) {
+  .topbar {
+    & > .trump-chip {
+      display: none;
+    }
+
+    & .bid > .suit-pip {
+      display: block;
+    }
+  }
+}

@@ -1,0 +1,32 @@
+<table class="score-history">
+  <thead>
+    <tr>
+      <th scope="col" class="round"><%= t("games.score_history.round") %></th>
+      <th scope="col" class="bid"><%= t("games.score_history.bid") %></th>
+      <th scope="col" class="points -us"><%= t("games.table.us") %></th>
+      <th scope="col" class="points -them"><%= t("games.table.opp") %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% summaries.each do |summary| %>
+      <tr>
+        <td class="round"><%= summary.number %></td>
+        <td class="bid">
+          <% if summary.bid_known? %>
+            <span class="bidder"><%= seat_name(summary.bidder, table) %></span>
+            <span class="amount"><%= summary.bid_amount %></span>
+            <span class="outcome <%= summary.made? ? "-made" : "-set" %>"><%= summary.made? ? t("games.score_history.made") : t("games.score_history.set") %></span>
+          <% else %>
+            –
+          <% end %>
+        </td>
+        <% [ table.us, table.them ].each do |team| %>
+          <td class="points">
+            <span class="delta <%= "-negative" if summary.score(team).negative? %>"><%= signed_points(summary.score(team)) %></span>
+            <span class="total"><%= score_text(summary.total(team)) %></span>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

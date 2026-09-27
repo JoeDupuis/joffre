@@ -1,0 +1,111 @@
+.suit-pip {
+  --suit: var(--s-brown);
+
+  display: block;
+  width: 0.52em;
+  height: 0.52em;
+  background: var(--suit);
+
+  &.-brown {
+    --suit: var(--s-brown);
+    border-radius: 0.06em;
+  }
+
+  &.-green {
+    --suit: var(--s-green);
+    border-radius: 50%;
+  }
+
+  &.-red {
+    --suit: var(--s-red);
+    border-radius: 0.05em;
+    transform: rotate(45deg);
+  }
+
+  &.-blue {
+    --suit: var(--s-blue);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+}
+
+.playing-card {
+  --suit: var(--s-brown);
+
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  color: var(--suit);
+  background: linear-gradient(160deg, #fbf6e8 0%, #f2e8d1 100%);
+  border-radius: 0.42em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+
+  &.-brown { --suit: var(--s-brown); }
+  &.-green { --suit: var(--s-green); }
+  &.-red { --suit: var(--s-red); }
+  &.-blue { --suit: var(--s-blue); }
+
+  & > .frame {
+    position: absolute;
+    inset: 7%;
+    border: 1px solid var(--suit);
+    border-radius: 0.24em;
+    opacity: 0.32;
+  }
+
+  & > .rank {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 2.25em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--suit);
+    opacity: 0.95;
+  }
+
+  & > .corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.16em;
+    font-size: 0.86em;
+    line-height: 1;
+
+    & > b {
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    &.-top {
+      top: 0.34em;
+      left: 0.36em;
+    }
+
+    &.-bottom {
+      right: 0.36em;
+      bottom: 0.34em;
+      transform: rotate(180deg);
+    }
+  }
+
+  & > .score-tag {
+    position: absolute;
+    top: 0.3em;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.05em 0.5em;
+    font-size: 0.6em;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    white-space: nowrap;
+    color: #fff;
+    background: var(--suit);
+    border-radius: 999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}

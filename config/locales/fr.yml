@@ -1,0 +1,47 @@
+fr:
+  hello: "Bonjour tout le monde"
+  activerecord:
+    models:
+      bid: "Mise"
+      game: "Partie"
+      player: "Joueur"
+    attributes:
+      game:
+        all_players_pass_strategies:
+          dealer_must_bid: "Le donneur doit miser (impossible de passer)"
+          move_dealer: "Passer au donneur suivant et redistribuer"
+      player:
+        game: "Partie"
+    errors:
+      models:
+        player:
+          attributes:
+            game:
+              full: "est complète"
+              started: "a déjà commencé"
+        game:
+          attributes:
+            status:
+              teams_not_assigned: "ne peut pas démarrer : tous les joueurs doivent faire partie d'une équipe"
+              teams_not_balanced: "ne peut pas démarrer : les équipes doivent être équilibrées (2 joueurs chacune)"
+        bid:
+          attributes:
+            amount:
+              dealer_must_bid: "Le donneur doit miser"
+  application:
+    form_errors:
+      title:
+        one: "Une erreur a empêché l'enregistrement"
+        other: "%{count} erreurs ont empêché l'enregistrement"
+    create:
+      success: "%{name} : création réussie."
+      failure: "%{name} : la création a échoué."
+    update:
+      success: "%{name} : mise à jour réussie."
+      failure: "%{name} : la mise à jour a échoué."
+    destroy:
+      success: "%{name} : suppression réussie."
+      failure: "%{name} : la suppression a échoué."
+  locales:
+    update:
+      failure: "Impossible de changer la langue."

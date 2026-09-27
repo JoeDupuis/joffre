@@ -8,44 +8,93 @@
   & > .container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-    margin-top: var(--space-md);
+    gap: var(--space-md);
+    max-width: none;
+    margin: var(--space-md) 0 0;
+    padding: 0;
   }
 
   & > .container > .team {
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-xl);
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 14px;
     padding: var(--space-md);
-    background: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
+    background: rgba(0, 0, 0, 0.24);
 
     & > .heading {
-      margin-top: 0;
-      margin-bottom: var(--space-md);
-      padding-bottom: var(--space-sm);
-      border-bottom: 2px solid var(--glass-border);
-      color: var(--color-white);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin: 0 0 var(--space-12);
+      padding-bottom: var(--space-12);
+      border-bottom: 1px solid var(--line-soft);
+      color: var(--cream);
+      font-size: 1.125rem;
+
+      &::before {
+        content: "";
+        flex: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: var(--cream-dim);
+        opacity: 0.45;
+      }
+    }
+
+    &.-us > .heading::before {
+      background: var(--team-us);
+      opacity: 1;
+    }
+
+    &.-them > .heading::before {
+      background: var(--team-them);
+      opacity: 1;
     }
 
     & > .players {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
       list-style: none;
       padding: 0;
       margin: 0;
 
+      &:not(:has(> .player))::before,
+      &:not(:has(> .player + .player))::after {
+        content: "";
+        display: block;
+        min-height: 54px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+      }
+
       & > .player {
-        padding: var(--space-sm);
-        margin: 0 0 var(--space-sm);
-        background: var(--color-black-alpha-20);
-        border-radius: var(--radius-lg);
-        border: 1px solid var(--color-white-alpha-10);
+        min-height: 54px;
+        padding: 6px 6px 6px 14px;
+        margin: 0;
+        background: rgba(0, 0, 0, 0.22);
+        border-radius: 12px;
+        border: 1px solid var(--line-soft);
         display: flex;
         align-items: center;
         gap: var(--space-sm);
         flex-wrap: wrap;
-        color: var(--color-white);
+        color: var(--cream);
+        font-weight: 500;
+        overflow-wrap: anywhere;
+
+        & > .status-badge {
+          margin-right: 0;
+        }
 
         & > form {
           margin: 0;
+        }
+
+        & > form:first-of-type,
+        & > button:first-of-type {
+          margin-left: auto;
         }
       }
     }

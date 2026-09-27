@@ -1,20 +1,20 @@
-<div class="container">
+<div class="container -narrow">
   <h1>New Game</h1>
 
   <%= form_with model: @game do |form| %>
     <%= form_errors(@game) %>
 
-    <div>
+    <div class="form-field">
       <%= form.label :name %>
       <%= form.text_field :name, required: true, autofocus: true, placeholder: "Enter game name" %>
     </div>
 
-    <div>
+    <div class="form-field">
       <%= form.label :password, "Password (optional)" %>
       <%= form.password_field :password, placeholder: "Leave blank for no password" %>
     </div>
 
-    <div>
+    <div class="form-field">
       <%= form.label :password_confirmation, "Confirm Password" %>
       <%= form.password_field :password_confirmation %>
     </div>
@@ -30,7 +30,7 @@
       <small class="help">Points needed to win. Tournament rules use 40, the classic game uses 41.</small>
     </div>
 
-    <div>
+    <div class="form-field">
       <%= form.label :all_players_pass_strategy, "If all players pass" %>
       <%= form.select :all_players_pass_strategy,
                       options_for_select(

@@ -1,7 +1,7 @@
 <div class="team-display">
   <h2 class="title">Teams (<%= game.players.count %>/4 players)</h2>
   <div class="container">
-    <div class="team">
+    <div class="team <%= team_side_class(1) %>">
       <h3 class="heading">Team 1</h3>
       <ul class="players">
         <% game.players.team_one.includes(:user).each do |player| %>
@@ -14,13 +14,13 @@
               <%= button_to "→ Move to Team 2", games_player_path(player), method: :patch, params: { player: { team: 2 } }, class: "link-button -small" %>
             <% end %>
             <% if game.owner == Current.user && player.user != Current.user %>
-              <%= button_to "Kick", games_player_path(player), method: :delete, class: "link-button -small" %>
+              <%= button_to "Kick", games_player_path(player), method: :delete, class: "link-button -small -danger" %>
             <% end %>
           </li>
         <% end %>
       </ul>
     </div>
-    <div class="team">
+    <div class="team <%= team_side_class(2) %>">
       <h3 class="heading">Team 2</h3>
       <ul class="players">
         <% game.players.team_two.includes(:user).each do |player| %>
@@ -33,7 +33,7 @@
               <%= button_to "← Move to Team 1", games_player_path(player), method: :patch, params: { player: { team: 1 } }, class: "link-button -small" %>
             <% end %>
             <% if game.owner == Current.user && player.user != Current.user %>
-              <%= button_to "Kick", games_player_path(player), method: :delete, class: "link-button -small" %>
+              <%= button_to "Kick", games_player_path(player), method: :delete, class: "link-button -small -danger" %>
             <% end %>
           </li>
         <% end %>

@@ -1,8 +1,17 @@
 .form-field {
+  margin: 0 0 var(--space-lg);
+
+  & > input[type],
+  & > select {
+    margin-bottom: 0;
+  }
+
   & > .help {
     display: block;
     margin-top: var(--space-sm);
-    color: var(--color-white-alpha-70);
-    font-size: var(--font-sm);
+    color: var(--cream-dim);
+    font-size: 13px;
+    line-height: 1.45;
+    opacity: 0.75;
   }
 }

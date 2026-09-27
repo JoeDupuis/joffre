@@ -1,22 +1,29 @@
 module GamesHelper
-  def partner_of(player, player_order)
-    return nil unless player && player_order.present?
+  SEAT_NAME_LENGTH = 14
 
-    player_index = player_order.index(player)
-    return nil unless player_index
+  def seat_name(player, table)
+    return t("games.table.you") if player == table.you
 
-    player_order[(player_index + 2) % 4]
+    truncate(player.user.name.squish, length: SEAT_NAME_LENGTH, omission: "…")
   end
 
-  def player_label(player, current_player = Current.player)
-    return player.user.name unless current_player
+  def seat_initial(player)
+    player.user.name.strip.first.to_s.upcase
+  end
 
-    if player == current_player
-      "You"
-    elsif player == partner_of(current_player, player.game.bidding_order || player.game.play_order)
-      player.user.name
-    else
-      player.user.name
+  def suit_name(suite)
+    t("games.table.suits.#{suite}")
+  end
+
+  def card_label(card)
+    t("games.table.card", suit: suit_name(card.suite), rank: card.rank)
+  end
+
+  def bid_columns(count)
+    if count <= 2 then count
+    elsif count <= 4 then 2
+    elsif count <= 6 then 3
+    else 4
     end
   end
 
@@ -54,20 +61,14 @@ module GamesHelper
     value.negative? ? "−#{value.abs}" : "+#{value}"
   end
 
-  def team_label(team, current_player = Current.player)
-    return "Team #{team}" unless current_player
+  def team_side_class(team, current_player = Current.player)
+    return unless current_player&.team
 
-    current_player.team == team ? "Us" : "Them"
+    current_player.team == team ? "-us" : "-them"
   end
 
-  def ordered_teams(current_player = Current.player)
-    return [ 1, 2 ] unless current_player&.team
-
-    [ current_player.team, current_player.team == 1 ? 2 : 1 ]
-  end
-
-  def dev_clickable_player_name(player, game: nil)
-    name = player.is_a?(Player) ? player.user.name : player.name
+  def dev_clickable_player_name(player, game: nil, label: nil)
+    name = label || (player.is_a?(Player) ? player.user.name : player.name)
     game_id = game&.id || (player.is_a?(Player) ? player.game_id : nil)
 
     if (Rails.env.development? || Rails.env.test?) && game_id

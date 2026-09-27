@@ -1,0 +1,70 @@
+.bid-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  & > .bid-grid {
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  & > .bid-foot {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.35;
+    text-align: center;
+    color: var(--cream-dim);
+    opacity: 0.72;
+  }
+}
+
+.bid-button {
+  min-height: 48px;
+  padding: 10px 4px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--cream);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &.-pass {
+    font-family: var(--font-ui);
+    font-size: 14px;
+    color: var(--cream);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--line);
+  }
+
+  &.-special {
+    color: var(--cream);
+    background: var(--rust);
+  }
+}
+
+@container table (max-height: 459.98px) {
+  .bid-panel {
+    & > .bid-grid {
+      grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    }
+
+    & > .bid-foot {
+      display: none;
+    }
+  }
+
+  .bid-button {
+    min-height: 42px;
+    font-size: 17px;
+  }
+}

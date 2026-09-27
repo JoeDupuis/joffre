@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   resource :session
   resource :registration, only: %i[new create]
+  resource :locale, only: :update
   resources :passwords, param: :token
   resources :games, only: [ :index, :new, :create, :show, :update, :destroy ] do
     scope module: :games do

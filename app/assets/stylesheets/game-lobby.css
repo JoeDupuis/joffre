@@ -1,8 +1,10 @@
 .game-lobby {
-  grid-row: 1 / -1;
   min-width: 0;
+  max-width: 960px;
+  margin: 0 auto;
+  line-height: 1.5;
 
   & > .action-buttons {
-    margin-bottom: var(--space-2xl);
+    margin: var(--space-xl) 0 var(--space-2xl);
   }
 }

@@ -1,23 +1,48 @@
 .game-status {
-  display: inline-block;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-accent);
-  background: var(--color-accent-alpha-20);
-  color: var(--color-accent);
-  font-size: var(--font-sm);
-  font-weight: var(--font-weight-semibold);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 100%;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 162, 74, 0.4);
+  background: rgba(216, 162, 74, 0.1);
+  color: var(--cream);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+
+  &::before {
+    content: "";
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--gold);
+  }
 
   &.-bidding,
   &.-playing {
-    border-color: var(--color-success);
-    background: var(--color-success-alpha-20);
-    color: var(--color-white);
+    border-color: rgba(110, 201, 138, 0.4);
+    background: rgba(110, 201, 138, 0.1);
+    color: var(--cream);
+
+    &::before {
+      background: var(--up);
+      box-shadow: 0 0 0 3px rgba(110, 201, 138, 0.2);
+    }
   }
 
   &.-done {
-    border-color: var(--color-white-alpha-30);
-    background: var(--color-white-alpha-10);
-    color: var(--color-white-alpha-90);
+    border-color: var(--line);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--cream-dim);
+
+    &::before {
+      background: var(--cream-dim);
+      opacity: 0.5;
+    }
   }
 }

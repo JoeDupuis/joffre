@@ -1,0 +1,9 @@
+<div class="playing-card -<%= card.suite %>" title="<%= card_label(card) %>">
+  <span class="frame" aria-hidden="true"></span>
+  <span class="corner -top" aria-hidden="true"><b><%= card.rank %></b><span class="suit-pip -<%= card.suite %>"></span></span>
+  <span class="rank" aria-hidden="true"><%= card.rank %></span>
+  <span class="corner -bottom" aria-hidden="true"><b><%= card.rank %></b><span class="suit-pip -<%= card.suite %>"></span></span>
+  <% unless card.score_modifier.zero? %>
+    <span class="score-tag"><%= signed_points(card.score_modifier) %></span>
+  <% end %>
+</div>

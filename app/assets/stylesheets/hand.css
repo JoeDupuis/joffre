@@ -1,0 +1,129 @@
+.you-strip {
+  min-height: var(--strip-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 4px;
+  text-align: center;
+
+  & > .turn-flag {
+    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--gold);
+
+    &::before {
+      content: "";
+      flex: 0 0 auto;
+      width: 7px;
+      height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--gold);
+    }
+  }
+
+  & > .hint {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    color: var(--cream-dim);
+    opacity: 0.62;
+  }
+
+  & > .dealer-chip {
+    flex: 0 0 auto;
+    padding: 1px 7px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-ink);
+    background: var(--cream);
+    border-radius: 999px;
+  }
+}
+
+.hand {
+  --step: min(var(--hand-w) * 0.82, (var(--inner) - var(--hand-w)) / max(var(--count, 1) - 1, 1));
+
+  position: relative;
+  height: calc(var(--hand-w) * 1.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  & > .slot {
+    position: relative;
+    flex: 0 0 auto;
+    width: var(--hand-w);
+    padding: 0;
+    font-size: calc(var(--hand-w) * 0.185);
+    background: none;
+    border: none;
+    border-radius: 0.42em;
+    cursor: default;
+    transition: transform 0.16s ease;
+
+    & + .slot {
+      margin-left: calc(var(--step) - var(--hand-w));
+    }
+
+    &.-playable {
+      cursor: pointer;
+
+      & .playing-card {
+        box-shadow: 0 0 0 1.5px var(--gold), 0 4px 12px rgba(0, 0, 0, 0.45);
+      }
+    }
+
+    &.-dim .playing-card {
+      filter: grayscale(0.72) brightness(0.68) contrast(0.95);
+    }
+
+    &.-shake {
+      animation: hand-shake 0.36s ease;
+    }
+
+    &:focus-visible {
+      z-index: 30;
+      transform: translateY(-10px);
+    }
+  }
+}
+
+@media (hover: hover) {
+  .hand > .slot.-playable:hover {
+    z-index: 30;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes hand-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  55% {
+    transform: translateX(4px);
+  }
+
+  80% {
+    transform: translateX(-2px);
+  }
+}

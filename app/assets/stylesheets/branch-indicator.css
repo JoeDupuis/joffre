@@ -1,25 +1,32 @@
+body:has(> .branch-indicator):not(:has(> .table-app)) {
+  padding-bottom: 72px;
+}
+
 .branch-indicator {
   position: fixed;
-  bottom: var(--space-20);
-  right: var(--space-20);
-  background-color: #2d3748;
-  color: #e2e8f0;
-  padding: var(--space-8) var(--space-16);
-  border-radius: var(--radius-sm);
-  font-family: monospace;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  bottom: var(--space-12);
+  right: var(--space-12);
+  max-width: calc(100vw - 140px);
+  padding: 6px 12px;
+  overflow: hidden;
+  background-color: rgba(10, 21, 18, 0.92);
+  color: var(--cream-dim);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   z-index: var(--z-modal);
-  opacity: 0.9;
+  opacity: 0.85;
+  pointer-events: none;
   transition: opacity var(--transition-fast) ease;
-
-  &:hover {
-    opacity: 1;
-  }
 
   &::before {
     content: "⎇ ";
-    font-size: 16px;
-    vertical-align: middle;
+    color: var(--gold);
+    font-size: 12px;
   }
 }

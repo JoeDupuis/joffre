@@ -1,15 +1,29 @@
 .error-messages {
-  background: var(--color-danger-alpha-20);
-  border: 1px solid var(--color-danger-alpha-40);
-  color: var(--color-danger);
+  background: rgba(155, 74, 38, 0.18);
+  border: 1px solid rgba(224, 122, 99, 0.45);
+  color: var(--cream);
   padding: var(--space-md);
-  border-radius: var(--radius-lg);
-  backdrop-filter: var(--glass-blur);
-  margin-bottom: var(--space-md);
+  border-radius: 14px;
+  margin-bottom: var(--space-lg);
+  font-size: 15px;
   font-weight: 500;
+  line-height: 1.45;
 
   & > .list {
     margin: 0;
-    padding-left: var(--space-lg);
+    padding-left: 1.1em;
+    list-style: disc;
+
+    & > li {
+      margin: 0 0 var(--space-xs);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &::marker {
+        color: var(--down);
+      }
+    }
   }
 }
