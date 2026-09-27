@@ -15,7 +15,6 @@ class GameBroadcastsTest < ActionDispatch::IntegrationTest
   test "joining a game refreshes the game" do
     game = games(:one)
     game.update!(game_code: "JOIN01")
-    discard_refresh_broadcasts(game)
     sign_in_as(users(:stranger_two))
 
     assert_game_refreshed(game) do
@@ -50,7 +49,7 @@ class GameBroadcastsTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "starting a game refreshes the game once" do
+  test "starting a game refreshes the game" do
     game = games(:full_game)
     sign_in_as(game.owner)
 
@@ -111,9 +110,8 @@ class GameBroadcastsTest < ActionDispatch::IntegrationTest
     game = games(:one)
     sign_in_as(users(:one))
 
-    assert_turbo_stream_broadcasts(game) do
+    assert_game_refreshed(game) do
       delete game_url(game)
-      flush_refresh_broadcasts(game)
     end
   end
 
@@ -121,7 +119,6 @@ class GameBroadcastsTest < ActionDispatch::IntegrationTest
 
   def play_all_but_last_card(game)
     31.times { play_active_card(game) }
-    discard_refresh_broadcasts(game)
   end
 
   def play_active_card(game)
