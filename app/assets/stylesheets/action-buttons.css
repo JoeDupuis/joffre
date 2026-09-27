@@ -1,12 +1,19 @@
 .action-buttons {
   margin: var(--space-lg) 0;
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-12);
   flex-wrap: wrap;
   align-items: center;
 
   & > form {
     margin: 0;
+  }
+
+  & input[type="submit"] {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    padding: 12px 20px;
   }
 }
 
@@ -16,10 +23,16 @@
     align-items: stretch;
 
     & > form > .button,
-    & > .button {
-      display: block;
+    & > .button,
+    & > .link-button {
+      display: flex;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    & input[type="submit"] {
+      display: block;
+      width: 100%;
     }
   }
 }

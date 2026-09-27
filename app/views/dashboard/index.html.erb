@@ -1,7 +1,9 @@
 <div class="dashboard">
   <h1>Welcome to Joffre</h1>
-  <p>You are logged in as <%= Current.session.user.email_address %></p>
-  <p>Your friend code: <strong><%= Current.session.user.user_code %></strong></p>
+  <div class="user-info">
+    <p>You are logged in as <%= Current.session.user.email_address %></p>
+    <p>Your friend code: <strong class="code"><%= Current.session.user.user_code %></strong></p>
+  </div>
 
   <div class="action-buttons">
     <%= link_to "My Games", games_path, class: "button" %>

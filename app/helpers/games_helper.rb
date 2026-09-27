@@ -60,6 +60,12 @@ module GamesHelper
     current_player.team == team ? "Us" : "Them"
   end
 
+  def team_side_class(team, current_player = Current.player)
+    return unless current_player&.team
+
+    current_player.team == team ? "-us" : "-them"
+  end
+
   def ordered_teams(current_player = Current.player)
     return [ 1, 2 ] unless current_player&.team
 

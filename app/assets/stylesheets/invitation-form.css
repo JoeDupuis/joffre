@@ -1,5 +1,12 @@
 .invitation-form {
-  max-width: 800px;
+  max-width: 544px;
   margin: 0 auto;
-  padding: var(--space-xl);
+  padding: var(--space-xl) var(--space-md);
+  line-height: 1.5;
+}
+
+@media (min-width: 600px) {
+  .invitation-form {
+    padding: var(--space-2xl) var(--space-xl);
+  }
 }
