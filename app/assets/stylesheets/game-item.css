@@ -1,38 +1,77 @@
 .game-item {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  backdrop-filter: var(--glass-blur);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: var(--space-md) var(--space-20) var(--space-20);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+
+  &:hover {
+    border-color: rgba(244, 234, 214, 0.24);
+    background: rgba(0, 0, 0, 0.28);
+  }
 
   & > .title {
-    margin-top: 0;
+    margin: 0;
+    font-size: 1.3125rem;
+    line-height: 1.25;
+    max-width: 100%;
   }
 
   & > .title a {
-    color: var(--color-white);
-    font-size: var(--font-xl);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--cream);
+    text-decoration: none;
 
     &:hover {
-      color: var(--color-accent);
+      color: var(--gold);
     }
   }
 
   & > .info {
-    margin: var(--space-sm) 0;
-    color: var(--color-white-alpha-90);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    margin: 0;
+    color: var(--cream-dim);
+    font-size: 14px;
+
+    & > strong {
+      color: var(--cream-dim);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.75;
+    }
   }
 
   & > .status {
-    margin: var(--space-sm) 0;
+    margin: 0 0 var(--space-xs);
+    max-width: 100%;
   }
 
   & > .info > .count {
-    color: var(--color-white-alpha-70);
-    margin-left: var(--space-sm);
+    flex-basis: 100%;
+    color: var(--cream-dim);
+    opacity: 0.75;
+    margin-left: 0;
+  }
+
+  & > .info > .status-badge {
+    margin-right: 0;
   }
 
   & > form {
-    margin: var(--space-sm) 0 0;
+    margin: auto 0 0;
+    padding-top: var(--space-sm);
+    align-self: flex-end;
   }
 }

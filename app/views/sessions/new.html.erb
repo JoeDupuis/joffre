@@ -1,16 +1,16 @@
-<div class="container">
+<div class="container -narrow">
   <h1>Sign in</h1>
 
   <%= form_with url: session_path do |form| %>
-    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-    <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %><br>
+    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
+    <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %>
     <%= form.submit "Sign in" %>
   <% end %>
-  <br>
 
-  <%= link_to "Forgot password?", new_password_path %>
-  <br>
-  <%= link_to "Don't have an account? Sign up", new_registration_path %>
+  <div class="link-list">
+    <%= link_to "Forgot password?", new_password_path %>
+    <%= link_to "Don't have an account? Sign up", new_registration_path %>
+  </div>
 
   <% if Rails.env.development? %>
     <div class="dev-signin" data-controller="dev-signin">

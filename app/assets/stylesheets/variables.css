@@ -31,49 +31,50 @@
      ======================================== */
 
   /* Primary colors */
-  --color-primary: #154734;
-  --color-primary-dark: #0d2e20;
-  --color-accent: #ffd700;
-  --color-accent-dim: #d4af37;
+  --color-primary: var(--felt-0);
+  --color-primary-dark: var(--felt-deep);
+  --color-accent: var(--gold);
+  --color-accent-dim: #b98a3e;
 
   /* Semantic colors */
-  --color-success: #4caf50;
-  --color-success-dark: #45a049;
-  --color-danger: #f44336;
-  --color-warning: #ff9800;
+  --color-success: var(--up);
+  --color-success-dark: #57b374;
+  --color-danger: var(--down);
+  --color-warning: #e39a52;
 
   /* Neutral colors */
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --color-gray: #999999;
+  --color-white: var(--cream);
+  --color-black: #0a1512;
+  --color-gray: rgba(231, 220, 196, 0.6);
 
   /* Alpha colors (backgrounds) */
-  --color-white-alpha-5: rgba(255, 255, 255, 0.05);
-  --color-white-alpha-10: rgba(255, 255, 255, 0.1);
-  --color-white-alpha-15: rgba(255, 255, 255, 0.15);
-  --color-white-alpha-20: rgba(255, 255, 255, 0.2);
-  --color-white-alpha-30: rgba(255, 255, 255, 0.3);
-  --color-white-alpha-70: rgba(255, 255, 255, 0.7);
-  --color-white-alpha-80: rgba(255, 255, 255, 0.8);
-  --color-white-alpha-90: rgba(255, 255, 255, 0.9);
+  --color-white-alpha-5: rgba(244, 234, 214, 0.05);
+  --color-white-alpha-10: rgba(244, 234, 214, 0.1);
+  --color-white-alpha-15: rgba(244, 234, 214, 0.15);
+  --color-white-alpha-20: rgba(244, 234, 214, 0.2);
+  --color-white-alpha-30: rgba(244, 234, 214, 0.3);
+  --color-white-alpha-50: rgba(244, 234, 214, 0.5);
+  --color-white-alpha-70: rgba(244, 234, 214, 0.7);
+  --color-white-alpha-80: rgba(244, 234, 214, 0.8);
+  --color-white-alpha-90: rgba(244, 234, 214, 0.9);
 
   --color-black-alpha-10: rgba(0, 0, 0, 0.1);
   --color-black-alpha-20: rgba(0, 0, 0, 0.2);
   --color-black-alpha-30: rgba(0, 0, 0, 0.3);
   --color-black-alpha-40: rgba(0, 0, 0, 0.4);
 
-  --color-accent-alpha-20: rgba(255, 215, 0, 0.2);
-  --color-accent-alpha-30: rgba(255, 215, 0, 0.3);
-  --color-accent-alpha-40: rgba(255, 215, 0, 0.4);
+  --color-accent-alpha-20: rgba(216, 162, 74, 0.2);
+  --color-accent-alpha-30: rgba(216, 162, 74, 0.3);
+  --color-accent-alpha-40: rgba(216, 162, 74, 0.4);
 
-  --color-success-alpha-20: rgba(76, 175, 80, 0.2);
-  --color-success-alpha-30: rgba(76, 175, 80, 0.3);
-  --color-success-alpha-40: rgba(76, 175, 80, 0.4);
-  --color-success-alpha-50: rgba(76, 175, 80, 0.5);
+  --color-success-alpha-20: rgba(110, 201, 138, 0.2);
+  --color-success-alpha-30: rgba(110, 201, 138, 0.3);
+  --color-success-alpha-40: rgba(110, 201, 138, 0.4);
+  --color-success-alpha-50: rgba(110, 201, 138, 0.5);
 
-  --color-danger-alpha-20: rgba(244, 67, 54, 0.2);
-  --color-danger-alpha-40: rgba(244, 67, 54, 0.4);
-  --color-danger-alpha-50: rgba(244, 67, 54, 0.5);
+  --color-danger-alpha-20: rgba(224, 122, 99, 0.2);
+  --color-danger-alpha-40: rgba(224, 122, 99, 0.4);
+  --color-danger-alpha-50: rgba(224, 122, 99, 0.5);
 
   /* ========================================
      Spacing Scale
@@ -147,9 +148,9 @@
      ======================================== */
 
   /* Glass-morphism */
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-bg-light: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(0, 0, 0, 0.24);
+  --glass-bg-light: rgba(0, 0, 0, 0.28);
+  --glass-border: var(--line);
   --glass-blur: blur(10px);
 
   /* Shadows */

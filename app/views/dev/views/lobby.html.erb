@@ -1,53 +1,55 @@
 <div class="game-page">
-  <h1>Friday Night Kaiser</h1>
+  <div class="game-lobby">
+    <h1>Friday Night Kaiser</h1>
 
-  <dl class="game-settings">
-    <div class="item"><dt class="label">Game code</dt><dd class="value">ABC123</dd></div>
-    <div class="item"><dt class="label">Starting bid</dt><dd class="value">6</dd></div>
-    <div class="item"><dt class="label">Target score</dt><dd class="value">41</dd></div>
-    <div class="item"><dt class="label">If all players pass</dt><dd class="value">Dealer must bid (no passing)</dd></div>
-    <div class="item"><dt class="label">Access</dt><dd class="value">Password protected</dd></div>
-  </dl>
+    <dl class="game-settings">
+      <div class="item"><dt class="label">Game code</dt><dd class="value -code">ABC123</dd></div>
+      <div class="item"><dt class="label">Starting bid</dt><dd class="value">6</dd></div>
+      <div class="item"><dt class="label">Target score</dt><dd class="value">41</dd></div>
+      <div class="item"><dt class="label">If all players pass</dt><dd class="value">Dealer must bid (no passing)</dd></div>
+      <div class="item"><dt class="label">Access</dt><dd class="value">Password protected</dd></div>
+    </dl>
 
-  <div class="team-display">
-    <h2 class="title">Teams (4/4 players)</h2>
-    <div class="container">
-      <div class="team">
-        <h3 class="heading">Team 1</h3>
-        <ul class="players">
-          <li class="player">
-            Alice
-            <span class="status-badge">Owner</span>
-            <button class="link-button -small">→ Move to Team 2</button>
-          </li>
-          <li class="player">
-            Charlie
-            <button class="link-button -small">→ Move to Team 2</button>
-            <button class="link-button -small">Kick</button>
-          </li>
-        </ul>
-      </div>
-      <div class="team">
-        <h3 class="heading">Team 2</h3>
-        <ul class="players">
-          <li class="player">
-            Bob
-            <button class="link-button -small">← Move to Team 1</button>
-            <button class="link-button -small">Kick</button>
-          </li>
-          <li class="player">
-            Diana
-            <button class="link-button -small">← Move to Team 1</button>
-            <button class="link-button -small">Kick</button>
-          </li>
-        </ul>
+    <div class="team-display">
+      <h2 class="title">Teams (4/4 players)</h2>
+      <div class="container">
+        <div class="team -us">
+          <h3 class="heading">Team 1</h3>
+          <ul class="players">
+            <li class="player">
+              Alice
+              <span class="status-badge">Owner</span>
+              <button class="link-button -small">→ Move to Team 2</button>
+            </li>
+            <li class="player">
+              Charlie
+              <button class="link-button -small">→ Move to Team 2</button>
+              <button class="link-button -small -danger">Kick</button>
+            </li>
+          </ul>
+        </div>
+        <div class="team -them">
+          <h3 class="heading">Team 2</h3>
+          <ul class="players">
+            <li class="player">
+              Bob
+              <button class="link-button -small">← Move to Team 1</button>
+              <button class="link-button -small -danger">Kick</button>
+            </li>
+            <li class="player">
+              Diana
+              <button class="link-button -small">← Move to Team 1</button>
+              <button class="link-button -small -danger">Kick</button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="action-buttons">
-    <button class="button">Start Game</button>
-    <button class="button -danger">Delete Game</button>
-    <a href="#" class="button -secondary">Back to Dashboard</a>
+    <div class="action-buttons">
+      <button class="button">Start Game</button>
+      <button class="button -danger">Delete Game</button>
+      <a href="#" class="button -secondary">Back to Dashboard</a>
+    </div>
   </div>
 </div>

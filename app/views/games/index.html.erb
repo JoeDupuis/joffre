@@ -11,7 +11,7 @@
             <span class="game-status -<%= game.status %>"><%= game_status_text(game) %></span>
           </p>
           <p class="info">
-            <strong>Code:</strong> <%= game.game_code %>
+            <strong>Code:</strong> <span class="code"><%= game.game_code %></span>
             <span class="count">Starting bid <%= game.minimum_bid %> · Target <%= game.max_score %></span>
           </p>
           <% if owner || game.password_digest.present? %>

@@ -1,17 +1,21 @@
 .user-info {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
   padding: var(--space-md);
-  border-radius: var(--radius-xl);
-  backdrop-filter: var(--glass-blur);
-  margin-bottom: var(--space-xl);
-  text-align: center;
-  color: var(--color-white);
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--cream-dim);
+  font-size: 15px;
+  overflow-wrap: anywhere;
 
-  & > .code {
-    font-family: monospace;
-    font-size: var(--font-xl);
-    color: var(--color-accent);
-    font-weight: var(--font-weight-bold);
+  & > p {
+    margin: 0;
+  }
+
+  & .code {
+    margin-left: var(--space-xs);
   }
 }

@@ -61,6 +61,12 @@ module GamesHelper
     value.negative? ? "−#{value.abs}" : "+#{value}"
   end
 
+  def team_side_class(team, current_player = Current.player)
+    return unless current_player&.team
+
+    current_player.team == team ? "-us" : "-them"
+  end
+
   def dev_clickable_player_name(player, game: nil, label: nil)
     name = label || (player.is_a?(Player) ? player.user.name : player.name)
     game_id = game&.id || (player.is_a?(Player) ? player.game_id : nil)

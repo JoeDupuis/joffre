@@ -1,66 +1,89 @@
 .dev-signin {
-  border-top: 1px solid var(--glass-border);
-  margin-top: var(--space-20);
-  padding-top: var(--space-20);
+  border-top: 1px solid var(--line-soft);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
 
   & h3 {
-    margin-bottom: var(--space-15);
-    color: var(--color-white);
-    font-size: var(--font-lg);
+    margin: 0 0 var(--space-12);
+    color: var(--gold);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1.4;
+    text-transform: uppercase;
   }
 }
 
 .dev-signin-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-10);
-  margin-top: var(--space-10);
+  gap: var(--space-sm);
 }
 
 .dev-user-button {
-  padding: var(--space-10) var(--space-20);
-  background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);
-  color: var(--color-white);
-  border: none;
-  border-radius: var(--radius-lg);
+  min-height: 44px;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   cursor: pointer;
-  font-size: var(--font-base);
-  font-weight: var(--font-weight-semibold);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    background: rgba(244, 234, 214, 0.06);
+    border-color: rgba(244, 234, 214, 0.28);
   }
 
   &:active {
-    transform: scale(0.98);
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
   }
 }
 
 .dev-signout-form {
   position: absolute;
+  margin: 0;
 }
 
 .dev-signout-button {
   position: fixed;
-  bottom: var(--space-10);
-  left: var(--space-10);
-  padding: var(--space-8) var(--space-16);
-  background-color: #dc3545;
-  color: var(--color-white);
+  bottom: var(--space-12);
+  left: var(--space-12);
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--rust);
+  color: var(--cream);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  font-size: var(--font-sm);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
   z-index: var(--z-modal);
-  transition: background-color var(--transition-fast);
+  transition: filter var(--transition-fast);
 
   &:hover {
-    background-color: #c82333;
+    filter: brightness(1.12);
   }
 
   &:active {
     transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
   }
 }

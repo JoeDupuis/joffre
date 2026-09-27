@@ -25,4 +25,10 @@ class GamesHelperTest < ActionView::TestCase
     assert_equal "Playing: Team 1 −7 – Team 2 9", game_status_text(game)
   end
 
+  test "team_side_class marks the current player's team as us" do
+    assert_equal "-us", team_side_class(2, players(:playing_game_player_two))
+    assert_equal "-them", team_side_class(1, players(:playing_game_player_two))
+    assert_nil team_side_class(1, nil)
+  end
+
 end
