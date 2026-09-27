@@ -1,6 +1,10 @@
 module GamesHelper
   SEAT_NAME_LENGTH = 14
 
+  def game_password_field(form, method, **options)
+    form.text_field method, value: nil, autocomplete: "off", autocapitalize: "off", spellcheck: false, class: "-masked", **options
+  end
+
   def seat_name(player, table)
     return t("games.table.you") if player == table.you
 
