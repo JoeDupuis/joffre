@@ -29,9 +29,10 @@ export default class extends Controller {
   }
 
   preserve(event) {
-    if (event.target !== this.element) return
-
     const { newElement } = event.detail
+    if (event.target !== this.element) return
+    if (newElement?.dataset.controller !== this.identifier) return
+
     const key = newElement.dataset.roundResultKeyValue
     newElement.hidden = key === this.keyValue ? this.element.hidden : this.dismissed(key)
   }

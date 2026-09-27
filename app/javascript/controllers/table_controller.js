@@ -24,8 +24,10 @@ export default class extends Controller {
   }
 
   preserve(event) {
+    const { newElement } = event.detail
     if (!this.hasMenuTarget || event.target !== this.menuTarget) return
+    if (newElement?.dataset.tableTarget !== "menu") return
 
-    event.detail.newElement.hidden = this.menuTarget.hidden
+    newElement.hidden = this.menuTarget.hidden
   }
 }

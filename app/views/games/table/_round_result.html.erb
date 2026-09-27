@@ -2,7 +2,7 @@
 <% them = table.them %>
 <% bidder_is_you = summary.bidder == table.you %>
 <% outcome = summary.made? ? "made" : "missed" %>
-<div class="overlay -round" role="dialog" aria-modal="true" aria-labelledby="round-result-title" hidden
+<div id="round-result" class="overlay -round" role="dialog" aria-modal="true" aria-labelledby="round-result-title" hidden
      data-controller="round-result" data-round-result-key-value="joffre:game-<%= table.game.id %>:round-<%= summary.number %>">
   <div class="head">
     <div class="kicker"><%= t("games.round_result.kicker", number: summary.number) %></div>
