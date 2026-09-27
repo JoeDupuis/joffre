@@ -14,6 +14,10 @@ body:has(> .table-app) {
   overscroll-behavior: none;
 }
 
+.table-app form {
+  margin: 0;
+}
+
 .table-app {
   position: fixed;
   inset: 0;
@@ -39,10 +43,6 @@ body:has(> .table-app) {
     margin: 0;
     font: inherit;
     color: inherit;
-  }
-
-  & :where(form) {
-    margin: 0;
   }
 }
 
