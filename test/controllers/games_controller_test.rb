@@ -192,7 +192,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     get game_url(game)
 
-    assert_select ".game-menu form[action='#{game_path(game)}'] button[data-turbo-confirm]", text: "Delete game"
+    assert_select ".overlay.-menu[hidden] form[action='#{game_path(game)}'] button[data-turbo-confirm]", text: "Delete game"
   end
 
   test "non owner does not see a delete option in game" do
@@ -200,8 +200,8 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     get game_url(games(:playing_game))
 
-    assert_select ".game-menu a[href='#{games_path}']"
-    assert_select ".game-menu form[action='#{game_path(games(:playing_game))}']", 0
+    assert_select ".overlay.-menu a[href='#{games_path}']"
+    assert_select ".overlay.-menu form[action='#{game_path(games(:playing_game))}']", 0
   end
 
   test "should create game with custom settings" do
@@ -384,9 +384,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
 
     assert_response :success
-    assert_select ".round-result > .title.-success", text: /You Win/
-    assert_select ".round-result > .details > .item > .value.-positive", text: "+66 points"
-    assert_select ".round-result a[href=?]", games_path
+    assert_select ".overlay.-game-over .title", text: "Your team wins"
+    assert_select ".overlay.-game-over .lede", text: "Final score 48–−18"
+    assert_select ".overlay.-game-over .column.-us.-win .delta.-up", text: "+66"
+    assert_select ".overlay.-game-over a.overlay-button[href=?]", games_path
+    assert_select ".overlay.-menu", 0
   end
 
   test "should show the end screen to the losing team when both teams crossed max_score" do
@@ -399,8 +401,9 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
 
     assert_response :success
-    assert_select ".round-result > .title.-failure", text: /You Lose/
-    assert_select ".round-result > .details > .item > .value.-negative", text: "−3 points"
+    assert_select ".overlay.-game-over .title", text: "Opponents win"
+    assert_select ".overlay.-game-over .column.-us .delta.-down", text: "−3"
+    assert_select ".overlay.-game-over .column.-them.-win"
   end
 
   test "shows the last completed trick with its winner until the next card is led" do
@@ -415,10 +418,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
 
     assert_response :success
-    assert_select ".play-area.-last > .card", 4
-    assert_select ".play-area > .card.-winner", 1
-    assert_select ".play-area > .card.-winner > .points", text: "+#{trick.value}"
-    assert_select ".phase-area .lasttrick", text: /took the trick/
+    assert_select ".trick.-last > .slot.-filled .playing-card", 4
+    assert_select ".trick > .slot.-winner", 1
+    assert_select ".trick > .slot.-winner .points", text: "+#{trick.value}"
+    assert_select ".won-flash .tag", text: /take/
+    assert_select ".trick > .tag", 0
   end
 
   test "showing the game between tricks does not create or modify tricks" do
@@ -435,7 +439,7 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
         sign_in_as(player.user)
         get game_url(game)
         assert_response :success
-        assert_select ".play-area.-last > .card", 4
+        assert_select ".trick.-last > .slot.-filled", 4
       end
     end
     assert_equal before, game.tricks.order(:id).map(&:attributes)
@@ -451,9 +455,10 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     get game_url(game)
 
-    assert_select ".play-area.-last", 0
-    assert_select ".play-area > .card", 1
-    assert_select ".play-area > .card.-winner", 0
+    assert_select ".trick.-last", 0
+    assert_select ".trick > .slot.-filled", 1
+    assert_select ".trick > .slot.-winner", 0
+    assert_select ".won-flash", 0
   end
 
   test "shows the team's points for the round while playing" do
@@ -462,10 +467,11 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     get game_url(game)
 
-    assert_select ".game-info .item", text: /Points:\s*6/
+    assert_select ".score-pill .team.-us .round", text: "+6"
+    assert_select ".score-pill .team.-them .round", text: "0"
   end
 
-  test "shows the previous round summary and score history during bidding" do
+  test "shows the previous hand's result and the score history during bidding" do
     game = games(:playing_game)
     bidder = players(:playing_game_player_one)
     8.times do |i|
@@ -477,21 +483,21 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
     get game_url(game)
 
     assert_response :success
-    assert_select ".round-summary .title", text: "Round 1"
-    assert_select ".round-summary .outcome.-made", text: "Made"
-    assert_select ".round-summary .bid", text: /You\s+bid\s+8/
-    assert_select ".round-summary .team.-bidding .score", text: "+8"
-    assert_select ".score-board .score-history tbody tr", 1
-    assert_select ".score-board .score-history[data-controller='score-history']:not([open])"
-    assert_select ".score-board .score-history[data-action*='turbo:before-morph-element->score-history#preserveOpen']"
-    assert_select ".score-history td.points .total", text: "8"
+    assert_select ".overlay.-round[hidden][data-controller='round-result'][data-round-result-key-value='joffre:game-#{game.id}:round-1']"
+    assert_select ".overlay.-round .kicker", text: "Hand 1"
+    assert_select ".overlay.-round .title", text: "Bid made"
+    assert_select ".overlay.-round .lede", text: "Your team bid 8 and took 8."
+    assert_select ".overlay.-round .column.-us .delta.-up", text: "+8 this hand"
+    assert_select ".overlay.-round button[data-action='round-result#dismiss']", text: "Next hand"
+    assert_select ".overlay.-menu .score-history tbody tr", 1
+    assert_select ".overlay.-menu .score-history td.points .total", text: "8"
   end
 
   test "does not show a round summary before the first round is scored" do
     get game_url(games(:bidding_game))
 
     assert_response :success
-    assert_select ".round-summary", 0
+    assert_select ".overlay.-round", 0
     assert_select ".score-history", 0
   end
 
@@ -508,9 +514,119 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select ".score-history", 1
-    assert_select ".score-history.-inline[open] tbody tr", 2
+    assert_select ".overlay.-game-over .score-history tbody tr", 2
     assert_select ".score-history tbody tr:last-child td.points .total", text: "48"
-    assert_select ".score-history[data-controller]", 0
-    assert_select ".round-result .item .value.-positive", text: "+47 points"
+    assert_select ".overlay.-game-over .column.-us .delta.-up", text: "+47"
+  end
+
+  test "the bidder gets a bid grid with pass and a highlighted top bid" do
+    game = games(:bidding_game)
+    sign_in_as(game.current_bidder.user)
+
+    get game_url(game)
+
+    assert_select ".you-strip .turn-flag", text: "Your turn — make a bid"
+    assert_select ".bid-grid button.bid-button.-pass[name='bid[amount]'][value='']", text: "Pass"
+    assert_select ".bid-grid button.bid-button[name='bid[amount]']", 8
+    assert_select ".bid-grid button.bid-button.-special[value='12']", text: "12"
+    assert_select ".bid-foot", text: "Bid the points your team will take · 6–12"
+    assert_select ".bid-panel .hand .slot .playing-card", 8
+  end
+
+  test "players waiting to bid see who is bidding and no bid grid" do
+    game = games(:bidding_game)
+    waiting = game.players.where.not(id: game.current_bidder.id).first
+    sign_in_as(waiting.user)
+
+    get game_url(game)
+
+    assert_select ".bid-grid", 0
+    assert_select ".you-strip .hint", text: /\A\S.* is bidding…\z/
+    assert_select ".seat.-active", 1
+  end
+
+  test "shows bids in the seat bubbles while bidding" do
+    game = games(:bidding_game)
+    first = game.current_bidder
+    game.place_bid!(player: first, amount: 7)
+    second = game.reload.current_bidder
+    game.place_bid!(player: second, amount: nil)
+
+    get game_url(game)
+
+    assert_select ".seat .bubble", text: "bid 7"
+    assert_select ".seat .bubble.-pass", text: "pass"
+  end
+
+  test "the player to act can play legal cards and sees the rest dimmed" do
+    game = games(:playing_game)
+    game.play_card!(players(:playing_game_player_one).cards.find_by!(suite: :blue, rank: 3))
+    follower = players(:playing_game_player_two)
+    sign_in_as(follower.user)
+
+    get game_url(game)
+
+    assert_select ".you-strip .turn-flag", text: "Your turn — play a card"
+    assert_select ".play-panel[data-hand-refusal-value='Must follow Blue']"
+    assert_select "form.hand[action='#{game_plays_path(game)}'] button.slot.-playable[type=submit][name='play[card_id]']", 4
+    assert_select "form.hand button.slot.-dim[type=button][data-action='hand#refuse']", 4
+    assert_select ".trick > .slot.-S.-filled", 0
+    assert_select ".trick > .slot.-E.-filled .playing-card.-blue"
+  end
+
+  test "players waiting to play have no card buttons" do
+    game = games(:playing_game)
+    sign_in_as(users(:two))
+
+    get game_url(game)
+
+    assert_select "form.hand button", 0
+    assert_select "form.hand .slot[role=img]", 8
+    assert_select ".you-strip .hint", text: "#{users(:one).name} is playing…"
+    assert_select ".trick > .tag", text: /Trick\s*1 \/ 8/
+  end
+
+  test "shows the contract and trump in the top bar once a card is led" do
+    game = games(:playing_game)
+    game.play_card!(players(:playing_game_player_one).cards.find_by!(suite: :green, rank: 2))
+
+    get game_url(game)
+
+    assert_select ".topbar .contract .name", text: "You"
+    assert_select ".topbar .contract .amount", text: "· 8"
+    assert_select ".topbar .trump-chip[title='Trump · Green'] .suit-pip.-green"
+    assert_select ".seat .bubble.-win", 0
+  end
+
+  test "marks the counting cards on their faces" do
+    game = games(:playing_game)
+    game.cards.find_by!(suite: :red, rank: 0).update_column(:score_modifier, 5)
+    sign_in_as(users(:stranger_one))
+
+    get game_url(game)
+
+    assert_select ".hand .playing-card.-red .score-tag", text: "+5"
+    assert_select ".hand .playing-card .score-tag", 1
+  end
+
+  test "the menu offers both languages" do
+    get game_url(games(:playing_game))
+
+    assert_select ".overlay.-menu form[action='#{locale_path}'] button.segment", 2
+    assert_select ".overlay.-menu button.segment.-on", text: "EN"
+    assert_select ".overlay.-menu .rules h4", text: "Bidding"
+  end
+
+  test "renders the table in French for a French-speaking user" do
+    @user.update!(locale: "fr")
+    game = games(:bidding_game)
+
+    get game_url(game)
+
+    assert_select "html[lang=fr]"
+    assert_select ".topbar .contract .bid.-pending", text: "Annonces…"
+    assert_select ".score-pill .team.-us .label", text: /Nous/
+    assert_select ".overlay.-menu button.segment.-on", text: "FR"
+    assert_select ".overlay.-menu .rules .section-title", text: "Comment jouer au Joffre"
   end
 end

@@ -46,13 +46,12 @@ body {
 }
 
 @media (max-width: 660px) {
-  body:has(> .game-menu) > #flash-messages {
-    padding-right: 52px;
+  body:has(> .table-app) > #flash-messages {
+    padding-right: 60px;
   }
 }
 
-body:not(:has(> .game-page)) > #flash-messages,
-body:has(> .game-page > .game-lobby) > #flash-messages {
+body:not(:has(> .table-app)) > #flash-messages {
   position: relative;
   max-width: 512px;
 }

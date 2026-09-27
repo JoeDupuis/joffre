@@ -1,12 +1,22 @@
 <header class="topbar">
   <div class="score-pill">
     <span class="team -us">
-      <span class="label"><%= t("games.table.us") %></span>
+      <span class="label">
+        <%= t("games.table.us") %>
+        <% if table.game.playing? %>
+          <span class="round" title="<%= t("games.table.round_points", points: table.round_points(table.us)) %>"><%= signed_points(table.round_points(table.us)) %></span>
+        <% end %>
+      </span>
       <span class="value"><%= score_text(table.score(table.us)) %></span>
     </span>
     <span class="separator"></span>
     <span class="team -them">
-      <span class="label"><%= t("games.table.opp") %></span>
+      <span class="label">
+        <%= t("games.table.opp") %>
+        <% if table.game.playing? %>
+          <span class="round" title="<%= t("games.table.round_points", points: table.round_points(table.them)) %>"><%= signed_points(table.round_points(table.them)) %></span>
+        <% end %>
+      </span>
       <span class="value"><%= score_text(table.score(table.them)) %></span>
     </span>
   </div>

@@ -49,6 +49,10 @@ class GameTable
     game.team_total_score(team)
   end
 
+  def round_points(team)
+    game.team_round_points(team)
+  end
+
   def hand_number
     game.current_round_number
   end

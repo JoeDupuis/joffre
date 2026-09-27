@@ -30,5 +30,4 @@ class GamesHelperTest < ActionView::TestCase
     assert_equal "-them", team_side_class(1, players(:playing_game_player_two))
     assert_nil team_side_class(1, nil)
   end
-
 end

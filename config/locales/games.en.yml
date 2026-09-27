@@ -9,6 +9,7 @@ en:
       opponent: "Opponent"
       dealer: "Dealer"
       dealer_mark: "D"
+      round_points: "Points this hand: %{points}"
       hand_number: "Hand %{number}"
       to_goal: "to %{score}"
       bidding: "Bidding…"

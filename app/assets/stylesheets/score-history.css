@@ -20,6 +20,7 @@
   & td {
     padding: 6px;
     vertical-align: baseline;
+    border: 0;
     border-bottom: 1px solid var(--line-soft);
   }
 

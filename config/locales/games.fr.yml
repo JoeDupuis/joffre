@@ -9,6 +9,7 @@ fr:
       opponent: "Adversaire"
       dealer: "Donneur"
       dealer_mark: "D"
+      round_points: "Points de cette main : %{points}"
       hand_number: "Main %{number}"
       to_goal: "sur %{score}"
       bidding: "Annonces…"

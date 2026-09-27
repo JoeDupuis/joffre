@@ -1,5 +1,4 @@
-body:has(> .branch-indicator):not(:has(> .game-page)),
-body:has(> .branch-indicator):has(.game-lobby) {
+body:has(> .branch-indicator):not(:has(> .table-app)) {
   padding-bottom: 72px;
 }
 

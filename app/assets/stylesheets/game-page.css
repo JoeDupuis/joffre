@@ -1,5 +1,9 @@
 .game-page {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 1em;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--space-xl) var(--space-md);
+
+  @media (min-width: 600px) {
+    padding: var(--space-2xl) var(--space-xl);
+  }
 }

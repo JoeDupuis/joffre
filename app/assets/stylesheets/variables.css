@@ -183,27 +183,11 @@
   --max-width-content: 500px;
   --max-width-form: 400px;
 
-  /* Play area dimensions */
-  --play-area-size: min(400px, calc(100vw - 120px));
-  --play-area-max: 400px;
-
-  /* Card dimensions */
-  --card-width-mobile: min(70px, calc((100vw - 80px) / 4));
-  --card-height-mobile: min(105px, calc((100vw - 80px) / 4 * 1.5));
-  --card-width-desktop: 80px;
-  --card-height-desktop: 120px;
-
-  --played-card-width-mobile: min(50px, 20%);
-  --played-card-height-mobile: min(75px, 30%);
-  --played-card-width-desktop: 70px;
-  --played-card-height-desktop: 105px;
-
   /* ========================================
      Z-index Scale
      ======================================== */
 
   --z-base: 1;
-  --z-card-hover: 10;
   --z-dropdown: 100;
   --z-modal: 1000;
 }
