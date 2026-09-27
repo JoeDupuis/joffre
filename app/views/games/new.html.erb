@@ -11,12 +11,12 @@
 
     <div class="form-field">
       <%= form.label :password, "Password (optional)" %>
-      <%= form.password_field :password, placeholder: "Leave blank for no password" %>
+      <%= game_password_field form, :password, placeholder: "Leave blank for no password" %>
     </div>
 
     <div class="form-field">
       <%= form.label :password_confirmation, "Confirm Password" %>
-      <%= form.password_field :password_confirmation %>
+      <%= game_password_field form, :password_confirmation %>
     </div>
 
     <div class="form-field">

@@ -1,6 +1,21 @@
 require "test_helper"
 
 class GamesHelperTest < ActionView::TestCase
+  test "game_password_field renders a masked text input that browsers do not treat as a login password" do
+    game = Game.new(password: "secret")
+
+    render inline: "<%= form_with(model: game, url: '/games') { |form| game_password_field(form, :password) } %>", locals: { game: game }
+
+    assert_select "input[name='game[password]']" do |inputs|
+      input = inputs.first
+      assert_equal "text", input["type"]
+      assert_equal "off", input["autocomplete"]
+      assert_includes input["class"], "-masked"
+      assert_nil input["value"]
+    end
+    assert_select "input[type='password']", count: 0
+  end
+
   test "signed_points formats trick and round values" do
     assert_equal "+1", signed_points(1)
     assert_equal "+6", signed_points(6)

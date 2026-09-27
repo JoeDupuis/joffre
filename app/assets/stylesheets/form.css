@@ -66,6 +66,10 @@ form {
     cursor: pointer;
   }
 
+  & input.-masked {
+    -webkit-text-security: disc;
+  }
+
   & select option {
     background: var(--felt-deep);
     color: var(--cream);
