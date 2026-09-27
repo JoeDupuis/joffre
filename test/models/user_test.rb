@@ -36,4 +36,29 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(email_address: " DOWNCASED@EXAMPLE.COM ")
     assert_equal("downcased@example.com", user.email_address)
   end
+
+  test "allows a nil locale" do
+    user = users(:one)
+    user.locale = nil
+    assert user.valid?
+  end
+
+  test "allows available locales" do
+    user = users(:one)
+
+    %w[en fr].each do |locale|
+      user.locale = locale
+      assert user.valid?, "expected #{locale} to be valid"
+    end
+  end
+
+  test "rejects unavailable locales" do
+    user = users(:one)
+
+    [ "de", "", "FR" ].each do |locale|
+      user.locale = locale
+      assert_not user.valid?, "expected #{locale.inspect} to be invalid"
+      assert_includes user.errors[:locale], "is not included in the list"
+    end
+  end
 end

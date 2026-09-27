@@ -69,3 +69,6 @@ en:
     destroy:
       success: "%{name} deleted successfully!"
       failure: "%{name} could not be deleted."
+  locales:
+    update:
+      failure: "Your language could not be changed."
