@@ -1,5 +1,32 @@
 :root {
   /* ========================================
+     Table design tokens
+     ======================================== */
+
+  --felt-0: #16302a;
+  --felt-1: #1f4339;
+  --felt-2: #27513f;
+  --felt-deep: #0f231e;
+  --cream: #f4ead6;
+  --cream-dim: #e7dcc4;
+  --ink: #2a2018;
+  --rust: #9b4a26;
+  --gold: #d8a24a;
+  --gold-ink: #3a2a10;
+  --line: rgba(244, 234, 214, 0.16);
+  --line-soft: rgba(244, 234, 214, 0.09);
+  --s-brown: #a8663a;
+  --s-green: #3f8a55;
+  --s-red: #c8452f;
+  --s-blue: #2f6fa8;
+  --team-us: #d8a24a;
+  --team-them: #8aa7ad;
+  --up: #6ec98a;
+  --down: #e07a63;
+  --font-display: "Spectral", Georgia, "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* ========================================
      Colors
      ======================================== */
 
