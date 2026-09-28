@@ -628,8 +628,29 @@ class GamesControllerTest < ActionDispatch::IntegrationTest
 
     get game_url(game)
 
-    assert_select ".hand .playing-card.-red .score-tag", text: "+5"
-    assert_select ".hand .playing-card .score-tag", 1
+    assert_select ".hand .playing-card.-red .figure .value", text: "+5"
+    assert_select ".hand .playing-card .figure .value", 1
+  end
+
+  test "draws the country figure on the zero cards" do
+    game = games(:playing_game)
+    sign_in_as(users(:stranger_one))
+
+    get game_url(game)
+
+    assert_select ".hand .playing-card.-red.-figure .figure .country", text: "FRANCE"
+    assert_select ".hand .playing-card.-figure .rank", 0
+    assert_select ".hand .playing-card:not(.-figure) .rank"
+  end
+
+  test "names the country figures in French for a French-speaking user" do
+    users(:stranger_one).update!(locale: "fr")
+    game = games(:playing_game)
+    sign_in_as(users(:stranger_one))
+
+    get game_url(game)
+
+    assert_select ".hand .playing-card.-red.-figure .figure text", text: "Maréchal Joffre"
   end
 
   test "the menu offers both languages" do

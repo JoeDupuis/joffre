@@ -30,6 +30,7 @@
 
 .playing-card {
   --suit: var(--s-brown);
+  --suit-ink: var(--s-brown-ink);
 
   position: relative;
   width: 100%;
@@ -40,10 +41,21 @@
   border-radius: 0.42em;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 
-  &.-brown { --suit: var(--s-brown); }
-  &.-green { --suit: var(--s-green); }
-  &.-red { --suit: var(--s-red); }
-  &.-blue { --suit: var(--s-blue); }
+  &.-brown { --suit: var(--s-brown); --suit-ink: var(--s-brown-ink); }
+  &.-green { --suit: var(--s-green); --suit-ink: var(--s-green-ink); }
+  &.-red { --suit: var(--s-red); --suit-ink: var(--s-red-ink); }
+  &.-blue { --suit: var(--s-blue); --suit-ink: var(--s-blue-ink); }
+
+  & > .figure {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    & text {
+      font-family: var(--font-display);
+    }
+  }
 
   & > .frame {
     position: absolute;
@@ -90,22 +102,5 @@
       bottom: 0.34em;
       transform: rotate(180deg);
     }
-  }
-
-  & > .score-tag {
-    position: absolute;
-    top: 0.3em;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.05em 0.5em;
-    font-size: 0.6em;
-    font-weight: 800;
-    letter-spacing: 0.02em;
-    line-height: 1.4;
-    white-space: nowrap;
-    color: #fff;
-    background: var(--suit);
-    border-radius: 999px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }

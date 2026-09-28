@@ -1,0 +1,55 @@
+<% suite = card.suite %>
+<% pips = GamesHelper::FIGURE_PIPS.fetch(suite) %>
+<% country = t("games.table.figures.#{suite}.country") %>
+<svg class="figure" viewBox="0 0 200 300" aria-hidden="true">
+  <defs>
+    <pattern id="jf-<%= suite %>-t1" width="2.6" height="2.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)" style="color: var(--suit-ink)"><rect width="0.6" height="2.6" fill="currentColor"></rect></pattern>
+    <pattern id="jf-<%= suite %>-t2" width="2.2" height="2.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)" style="color: var(--suit-ink)"><rect width="0.7" height="2.2" fill="currentColor"></rect><rect width="2.2" height="0.6" fill="currentColor"></rect></pattern>
+    <pattern id="jf-<%= suite %>-t3" width="1.7" height="1.7" patternUnits="userSpaceOnUse" patternTransform="rotate(30)" style="color: var(--suit-ink)"><rect width="0.85" height="1.7" fill="currentColor"></rect><rect width="1.7" height="0.75" fill="currentColor"></rect></pattern>
+    <pattern id="jf-<%= suite %>-lines" width="4" height="2.1" patternUnits="userSpaceOnUse"><rect width="4" height="0.5" fill="currentColor"></rect></pattern>
+    <pattern id="jf-<%= suite %>-lace" width="4" height="4" patternUnits="userSpaceOnUse"><g fill="none" stroke="currentColor" stroke-width="0.35"><circle cx="0" cy="0" r="2.4"></circle><circle cx="4" cy="0" r="2.4"></circle><circle cx="0" cy="4" r="2.4"></circle><circle cx="4" cy="4" r="2.4"></circle><circle cx="2" cy="2" r="2.4"></circle></g></pattern>
+    <clipPath id="jf-oval"><ellipse cx="100" cy="134" rx="57" ry="75"></ellipse></clipPath>
+  </defs>
+
+  <rect x="6" y="6" width="188" height="288" rx="8" fill="none" stroke="currentColor" stroke-width="0.8"></rect>
+  <path d="M9,9 H191 V291 H9 Z M16,16 V284 H184 V16 Z" fill="url(#jf-<%= suite %>-lace)" fill-rule="evenodd"></path>
+  <rect x="9" y="9" width="182" height="282" rx="5" fill="none" stroke="currentColor" stroke-width="0.6"></rect>
+  <rect x="16" y="16" width="168" height="268" rx="3" fill="none" stroke="currentColor" stroke-width="1"></rect>
+
+  <g fill="currentColor">
+    <path d="M67.1,211.7 L59.1,205.5 L51.9,197.9 L45.5,189.2 L40.1,179.5 L35.8,169.0 L32.6,157.8 L30.7,146.2" fill="none" stroke="currentColor" stroke-width="1"></path>
+    <ellipse cx="54.9" cy="205.1" rx="4.2" ry="1.7" transform="rotate(-176 54.9 205.1)"></ellipse><ellipse cx="58.4" cy="201.3" rx="4.2" ry="1.7" transform="rotate(-100 58.4 201.3)"></ellipse><ellipse cx="47.8" cy="197.0" rx="4.2" ry="1.7" transform="rotate(-168 47.8 197.0)"></ellipse><ellipse cx="51.7" cy="193.7" rx="4.2" ry="1.7" transform="rotate(-92 51.7 193.7)"></ellipse><ellipse cx="41.5" cy="187.8" rx="4.2" ry="1.7" transform="rotate(-161 41.5 187.8)"></ellipse><ellipse cx="45.9" cy="185.0" rx="4.2" ry="1.7" transform="rotate(-85 45.9 185.0)"></ellipse><ellipse cx="36.3" cy="177.6" rx="4.2" ry="1.7" transform="rotate(-154 36.3 177.6)"></ellipse><ellipse cx="41.0" cy="175.4" rx="4.2" ry="1.7" transform="rotate(-78 41.0 175.4)"></ellipse><ellipse cx="32.2" cy="166.7" rx="4.2" ry="1.7" transform="rotate(-147 32.2 166.7)"></ellipse><ellipse cx="37.1" cy="165.0" rx="4.2" ry="1.7" transform="rotate(-71 37.1 165.0)"></ellipse><ellipse cx="29.4" cy="155.2" rx="4.2" ry="1.7" transform="rotate(-141 29.4 155.2)"></ellipse><ellipse cx="34.4" cy="154.0" rx="4.2" ry="1.7" transform="rotate(-65 34.4 154.0)"></ellipse>
+    <path d="M132.9,211.7 L140.9,205.5 L148.1,197.9 L154.5,189.2 L159.9,179.5 L164.2,169.0 L167.4,157.8 L169.3,146.2" fill="none" stroke="currentColor" stroke-width="1"></path>
+    <ellipse cx="141.6" cy="201.3" rx="4.2" ry="1.7" transform="rotate(-80 141.6 201.3)"></ellipse><ellipse cx="145.1" cy="205.1" rx="4.2" ry="1.7" transform="rotate(-4 145.1 205.1)"></ellipse><ellipse cx="148.3" cy="193.7" rx="4.2" ry="1.7" transform="rotate(-88 148.3 193.7)"></ellipse><ellipse cx="152.2" cy="197.0" rx="4.2" ry="1.7" transform="rotate(-12 152.2 197.0)"></ellipse><ellipse cx="154.1" cy="185.0" rx="4.2" ry="1.7" transform="rotate(-95 154.1 185.0)"></ellipse><ellipse cx="158.5" cy="187.8" rx="4.2" ry="1.7" transform="rotate(-19 158.5 187.8)"></ellipse><ellipse cx="159.0" cy="175.4" rx="4.2" ry="1.7" transform="rotate(-102 159.0 175.4)"></ellipse><ellipse cx="163.7" cy="177.6" rx="4.2" ry="1.7" transform="rotate(-26 163.7 177.6)"></ellipse><ellipse cx="162.9" cy="165.0" rx="4.2" ry="1.7" transform="rotate(-109 162.9 165.0)"></ellipse><ellipse cx="167.8" cy="166.7" rx="4.2" ry="1.7" transform="rotate(-33 167.8 166.7)"></ellipse><ellipse cx="165.6" cy="154.0" rx="4.2" ry="1.7" transform="rotate(-115 165.6 154.0)"></ellipse><ellipse cx="170.6" cy="155.2" rx="4.2" ry="1.7" transform="rotate(-39 170.6 155.2)"></ellipse>
+  </g>
+
+  <ellipse cx="100" cy="134" rx="57" ry="75" fill="url(#jf-<%= suite %>-lines)"></ellipse>
+  <g clip-path="url(#jf-oval)" style="color: var(--suit-ink)" stroke-linejoin="round" stroke-linecap="round">
+    <%= render "games/table/figures/#{suite}" %>
+  </g>
+  <ellipse cx="100" cy="134" rx="57" ry="75" fill="none" stroke="currentColor" stroke-width="0.8"></ellipse>
+  <ellipse cx="100" cy="134" rx="60.5" ry="78.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="0.1 3" stroke-linecap="round"></ellipse>
+  <ellipse cx="100" cy="134" rx="64" ry="82" fill="none" stroke="currentColor" stroke-width="2"></ellipse>
+
+  <path d="M54,226 L40,228 L46,236 L40,244 L58,241 Z M146,226 L160,228 L154,236 L160,244 L142,241 Z" style="fill: var(--suit-ink)"></path>
+  <path d="M50,222 Q100,232 150,222 L150,238 Q100,248 50,238 Z" fill="currentColor"></path>
+  <path d="M52,224.5 Q100,234.5 148,224.5 M52,235.5 Q100,245.5 148,235.5" fill="none" stroke="#fbf6e8" stroke-width="0.5"></path>
+  <text class="country" x="100" y="237.5" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="<%= figure_letter_spacing(country) %>" fill="#fbf6e8"><%= country %></text>
+  <text x="100" y="258" text-anchor="middle" font-size="7.5" font-style="italic" style="fill: var(--suit-ink)"><%= t("games.table.figures.#{suite}.figure") %></text>
+
+  <circle cx="100" cy="50" r="13" fill="currentColor" stroke="#fbf6e8" stroke-width="1.5"></circle>
+  <circle cx="100" cy="50" r="10.5" fill="none" stroke="#fbf6e8" stroke-width="0.5"></circle>
+  <% if card.score_modifier.zero? %>
+    <path d="<%= pips[:medallion] %>" fill="#fbf6e8"></path>
+  <% else %>
+    <text class="value" x="100" y="54.6" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fbf6e8"><%= signed_points(card.score_modifier) %></text>
+  <% end %>
+
+  <% [nil, "rotate(180 100 150)"].each do |transform| %>
+    <g transform="<%= transform %>">
+      <circle cx="29" cy="31" r="13" fill="#fbf6e8" stroke="currentColor" stroke-width="1.3"></circle>
+      <text x="29" y="38" text-anchor="middle" font-size="19" font-weight="700" fill="currentColor">0</text>
+      <path d="<%= pips[:corner] %>" transform="translate(1 5)" fill="currentColor"></path>
+    </g>
+  <% end %>
+</svg>
