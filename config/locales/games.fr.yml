@@ -39,6 +39,19 @@ fr:
         green: "Vert"
         red: "Rouge"
         blue: "Bleu"
+      figures:
+        blue:
+          country: "ANGLETERRE"
+          figure: "Les armes royales"
+        green:
+          country: "RUSSIE"
+          figure: "Le soldat russe"
+        brown:
+          country: "ALLEMAGNE"
+          figure: "Guillaume II"
+        red:
+          country: "FRANCE"
+          figure: "Maréchal Joffre"
     round_result:
       kicker: "Main %{number}"
       made: "Contrat réussi"

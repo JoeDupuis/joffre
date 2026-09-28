@@ -1,5 +1,11 @@
 module GamesHelper
   SEAT_NAME_LENGTH = 14
+  FIGURE_PIPS = {
+    "blue" => { corner: "M28,44.8 L33,54 H23 Z", medallion: "M100,43.5 L106.5,55 H93.5 Z" },
+    "green" => { corner: "M23.5,49.5 A4.5,4.5 0 1 0 32.5,49.5 A4.5,4.5 0 1 0 23.5,49.5 Z", medallion: "M94.5,50 A5.5,5.5 0 1 0 105.5,50 A5.5,5.5 0 1 0 94.5,50 Z" },
+    "brown" => { corner: "M24,45.5 H32 V53.5 H24 Z", medallion: "M95,45 H105 V55 H95 Z" },
+    "red" => { corner: "M28,45 L32.5,49.5 L28,54 L23.5,49.5 Z", medallion: "M100,44 L106,50 L100,56 L94,50 Z" }
+  }.freeze
 
   def game_password_field(form, method, **options)
     form.text_field method, value: nil, autocomplete: "off", autocapitalize: "off", spellcheck: false, class: "-masked", **options
@@ -21,6 +27,10 @@ module GamesHelper
 
   def card_label(card)
     t("games.table.card", suit: suit_name(card.suite), rank: card.rank)
+  end
+
+  def figure_letter_spacing(name)
+    name.length > 7 ? 1.6 : 2.6
   end
 
   def bid_columns(count)

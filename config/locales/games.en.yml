@@ -39,6 +39,19 @@ en:
         green: "Green"
         red: "Red"
         blue: "Blue"
+      figures:
+        blue:
+          country: "ENGLAND"
+          figure: "The royal arms"
+        green:
+          country: "RUSSIA"
+          figure: "A Russian soldier"
+        brown:
+          country: "GERMANY"
+          figure: "Kaiser Wilhelm II"
+        red:
+          country: "FRANCE"
+          figure: "Marshal Joffre"
     round_result:
       kicker: "Hand %{number}"
       made: "Bid made"
